@@ -11,7 +11,18 @@
         android:theme="@style/Theme.CMPT362Project">
         <activity
             android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CMPT362Project.NoActionBar"/>
+        <activity
+            android:name=".login.LoginPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.SignUpPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StartPageActivity"
             android:label="@string/app_name"
+            android:exported="true"
             android:theme="@style/Theme.CMPT362Project.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
