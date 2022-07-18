@@ -43,7 +43,13 @@ class MainActivity : AppCompatActivity() {
         val bundle = intent.extras
         if (bundle != null) {
             val username = bundle?.getString("username")
-            navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = username
+            val email = bundle?.getString("email")
+            if (username != null) {
+                navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = username
+            }
+            if (email != null) {
+                navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = email
+            }
         }
     }
 
