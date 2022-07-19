@@ -30,6 +30,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity android:name=".activities.CreateBoardActivity" >
+        </activity>
+
+        <activity android:name=".activities.CreateTaskActivity" >
+        </activity>
+
+        <activity android:name=".activities.CreateCategoryActivity" >
+        </activity>
+
+        <activity android:name=".activities.DisplayCategoryActivity" >
+        </activity>
+
+        <activity android:name=".activities.DisplayTaskActivity" >
+        </activity>
+
+
     </application>
 
 </manifest>

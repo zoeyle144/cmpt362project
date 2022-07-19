@@ -35,4 +35,8 @@
     <string name="sign_up_ask">Create Account</string>
     <string name="sign_up">Sign up</string>
 
+    <string name="create_board_name">Board Name</string>
+    <string name="create_board_description">Description</string>
+    <string name="create_board_button">Confirm</string>
+
 </resources>
