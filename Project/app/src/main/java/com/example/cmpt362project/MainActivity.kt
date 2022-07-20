@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     val userData = it.value as Map<*, *>
                     navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = userData["username"].toString()
                     navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = userData["email"].toString()
+                    setProfilePicture(navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic))
                 }
 
             }
