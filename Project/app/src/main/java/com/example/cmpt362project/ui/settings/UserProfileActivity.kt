@@ -204,27 +204,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         val ONE_MEGABYTE: Long = 1024 * 1024
         var bitmap: Bitmap? = null
-        pathReference.getBytes(ONE_MEGABYTE)
-            .addOnSuccessListener(this) {
-                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                println("Success download!")
 
-                if (bitmap != null) {
-                    userProfileViewModel.setImage(bitmap!!)
+        try {
+            pathReference.getBytes(ONE_MEGABYTE)
+                .addOnSuccessListener(this) {
+                    bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                    println("Success download!")
+                    if (bitmap != null) userProfileViewModel.setImage(bitmap!!)
+                } .addOnFailureListener(this) {
+
+                    println("Failure download!")
                 }
-            } .addOnFailureListener(this) {
-                println("Failure download!")
-            }
+        } catch (e: Exception) {
+            println("UserProfileActivity: Ran into exception after failing to download profile picture")
+        }
 
         return bitmap
     }
-//
-//    fun setImageViewFromDL() {
-//        downloadImage()?.let { userProfileViewModel.setImage(it) }
-//    }
-//
-//    fun test1() {
-//        val bitmap = downloadImage()
-//
-//    }
 }
