@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -162,6 +163,9 @@ class UserProfileActivity : AppCompatActivity() {
 
         database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
         database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
+        uploadImage()
+
+        Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
 
         finish()
     }
@@ -174,7 +178,7 @@ class UserProfileActivity : AppCompatActivity() {
         finish()
     }
 
-    fun uploadImage(v: View) {
+    fun uploadImage() {
         val storage = Firebase.storage.reference
         val bitmapToUpload = userProfileViewModel.getImage()
         val user = auth.currentUser
@@ -212,7 +216,6 @@ class UserProfileActivity : AppCompatActivity() {
                     println("Success download!")
                     if (bitmap != null) userProfileViewModel.setImage(bitmap!!)
                 } .addOnFailureListener(this) {
-
                     println("Failure download!")
                 }
         } catch (e: Exception) {

@@ -119,14 +119,6 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/profile_TEMP_upload_img"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TEMP UPLOAD"
-        android:onClick="uploadImage"
-        />
-
-    <Button
         android:id="@+id/profile_TEMP_download_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
