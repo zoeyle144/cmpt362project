@@ -11,4 +11,12 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Session">
+        <Preference
+            app:title="Logout"
+            app:summary="Sign out of current session"
+            android:key="logout">
+        </Preference>
+    </PreferenceCategory>
+
 </PreferenceScreen>

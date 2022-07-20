@@ -8,15 +8,31 @@ import android.widget.Button
 import com.example.cmpt362project.R
 import com.example.cmpt362project.login.LoginPageActivity
 import com.example.cmpt362project.login.SignUpPageActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
+private lateinit var auth: FirebaseAuth
 class StartPageActivity : AppCompatActivity(), View.OnClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        auth = Firebase.auth
+        // start main page
+        if (auth.currentUser != null) {
+            // Referenced for ideas: https://stackoverflow.com/questions/2116158/replace-current-activity
+            intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
+            startActivity(intent)
+            this.finish()
+        }
+
         setContentView(R.layout.activity_start_page)
         val signupBtn = findViewById<Button>(R.id.login_redirect_btn)
         signupBtn.setOnClickListener(this)
         val loginBtn = findViewById<Button>(R.id.sign_up_redirect_btn)
         loginBtn.setOnClickListener(this)
+
     }
 
     override fun onClick(v: View) {
