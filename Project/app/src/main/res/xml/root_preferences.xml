@@ -15,6 +15,7 @@
         <Preference
             app:title="Logout"
             app:summary="Sign out of current session"
+            app:icon="@drawable/settings_logout"
             android:key="logout">
         </Preference>
     </PreferenceCategory>
