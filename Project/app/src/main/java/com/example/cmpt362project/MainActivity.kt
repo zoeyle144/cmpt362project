@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -27,12 +28,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        database = Firebase.database.reference
+        auth = Firebase.auth
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -44,18 +49,16 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val bundle = intent.extras
-        if (bundle != null) {
-            val username = bundle?.getString("username")
-            val email = bundle?.getString("email")
-            if (username != null) {
-                navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = username
-            }
-            if (email != null) {
-                navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = email
-            }
+        if (auth.currentUser != null) {
+            val user = auth.currentUser
+            database.child("users").child(user!!.uid).get().addOnSuccessListener {
+                if (it != null) {
+                    val userData = it.value as Map<*, *>
+                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = userData["username"].toString()
+                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = userData["email"].toString()
+                }
 
-            setProfilePicture(navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic))
+            }
         }
     }
 
