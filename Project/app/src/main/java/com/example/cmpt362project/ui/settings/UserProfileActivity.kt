@@ -27,7 +27,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException.ERROR_OBJECT_NOT_FOUND
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -42,7 +46,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var pictureView: ImageView
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
@@ -93,6 +97,8 @@ class UserProfileActivity : AppCompatActivity() {
         val placeholderImage = userProfileViewModel.getImage()
         if (placeholderImage == null) {
             println("Placeholder is null, using default")
+            // Don't use drawable, use bitmap
+            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
             pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
         } else {
             println("Placeholder is not null, using view model!")
@@ -100,6 +106,8 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
         // Initialize the gallery activity
+        // How to save image inside ViewModel to handle orientation change?
+        // https://stackoverflow.com/q/52297555
         galleryActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 val resultIntent = it.data
@@ -109,7 +117,6 @@ class UserProfileActivity : AppCompatActivity() {
                 userProfileViewModel.setImage(image)
             }
         }
-
     }
 
 
@@ -151,5 +158,27 @@ class UserProfileActivity : AppCompatActivity() {
 
     fun cancelButton(v: View) {
         finish()
+    }
+
+    fun uploadImage(v: View) {
+        val storage = Firebase.storage.reference
+        val bitmapToUpload = userProfileViewModel.getImage()
+        val user = auth.currentUser
+
+        println("Trying to upload....")
+        if (bitmapToUpload != null) {
+            println("bitmapToUpload is not null")
+
+            val stream = ByteArrayOutputStream()
+            bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+            val byteArray = stream.toByteArray()
+            stream.close()
+
+            val pathString = "profile_pic/" + user!!.uid + ".jpg"
+            storage.child(pathString).putBytes(byteArray)
+                .addOnSuccessListener(this) { println("Success upload") }
+                .addOnFailureListener(this) { println("Failure upload") }
+                .addOnCompleteListener(this) { println("Upload complete!") }
+        }
     }
 }
