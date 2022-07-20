@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.adaptors.CategoryListAdaptor
 import com.example.cmpt362project.adaptors.TaskListAdaptor
+import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
 import com.example.cmpt362project.models.Task
 import com.example.cmpt362project.viewModels.BoardListViewModel
@@ -27,6 +28,8 @@ class DisplayCategoryActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_category)
 
+        val boardTitle  = intent.getSerializableExtra("boardTitle").toString()
+
         val taskListViewModel: TaskListViewModel = ViewModelProvider(this)[TaskListViewModel::class.java]
         taskListViewModel.fetchTasks()
 
@@ -35,13 +38,16 @@ class DisplayCategoryActivity: AppCompatActivity() {
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, this)
+        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, boardTitle,this)
         recyclerView.adapter = adapter
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
         categoryListViewModel.fetchCategories()
         categoryListViewModel.categoriesLiveData.observe(this){
-            (adapter as CategoryListAdaptor).updateList(it)
+            val mutableIt = it.toMutableList()
+            mutableIt.removeIf{ it -> it.board != boardTitle}
+            val mutableList = mutableIt.toList()
+            (adapter as CategoryListAdaptor).updateList(mutableList)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()
         }
 
@@ -52,18 +58,23 @@ class DisplayCategoryActivity: AppCompatActivity() {
         val taskListViewModel: TaskListViewModel = ViewModelProvider(this)[TaskListViewModel::class.java]
         taskListViewModel.fetchTasks()
 
+        val boardTitle  = intent.getSerializableExtra("boardTitle").toString()
+
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, this)
+        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, boardTitle ,this)
         recyclerView.adapter = adapter
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
         categoryListViewModel.fetchCategories()
         categoryListViewModel.categoriesLiveData.observe(this){
-            (adapter as CategoryListAdaptor).updateList(it)
+            val mutableIt = it.toMutableList()
+            mutableIt.removeIf{ it -> it.board != boardTitle}
+            val mutableList = mutableIt.toList()
+            (adapter as CategoryListAdaptor).updateList(mutableList)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()
         }
     }

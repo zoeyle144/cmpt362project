@@ -29,9 +29,10 @@ class CreateCategoryActivity: AppCompatActivity() {
             val categoriesRef = database.getReference("categories")
             val categoryID = categoriesRef.push().key!!
             val categoryName = createCategoryName.text
+            val boardTitle = intent.getSerializableExtra("boardTitle").toString()
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
-            val category = Category(categoryName.toString(), createdBy.toString(),ArrayList())
+            val category = Category(categoryName.toString(), createdBy.toString(), boardTitle,ArrayList())
 
             categoriesRef.child(categoryID).setValue(category)
                 .addOnCompleteListener{

@@ -8,10 +8,12 @@ import android.os.Parcelable
 data class Category(
     val title: String = "",
     val createdBy: String = "",
+    val board: String = "",
     val tasks: List<Task> = ArrayList()
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         arrayListOf<Task>().also { parcel.readTypedList(it, Task.CREATOR) },
@@ -21,6 +23,7 @@ data class Category(
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(title)
         parcel.writeString(createdBy)
+        parcel.writeString(board)
         parcel.writeTypedList(tasks)
     }
 
