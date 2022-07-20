@@ -1,10 +1,19 @@
 package com.example.cmpt362project.ui.settings
 
+import android.app.Activity
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -17,13 +26,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.FileOutputStream
 
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
-    private lateinit var nameView: TextView
+    private lateinit var nameView: EditText
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var userProfileViewModel: UserProfileViewModel
@@ -38,14 +49,13 @@ class UserProfileActivity : AppCompatActivity() {
 
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
 
-        val usernameView = findViewById<EditText>(R.id.profile_username)
-        val emailView = findViewById<EditText>(R.id.profile_email)
         nameView = findViewById(R.id.profile_edit_name)
         aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
 
         database.child("users").child(user!!.uid).child("username").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
+                    val usernameView = findViewById<EditText>(R.id.profile_username)
                     usernameView.setText(it.value as String)
                 }
             }
@@ -53,39 +63,23 @@ class UserProfileActivity : AppCompatActivity() {
         database.child("users").child(user.uid).child("email").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
+                    val emailView = findViewById<EditText>(R.id.profile_email)
                     emailView.setText(it.value as String)
                 }
             }
 
-        var nameFromDB: String
         database.child("users").child(user.uid).child("name").get()
             .addOnSuccessListener(this) {
-                if (it.value == null) {
-                    println("UserProfileActivity: name is ${it.value}!")
-                } else {
-                    println("UserProfileActivity: Retrieved name ${it.value} from Firebase")
-                    nameFromDB = it.value as String
-                    nameView.text = nameFromDB
+                if (it.value != null) {
+                    nameView.setText(it.value as String)
                 }
-            }
-            .addOnFailureListener(this) {
-                println("UserProfileActivity: Failure. Could not find name!")
             }
 
-        var aboutMeFromDB: String
         database.child("users").child(user.uid).child("aboutMe").get()
             .addOnSuccessListener(this) {
-                if (it.value == null) {
-                    println("UserProfileActivity: aboutMe is ${it.value}!")
-                } else {
-                    println("UserProfileActivity: Retrieved aboutMe ${it.value} from Firebase")
-                    aboutMeFromDB = it.value as String
-                    aboutMeView.editText?.setText(aboutMeFromDB)
-                    //aboutMeView.text = aboutMeFromDB
+                if (it.value != null) {
+                    aboutMeView.editText?.setText(it.value as String)
                 }
-            }
-            .addOnFailureListener(this) {
-                println("UserProfileActivity: Failure. Could not find aboutMe!")
             }
 
     }
