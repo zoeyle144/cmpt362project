@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -17,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var nameView: TextView
     private lateinit var aboutMeView: TextInputLayout
@@ -28,13 +32,16 @@ class UserProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_profile)
 
         database = Firebase.database.reference
+        auth = Firebase.auth
+        val user = auth.currentUser
+
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
 
         nameView = findViewById(R.id.profile_edit_name)
-        aboutMeView = findViewById(R.id.profile_about_me)
+        aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
 
         var nameFromDB: String
-        database.child("users").child("names").get()
+        database.child("users").child(user!!.uid).child("name").get()
             .addOnSuccessListener(this) {
                 if (it.value == null) {
                     println("UserProfileActivity: name is ${it.value}!")
@@ -49,7 +56,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
 
         var aboutMeFromDB: String
-        database.child("users").child("aboutMe").get()
+        database.child("users").child(user.uid).child("aboutMe").get()
             .addOnSuccessListener(this) {
                 if (it.value == null) {
                     println("UserProfileActivity: aboutMe is ${it.value}!")
@@ -87,7 +94,14 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     fun saveProfile(v: View) {
-        
+        val user = auth.currentUser
+        val nameToAdd = nameView.text.toString()
+        val aboutMeToAdd = aboutMeView.editText?.text.toString()
+
+        database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
+        database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
+
+        finish()
     }
 
     fun loadProfile(v: View) {

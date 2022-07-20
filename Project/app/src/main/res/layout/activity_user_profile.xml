@@ -51,43 +51,47 @@
         android:text="Change about me" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_about_me_edit_text_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:counterEnabled="true"
-        app:counterMaxLength="200" >
+        app:counterMaxLength="200"
+        app:endIconMode="clear_text"
+        >
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_about_me"
+            android:id="@+id/profile_about_me_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="200"
             android:inputType="textMultiLine"
             android:minHeight="48dp" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/profile_save_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Save"
             android:onClick="saveProfile"
-            style="?android:attr/buttonBarButtonStyle"/>
+            android:text="Save" />
 
         <Button
             android:id="@+id/profile_cancel_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel"
             android:onClick="cancelButton"
-            style="?android:attr/buttonBarButtonStyle"
-            />
+            android:text="Cancel" />
 
     </LinearLayout>
+
 
 </LinearLayout>
