@@ -5,6 +5,7 @@
     <PreferenceCategory app:title="Your profile">
         <Preference
             app:title="Edit user profile"
+            app:icon="@drawable/ic_baseline_account_circle_24"
             app:summary="Profile picture, name, about me">
             <intent android:action="com.example.cmpt362project.ui.settings.UserProfileActivity" />
         </Preference>
