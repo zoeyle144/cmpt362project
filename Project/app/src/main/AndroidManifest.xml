@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.cmpt362project">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:allowBackup="true"
@@ -10,9 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
         <activity
+            android:name=".ui.settings.UserProfileActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.CMPT362Project.NoActionBar"/>
+            android:theme="@style/Theme.CMPT362Project.NoActionBar" />
         <activity
             android:name=".login.LoginPageActivity"
             android:exported="false" />
@@ -21,8 +33,8 @@
             android:exported="false" />
         <activity
             android:name=".StartPageActivity"
-            android:label="@string/app_name"
             android:exported="true"
+            android:label="@string/app_name"
             android:theme="@style/Theme.CMPT362Project.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
