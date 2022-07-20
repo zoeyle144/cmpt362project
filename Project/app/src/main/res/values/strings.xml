@@ -11,6 +11,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_groups">Group</string>
 
     <string name="menu_settings">Settings</string>
     <!-- Preference Titles -->
@@ -34,5 +35,9 @@
     <string name="email">Email</string>
     <string name="sign_up_ask">Create Account</string>
     <string name="sign_up">Sign up</string>
+
+    <string name="create_board_name">Board Name</string>
+    <string name="create_board_description">Description</string>
+    <string name="create_board_button">Confirm</string>
 
 </resources>

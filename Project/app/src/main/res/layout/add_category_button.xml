@@ -1,0 +1,5 @@
+<Button android:id="@+id/add_category_button"
+    android:text="Add a new category"
+    android:layout_width="270dp"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
