@@ -8,6 +8,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -16,6 +18,8 @@ class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
 
+    private lateinit var nameView: TextView
+    private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var userProfileViewModel: UserProfileViewModel
 
@@ -26,8 +30,8 @@ class UserProfileActivity : AppCompatActivity() {
         database = Firebase.database.reference
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
 
-        val nameView = findViewById<TextView>(R.id.profile_edit_name)
-        val aboutMeView = findViewById<TextView>(R.id.profile_about_me)
+        nameView = findViewById(R.id.profile_edit_name)
+        aboutMeView = findViewById(R.id.profile_about_me)
 
         var nameFromDB: String
         database.child("users").child("names").get()
@@ -52,12 +56,14 @@ class UserProfileActivity : AppCompatActivity() {
                 } else {
                     println("UserProfileActivity: Retrieved aboutMe ${it.value} from Firebase")
                     aboutMeFromDB = it.value as String
-                    aboutMeView.text = aboutMeFromDB
+                    aboutMeView.editText?.setText(aboutMeFromDB)
+                    //aboutMeView.text = aboutMeFromDB
                 }
             }
             .addOnFailureListener(this) {
                 println("UserProfileActivity: Failure. Could not find aboutMe!")
             }
+
     }
 
 
