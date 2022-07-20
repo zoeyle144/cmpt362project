@@ -8,7 +8,7 @@ class UserProfileViewModel : ViewModel() {
     val profilePicture = MutableLiveData<Bitmap>()
 
     //private lateinit var tempImage: Bitmap
-    var imageSet = false
+    private var imageSet = false
 
     fun getImage() : Bitmap? {
         return if(imageSet) {

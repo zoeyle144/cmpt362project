@@ -94,16 +94,30 @@ class UserProfileActivity : AppCompatActivity() {
 
 
         // If cannot find an image, use a place holder
-        val placeholderImage = userProfileViewModel.getImage()
-        if (placeholderImage == null) {
-            println("Placeholder is null, using default")
+
+
+//        val placeholderImage = userProfileViewModel.getImage()
+//        if (placeholderImage == null) {
+//            println("Placeholder is null, using default")
+//            // Don't use drawable, use bitmap
+//            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
+//            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
+//        } else {
+//            println("Placeholder is not null, using view model!")
+//            pictureView.setImageBitmap(placeholderImage)
+//        }
+
+        val pl2 = downloadAndSetImage()
+        if (pl2 == null) {
+            println("Could not download pfp, it might be is null. using default")
             // Don't use drawable, use bitmap
             // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
             pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
         } else {
-            println("Placeholder is not null, using view model!")
-            pictureView.setImageBitmap(placeholderImage)
+            println("pfp is not null, using view model!")
+            pictureView.setImageBitmap(pl2)
         }
+
 
         // Initialize the gallery activity
         // How to save image inside ViewModel to handle orientation change?
@@ -181,4 +195,36 @@ class UserProfileActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { println("Upload complete!") }
         }
     }
+
+    fun downloadAndSetImage() : Bitmap? {
+        val storage = Firebase.storage.reference
+        val user = auth.currentUser
+        val path = "profile_pic/" + user!!.uid + ".jpg"
+        val pathReference = storage.child(path)
+
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        var bitmap: Bitmap? = null
+        pathReference.getBytes(ONE_MEGABYTE)
+            .addOnSuccessListener(this) {
+                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                println("Success download!")
+
+                if (bitmap != null) {
+                    userProfileViewModel.setImage(bitmap!!)
+                }
+            } .addOnFailureListener(this) {
+                println("Failure download!")
+            }
+
+        return bitmap
+    }
+//
+//    fun setImageViewFromDL() {
+//        downloadImage()?.let { userProfileViewModel.setImage(it) }
+//    }
+//
+//    fun test1() {
+//        val bitmap = downloadImage()
+//
+//    }
 }
