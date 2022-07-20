@@ -28,4 +28,10 @@
         android:name="com.example.cmpt362project.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_groups"
+        android:name="com.example.cmpt362project.ui.groups.GroupsFragment"
+        android:label="@string/menu_groups"
+        tools:layout="@layout/fragment_groups" />
 </navigation>
