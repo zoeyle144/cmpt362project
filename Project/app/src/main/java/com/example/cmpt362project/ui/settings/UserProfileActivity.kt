@@ -95,8 +95,6 @@ class UserProfileActivity : AppCompatActivity() {
 
 
         // If cannot find an image, use a place holder
-
-
 //        val placeholderImage = userProfileViewModel.getImage()
 //        if (placeholderImage == null) {
 //            println("Placeholder is null, using default")
@@ -170,15 +168,11 @@ class UserProfileActivity : AppCompatActivity() {
         finish()
     }
 
-    fun loadProfile(v: View) {
-
-    }
-
     fun cancelButton(v: View) {
         finish()
     }
 
-    fun uploadImage() {
+    private fun uploadImage() {
         val storage = Firebase.storage.reference
         val bitmapToUpload = userProfileViewModel.getImage()
         val user = auth.currentUser
@@ -200,7 +194,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
-    fun downloadAndSetImage() : Bitmap? {
+    private fun downloadAndSetImage() : Bitmap? {
         val storage = Firebase.storage.reference
         val user = auth.currentUser
         val path = "profile_pic/" + user!!.uid + ".jpg"
