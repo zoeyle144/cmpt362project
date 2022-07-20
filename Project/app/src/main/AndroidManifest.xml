@@ -11,7 +11,12 @@
         android:theme="@style/Theme.CMPT362Project">
         <activity
             android:name=".ui.settings.UserProfileActivity"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="false"
