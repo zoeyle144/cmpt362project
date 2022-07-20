@@ -1,7 +1,10 @@
 package com.example.cmpt362project
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -15,13 +18,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var database: DatabaseReference
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +59,8 @@ class MainActivity : AppCompatActivity() {
             if (email != null) {
                 navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = email
             }
+
+            setProfilePicture(navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic))
         }
     }
 
@@ -66,5 +73,27 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun setProfilePicture(imageView: ImageView) : Bitmap? {
+        val storage = Firebase.storage.reference
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        val path = "profile_pic/" + user!!.uid + ".jpg"
+        val pathReference = storage.child(path)
+
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        var bitmap: Bitmap? = null
+
+        pathReference.getBytes(ONE_MEGABYTE)
+            .addOnSuccessListener(this) {
+                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                println("Success download!")
+                if (bitmap != null) imageView.setImageBitmap(bitmap)
+            } .addOnFailureListener(this) {
+                println("Failure download!")
+            }
+
+        return bitmap
     }
 }
