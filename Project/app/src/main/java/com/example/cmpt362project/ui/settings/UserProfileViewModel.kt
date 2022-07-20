@@ -6,4 +6,15 @@ import androidx.lifecycle.ViewModel
 
 class UserProfileViewModel : ViewModel() {
     val profilePicture = MutableLiveData<Bitmap>()
+
+    private lateinit var tempImage: Bitmap
+    var imageSet = false
+
+    fun getImage() : Bitmap? {
+        return if(imageSet) {
+            tempImage
+        } else {
+            null
+        }
+    }
 }

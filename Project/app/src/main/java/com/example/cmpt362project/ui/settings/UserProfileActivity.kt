@@ -82,6 +82,13 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
+        pictureView = findViewById(R.id.profile_picture)
+        val placeholderImage = userProfileViewModel.getImage()
+        if (placeholderImage == null) {
+            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
+        } else {
+            pictureView.setImageBitmap(placeholderImage)
+        }
     }
 
 
