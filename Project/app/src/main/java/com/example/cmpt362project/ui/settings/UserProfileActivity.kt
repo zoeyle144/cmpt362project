@@ -3,6 +3,7 @@ package com.example.cmpt362project.ui.settings
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -37,11 +38,27 @@ class UserProfileActivity : AppCompatActivity() {
 
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
 
+        val usernameView = findViewById<EditText>(R.id.profile_username)
+        val emailView = findViewById<EditText>(R.id.profile_email)
         nameView = findViewById(R.id.profile_edit_name)
         aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
 
+        database.child("users").child(user!!.uid).child("username").get()
+            .addOnSuccessListener(this) {
+                if (it.value != null) {
+                    usernameView.setText(it.value as String)
+                }
+            }
+
+        database.child("users").child(user.uid).child("email").get()
+            .addOnSuccessListener(this) {
+                if (it.value != null) {
+                    emailView.setText(it.value as String)
+                }
+            }
+
         var nameFromDB: String
-        database.child("users").child(user!!.uid).child("name").get()
+        database.child("users").child(user.uid).child("name").get()
             .addOnSuccessListener(this) {
                 if (it.value == null) {
                     println("UserProfileActivity: name is ${it.value}!")
