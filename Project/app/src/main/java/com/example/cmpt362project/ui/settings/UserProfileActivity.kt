@@ -26,6 +26,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.io.FileOutputStream
 
@@ -38,6 +39,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var userProfileViewModel: UserProfileViewModel
+    private lateinit var tempActivityResult1: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +91,15 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             pictureView.setImageBitmap(placeholderImage)
         }
+        tempActivityResult1 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val resultIntent = it.data
+                val resultUri = resultIntent?.data
+                val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
+                userProfileViewModel.setImage(image)
+            }
+        }
+
     }
 
 

@@ -17,4 +17,9 @@ class UserProfileViewModel : ViewModel() {
             null
         }
     }
+
+    fun setImage(bitmap: Bitmap) {
+        tempImage = bitmap
+        imageSet = true
+    }
 }
