@@ -31,7 +31,7 @@ class BoardListAdaptor(val context: Context, private var boardList: List<Board>)
 
         boardEntry.setOnClickListener {
             val intent = Intent(view.context, DisplayCategoryActivity::class.java)
-            intent.putExtra("Board", boardList[p0])
+            intent.putExtra("boardTitle", boardList[p0].boardName)
             view.context.startActivity(intent)
         }
         return view

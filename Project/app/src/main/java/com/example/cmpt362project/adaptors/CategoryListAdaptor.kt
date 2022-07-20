@@ -18,7 +18,7 @@ import com.example.cmpt362project.models.Task
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
-class CategoryListAdaptor(private var categoryList: List<Category>, private var taskLiveData: LiveData<List<Task>>, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
+class CategoryListAdaptor(private var categoryList: List<Category>, private var taskLiveData: LiveData<List<Task>>, private var boardTitle:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
 
     private lateinit var taskListAdaptor: TaskListAdaptor
     private lateinit var taskList: List<Task>
@@ -34,6 +34,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
 
             addCategoryButton.setOnClickListener {
                 val intent = Intent(view.context, CreateCategoryActivity::class.java)
+                intent.putExtra("boardTitle", boardTitle)
                 view.context.startActivity(intent)
             }
 
