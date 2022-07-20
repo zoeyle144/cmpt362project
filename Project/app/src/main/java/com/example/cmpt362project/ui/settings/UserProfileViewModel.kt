@@ -6,6 +6,4 @@ import androidx.lifecycle.ViewModel
 
 class UserProfileViewModel : ViewModel() {
     val profilePicture = MutableLiveData<Bitmap>()
-    val profileName = MutableLiveData<String>()
-    val profileAboutMe = MutableLiveData<String>()
 }
