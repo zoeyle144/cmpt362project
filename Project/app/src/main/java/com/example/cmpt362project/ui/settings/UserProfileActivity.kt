@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -38,9 +39,10 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var nameView: EditText
     private lateinit var aboutMeView: TextInputLayout
 
+    private lateinit var pictureView: ImageView
     private lateinit var userProfileViewModel: UserProfileViewModel
-    private lateinit var tempActivityResult1: ActivityResultLauncher<Intent>
-
+    private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
@@ -49,7 +51,9 @@ class UserProfileActivity : AppCompatActivity() {
         auth = Firebase.auth
         val user = auth.currentUser
 
+        pictureView = findViewById(R.id.profile_picture)
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
+        userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
         nameView = findViewById(R.id.profile_edit_name)
         aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
@@ -84,18 +88,24 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
-        pictureView = findViewById(R.id.profile_picture)
+
+        // If cannot find an image, use a place holder
         val placeholderImage = userProfileViewModel.getImage()
         if (placeholderImage == null) {
+            println("Placeholder is null, using default")
             pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
         } else {
+            println("Placeholder is not null, using view model!")
             pictureView.setImageBitmap(placeholderImage)
         }
-        tempActivityResult1 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+        // Initialize the gallery activity
+        galleryActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 val resultIntent = it.data
                 val resultUri = resultIntent?.data
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
+                println("Image found. Calling userProfileViewModel.setImage")
                 userProfileViewModel.setImage(image)
             }
         }
@@ -115,6 +125,8 @@ class UserProfileActivity : AppCompatActivity() {
             }
             else {
                 println("Gallery!")
+                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                galleryActivityResult.launch(galleryIntent)
             }
         }
 
