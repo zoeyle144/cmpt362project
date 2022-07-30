@@ -7,39 +7,38 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
+import com.example.cmpt362project.models.Group
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class CreateBoardActivity: AppCompatActivity() {
+class CreateGroupActivity: AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_board)
+        setContentView(R.layout.activity_create_group)
 
-        val createBoardButton = findViewById<Button>(R.id.create_board_button)
-        val createBoardName = findViewById<EditText>(R.id.create_board_name_input)
-        val createBoardDescription = findViewById<EditText>(R.id.create_board_description_input)
-        createBoardButton.setOnClickListener{
+        val createGroupButton = findViewById<Button>(R.id.create_group_button)
+        val createGroupName = findViewById<EditText>(R.id.create_group_name_input)
+        val createGroupDescription = findViewById<EditText>(R.id.create_group_description_input)
+        createGroupButton.setOnClickListener{
 
             val database = Firebase.database
-            val boardsRef = database.getReference("boards")
-            val boardID = boardsRef.push().key!!
-            val boardName = createBoardName.text
-            val boardDescription = createBoardDescription.text
-            val groupName = intent.getSerializableExtra("groupTitle").toString()
-
+            val groupsRef = database.getReference("groups")
+            val groupID = groupsRef.push().key!!
+            val groupName = createGroupName.text
+            val groupDescription = createGroupDescription.text
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
-            val board = Board(boardName.toString(), boardDescription.toString(), createdBy.toString(), groupName,ArrayList())
+            val group = Group(groupName.toString(), groupDescription.toString(), createdBy.toString(),ArrayList(),ArrayList())
 
 
-            boardsRef.child(boardID).setValue(board)
+            groupsRef.child(groupID).setValue(group)
                 .addOnCompleteListener{
-                    Toast.makeText(this, "Board Created Successfully", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Group Created Successfully", Toast.LENGTH_LONG).show()
                 }
                 .addOnFailureListener{ err ->
                     Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_LONG).show()

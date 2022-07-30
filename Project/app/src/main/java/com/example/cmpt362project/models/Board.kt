@@ -9,10 +9,12 @@ data class Board(
     val boardName: String = "",
     val description: String = "",
     val createdBy: String = "",
+    val group: String = "",
     val categories: List<Category> = ArrayList()
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -24,6 +26,7 @@ data class Board(
         parcel.writeString(boardName)
         parcel.writeString(description)
         parcel.writeString(createdBy)
+        parcel.writeString(group)
         parcel.writeTypedList(categories)
     }
 

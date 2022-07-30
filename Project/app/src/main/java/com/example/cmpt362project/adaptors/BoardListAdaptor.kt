@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.DisplayCategoryActivity
 import com.example.cmpt362project.models.Board
@@ -41,4 +43,7 @@ class BoardListAdaptor(val context: Context, private var boardList: List<Board>)
         boardList = newList
     }
 
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        var itemTitle: TextView? = itemView.findViewById(R.id.item_title)
+    }
 }

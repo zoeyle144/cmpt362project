@@ -53,10 +53,15 @@
         <activity android:name=".activities.CreateCategoryActivity" >
         </activity>
 
+        <activity android:name=".activities.CreateGroupActivity" >
+        </activity>
+
         <activity android:name=".activities.DisplayCategoryActivity" >
         </activity>
 
         <activity android:name=".activities.DisplayTaskActivity" >
+        </activity>
+        <activity android:name=".activities.DisplayBoardActivity" >
         </activity>
 
 
