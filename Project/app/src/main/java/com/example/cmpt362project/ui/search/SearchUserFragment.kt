@@ -5,12 +5,17 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
+import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent
 
 class SearchUserFragment : Fragment() {
 
     private val tempList = ArrayList<String>()
     private lateinit var tempAdapter: ArrayAdapter<String>
+    private var columnCount = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,9 +28,17 @@ class SearchUserFragment : Fragment() {
             tempList.add(java.util.UUID.randomUUID().toString())
         }
 
-        tempAdapter = activity?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, tempList) }!!
-        val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
-        myListView.adapter = tempAdapter
+//        tempAdapter = activity?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, tempList) }!!
+//        val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
+//        myListView.adapter = tempAdapter
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.search_bar_search_results_recycler)
+
+        recyclerView.layoutManager = when {
+            columnCount <= 1 -> LinearLayoutManager(context)
+            else -> GridLayoutManager(context, columnCount)
+        }
+        recyclerView.adapter = MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS)
 
         return view
     }
