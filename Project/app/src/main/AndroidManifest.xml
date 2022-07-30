@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.cmpt362project">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
     <application
@@ -13,12 +15,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
+        <activity android:name=".ui.search.SearchUserActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable_user"/>
+        </activity>
+
         <activity
             android:name=".ui.settings.UserProfileActivity"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -42,29 +54,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".activities.CreateBoardActivity" >
-        </activity>
-
-        <activity android:name=".activities.CreateTaskActivity" >
-        </activity>
-
-        <activity android:name=".activities.CreateCategoryActivity" >
-        </activity>
-
-        <activity android:name=".activities.CreateGroupActivity" >
-        </activity>
-
-        <activity android:name=".activities.DisplayCategoryActivity" >
-        </activity>
-
-        <activity android:name=".activities.DisplayTaskActivity" >
-        </activity>
-        <activity android:name=".activities.DisplayBoardActivity" >
-        </activity>
-
-
+        <activity android:name=".activities.CreateBoardActivity"></activity>
+        <activity android:name=".activities.CreateTaskActivity"></activity>
+        <activity android:name=".activities.CreateCategoryActivity"></activity>
+        <activity android:name=".activities.CreateGroupActivity"></activity>
+        <activity android:name=".activities.DisplayCategoryActivity"></activity>
+        <activity android:name=".activities.DisplayTaskActivity"></activity>
+        <activity android:name=".activities.DisplayBoardActivity"></activity>
     </application>
 
 </manifest>
