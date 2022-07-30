@@ -7,17 +7,11 @@
     android:fillViewport="true"
     tools:context=".ui.search.SearchUserActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <SearchView
+        android:id="@+id/search_user_search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_user_fragment_toolbar"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Look for users"
-        />
-
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_user_hint" />
 
 </LinearLayout>
