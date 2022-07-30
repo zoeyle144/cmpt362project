@@ -36,7 +36,7 @@ object PlaceholderContent {
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position.toString(), "Item " + position, makeDetails(position))
+        return PlaceholderItem(position.toString(), java.util.UUID.randomUUID().toString(), makeDetails(position))
     }
 
     private fun makeDetails(position: Int): String {
