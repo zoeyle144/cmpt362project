@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_search"
+        android:name="com.example.cmpt362project.ui.search.SearchUserFragment"
+        android:label="Search for users"
+        tools:layout="@layout/fragment_search_user" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="com.example.cmpt362project.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
