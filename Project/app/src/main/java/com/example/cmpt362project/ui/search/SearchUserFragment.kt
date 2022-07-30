@@ -3,7 +3,6 @@ package com.example.cmpt362project.ui.search
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +37,7 @@ class SearchUserFragment : Fragment() {
             columnCount <= 1 -> LinearLayoutManager(context)
             else -> GridLayoutManager(context, columnCount)
         }
-        recyclerView.adapter = MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS)
+        recyclerView.adapter = SearchUserAdapter(PlaceholderContent.ITEMS)
 
         return view
     }
