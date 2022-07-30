@@ -46,6 +46,7 @@
     <string name="members"> Members</string>
     <string name="invite">Invite Members</string>
     <string name="menu_search">Search</string>
+    <string name="search_user_hint">Search for users</string>
 
 
 </resources>
