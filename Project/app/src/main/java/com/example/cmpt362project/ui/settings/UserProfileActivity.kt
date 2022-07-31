@@ -160,10 +160,11 @@ class UserProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         val printIdentifier = "UserProfileActivity uploadImage"
         val storage = Firebase.storage.reference
-        val bitmapToUpload = userProfileViewModel.getImage() ?: return
+        val image = userProfileViewModel.getImage() ?: return
 
+        val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
         val stream = ByteArrayOutputStream()
-        bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+        imageScaled.compress(Bitmap.CompressFormat.JPEG, 75, stream)
         val byteArray = stream.toByteArray()
         stream.close()
 
@@ -175,7 +176,7 @@ class UserProfileActivity : AppCompatActivity() {
             val randomUUID = UUID.randomUUID().toString().replace("-", "")
             val newImgPath = "profile_pic/$randomUUID.jpg"
             storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
-                
+
                 // Write the new profile picture path to the user's info
                 userReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $randomUUID to database")
