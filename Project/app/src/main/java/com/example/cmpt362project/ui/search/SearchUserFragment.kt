@@ -60,7 +60,8 @@ class SearchUserFragment : Fragment() {
             columnCount <= 1 -> LinearLayoutManager(context)
             else -> GridLayoutManager(context, columnCount)
         }
-        recyclerViewAdapter = SearchUserAdapter(listOfUsers)
+
+        recyclerViewAdapter = SearchUserAdapter(requireActivity(), listOfUsers)
         recyclerView.adapter = recyclerViewAdapter
 
         val searchView = view.findViewById<SearchView>(R.id.search_user_search_bar)
