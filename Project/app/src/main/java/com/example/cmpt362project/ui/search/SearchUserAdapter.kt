@@ -49,6 +49,18 @@ class SearchUserAdapter(
     }
 
     override fun getFilter(): Filter {
+        val customFilter = object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                TODO("Not yet implemented")
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+        return customFilter
     }
 
 }
