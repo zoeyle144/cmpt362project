@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
+import com.example.cmpt362project.database.User
 import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,6 +24,7 @@ class SearchUserFragment : Fragment() {
     private val tempItems = PlaceholderContent.ITEMS
 
     private val listOfUsernames = ArrayList<String>()
+    private val listOfUsers = ArrayList<User>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewAdapter: SearchUserAdapter
 
@@ -37,19 +39,22 @@ class SearchUserFragment : Fragment() {
 
         database = Firebase.database.reference
 
-        val allUsers = database.child("users")
-        allUsers.addValueEventListener(object : ValueEventListener {
+        val allUsersRef = database.child("users")
+        allUsersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (i in snapshot.children) {
-                    val name = i.child("username").value as String
-                    listOfUsernames.add(name)
+                    val username = i.child("username").value as String
+                    val email = i.child("email").value as String
+                    val user = User(username, email)
+
+                    listOfUsernames.add(username)
+                    listOfUsers.add(user)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
-
-
+        
         recyclerView = view.findViewById(R.id.search_user_search_results_recycler)
         recyclerView.layoutManager = when {
             columnCount <= 1 -> LinearLayoutManager(context)
