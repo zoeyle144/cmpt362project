@@ -1,5 +1,7 @@
 package com.example.cmpt362project
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -13,6 +15,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceManager
+import com.example.cmpt362project.ui.settings.UserProfileActivity
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -21,11 +26,12 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,17 +69,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        class DrawerListener : DrawerLayout.DrawerListener {
-            override fun onDrawerOpened(drawerView: View) {
-                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
-            }
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-            override fun onDrawerClosed(drawerView: View) {}
-            override fun onDrawerStateChanged(newState: Int) {}
+        sharedPref = this.getSharedPreferences(UserProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
+        sharedPref.registerOnSharedPreferenceChangeListener(this)
+        with(sharedPref.edit()) {
+            putBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, false)
+            apply()
         }
 
-        drawerLayout.addDrawerListener(DrawerListener())
+//        class DrawerListener : DrawerLayout.DrawerListener {
+//            override fun onDrawerOpened(drawerView: View) {
+//                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+//            }
+//
+//            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+//            override fun onDrawerClosed(drawerView: View) {}
+//            override fun onDrawerStateChanged(newState: Int) {}
+//        }
+//
+//        drawerLayout.addDrawerListener(DrawerListener())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sharedPref.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -85,5 +103,18 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        println("sharedPref is $sharedPreferences")
+        if (key == UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED) {
+            println("KEY_PROFILE_PIC_RECENTLY_CHANGED was changed to TRUE")
+            val pfpVal = sharedPref.getBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+            println("MainActivity onSharedPreferenceChanged: KEY_PROFILE_PIC_RECENTLY_CHANGED is $pfpVal")
+            with(sharedPref.edit()) {
+                putBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, false)
+                apply()
+            }
+        }
     }
 }

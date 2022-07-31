@@ -1,5 +1,6 @@
 package com.example.cmpt362project.ui.search
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent
+import com.example.cmpt362project.ui.settings.UserProfileActivity
 
 class SearchUserFragment : Fragment() {
 
@@ -35,6 +37,9 @@ class SearchUserFragment : Fragment() {
         val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
         myListView.adapter = tempAdapter
 
+        val sharedPref = activity?.getSharedPreferences(UserProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
+        val pfpVal = sharedPref?.getBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+        println("SearchUserFragment onCreateView: KEY_PROFILE_PIC_RECENTLY_CHANGED is $pfpVal")
 
 
 //        val recyclerView = view.findViewById<RecyclerView>(R.id.search_bar_search_results_recycler)

@@ -1,6 +1,7 @@
 package com.example.cmpt362project.ui.settings
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
@@ -41,6 +42,11 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var pictureView: ImageView
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
+
+    companion object {
+        const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
+        const val SHARED_PREF = "SHARED_PREF"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,13 +187,23 @@ class UserProfileActivity : AppCompatActivity() {
                 userReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $randomUUID to database")
 
-                    // Delete the old profile picture from Storage
+                    // Delete the old profile picture from Storage, tell sidebar to update PFP
                     val oldImgRef = storage.child(oldImgPath.value as String)
                     oldImgRef.delete().addOnSuccessListener {
                         println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                        updateProfilePicSharedPref()
                     }
                 }
             }
         }
+    }
+
+    private fun updateProfilePicSharedPref() {
+        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+            apply()
+        }
+        println("Set KEY_PROFILE_PIC_RECENTLY_CHANGED to true")
     }
 }
