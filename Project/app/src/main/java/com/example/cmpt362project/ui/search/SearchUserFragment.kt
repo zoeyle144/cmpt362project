@@ -37,11 +37,6 @@ class SearchUserFragment : Fragment() {
         val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
         myListView.adapter = tempAdapter
 
-        val sharedPref = activity?.getSharedPreferences(UserProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
-        val pfpVal = sharedPref?.getBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
-        println("SearchUserFragment onCreateView: KEY_PROFILE_PIC_RECENTLY_CHANGED is $pfpVal")
-
-
 //        val recyclerView = view.findViewById<RecyclerView>(R.id.search_bar_search_results_recycler)
 //        recyclerView.layoutManager = when {
 //            columnCount <= 1 -> LinearLayoutManager(context)

@@ -204,6 +204,5 @@ class UserProfileActivity : AppCompatActivity() {
             putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
             apply()
         }
-        println("Set KEY_PROFILE_PIC_RECENTLY_CHANGED to true")
     }
 }
