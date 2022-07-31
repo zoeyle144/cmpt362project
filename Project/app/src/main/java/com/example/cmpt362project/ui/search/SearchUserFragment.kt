@@ -43,9 +43,9 @@ class SearchUserFragment : Fragment() {
             tempList.add(java.util.UUID.randomUUID().toString())
         }
 
-        tempAdapter = activity?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, tempList) }!!
-        val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
-        myListView.adapter = tempAdapter
+//        tempAdapter = activity?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, tempList) }!!
+//        val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
+//        myListView.adapter = tempAdapter
 
         val listOfNames = ArrayList<String>()
 
@@ -66,16 +66,16 @@ class SearchUserFragment : Fragment() {
 
 
 
-//        val recyclerView = view.findViewById<RecyclerView>(R.id.search_bar_search_results_recycler)
-//        recyclerView.layoutManager = when {
-//            columnCount <= 1 -> LinearLayoutManager(context)
-//            else -> GridLayoutManager(context, columnCount)
-//        }
-//        recyclerView.adapter = SearchUserAdapter(PlaceholderContent.ITEMS)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.search_user_search_results_recycler)
+        recyclerView.layoutManager = when {
+            columnCount <= 1 -> LinearLayoutManager(context)
+            else -> GridLayoutManager(context, columnCount)
+        }
+        recyclerView.adapter = SearchUserAdapter(PlaceholderContent.ITEMS)
 
-        val searchView = view.findViewById<SearchView>(R.id.search_user_search_bar)
-        val mySearchListener = SearchListener()
-        searchView.setOnQueryTextListener(mySearchListener)
+//        val searchView = view.findViewById<SearchView>(R.id.search_user_search_bar)
+//        val mySearchListener = SearchListener()
+//        searchView.setOnQueryTextListener(mySearchListener)
 
         return view
     }

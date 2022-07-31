@@ -14,22 +14,22 @@
         android:iconifiedByDefault="false"
         android:queryHint="@string/search_user_hint" />
     
-    <ListView
-        android:id="@+id/search_user_search_results"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="top"
-        android:layout_weight="1"
-        />
-
-<!--    <androidx.recyclerview.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--        android:id="@+id/search_bar_search_results_recycler"-->
-<!--        android:name="com.example.cmpt362project.ui.search.ItemFragment"-->
+<!--    <ListView-->
+<!--        android:id="@+id/search_user_search_results"-->
 <!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginLeft="16dp"-->
-<!--        android:layout_marginRight="16dp"-->
-<!--        app:layoutManager="LinearLayoutManager"-->
-<!--        tools:listitem="@layout/fragment_search_user_entry" />-->
+<!--        android:layout_height="0dp"-->
+<!--        android:gravity="top"-->
+<!--        android:layout_weight="1"-->
+<!--        />-->
+
+    <androidx.recyclerview.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/search_user_search_results_recycler"
+        android:name="com.example.cmpt362project.ui.search.ItemFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_search_user_entry" />
     
 </LinearLayout>
