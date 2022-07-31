@@ -54,7 +54,8 @@ class SearchUserAdapter(private var list: ArrayList<User>)
     override fun getFilter(): Filter {
         val customFilter = object : Filter() {
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                list = results?.values as ArrayList<User> /* = java.util.ArrayList<com.example.cmpt362project.database.User> */
+                @Suppress("UNCHECKED_CAST")
+                list = results?.values as ArrayList<User>
                 notifyDataSetChanged()
             }
 
