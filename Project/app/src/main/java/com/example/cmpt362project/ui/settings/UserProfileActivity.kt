@@ -106,16 +106,7 @@ class UserProfileActivity : AppCompatActivity() {
 //            pictureView.setImageBitmap(placeholderImage)
 //        }
 
-        val pl2 = downloadAndSetImage()
-        if (pl2 == null) {
-            println("Could not download pfp, it might be is null. using default")
-            // Don't use drawable, use bitmap
-            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
-            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
-        } else {
-            println("pfp is not null, using view model!")
-            pictureView.setImageBitmap(pl2)
-        }
+        setProfilePicture(pictureView)
 
 
         // Initialize the gallery activity
@@ -194,28 +185,27 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun downloadAndSetImage() : Bitmap? {
+    private fun setProfilePicture(imageView: ImageView) {
         val storage = Firebase.storage.reference
+        val auth = Firebase.auth
         val user = auth.currentUser
-        val path = "profile_pic/" + user!!.uid + ".jpg"
-        val pathReference = storage.child(path)
 
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        var bitmap: Bitmap? = null
+        database.child("users").child(user!!.uid).child("profile_pic").get()
+            .addOnSuccessListener { pathToProfilePic ->
 
-        try {
-            pathReference.getBytes(ONE_MEGABYTE)
-                .addOnSuccessListener(this) {
-                    bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                    println("Success download!")
-                    if (bitmap != null) userProfileViewModel.setImage(bitmap!!)
-                } .addOnFailureListener(this) {
-                    println("Failure download!")
-                }
-        } catch (e: Exception) {
-            println("UserProfileActivity: Ran into exception after failing to download profile picture")
-        }
+                val pathReference = storage.child(pathToProfilePic.value as String)
+                val oneMegabyte: Long = 1024 * 1024
 
-        return bitmap
+                pathReference.getBytes(oneMegabyte)
+                    .addOnSuccessListener(this) {
+                        val bitmap: Bitmap? = BitmapFactory.decodeByteArray(it, 0, it.size)
+                        if (bitmap != null) imageView.setImageBitmap(bitmap)
+                    } .addOnFailureListener(this) {
+                        println("MainActivity setProfilePicture: Failed to download profile pic")
+                    }
+            }
+            .addOnFailureListener {
+                println("MainActivity setProfilePicture: Failed to get value users/uid/profile_pic")
+            }
     }
 }
