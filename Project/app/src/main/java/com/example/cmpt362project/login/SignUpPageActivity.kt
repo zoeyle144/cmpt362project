@@ -127,7 +127,8 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
 
                         // give user add default profile picture
                         val defaultProfilePicPath = "defaults/default_pfp.png"
-                        database.child("users").child(user.uid).setValue(defaultProfilePicPath)
+                        database.child("users").child(user.uid)
+                            .child("profile_pic").setValue(defaultProfilePicPath)
 
                         // inform the user of success
                         Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
