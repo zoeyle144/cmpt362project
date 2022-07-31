@@ -20,17 +20,20 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var user: FirebaseUser
 
     private lateinit var nameView: EditText
     private lateinit var aboutMeView: TextInputLayout
@@ -45,7 +48,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         database = Firebase.database.reference
         auth = Firebase.auth
-        val user = auth.currentUser
+        user = auth.currentUser!!
 
         pictureView = findViewById(R.id.profile_picture)
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
@@ -54,7 +57,7 @@ class UserProfileActivity : AppCompatActivity() {
         nameView = findViewById(R.id.profile_edit_name)
         aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
 
-        database.child("users").child(user!!.uid).child("username").get()
+        database.child("users").child(user.uid).child("username").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
                     val usernameView = findViewById<EditText>(R.id.profile_username)
@@ -62,7 +65,7 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
-        database.child("users").child(user.uid).child("email").get()
+        database.child("users").child(user!!.uid).child("email").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
                     val emailView = findViewById<EditText>(R.id.profile_email)
@@ -157,22 +160,24 @@ class UserProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         val storage = Firebase.storage.reference
         val bitmapToUpload = userProfileViewModel.getImage()
-        val user = auth.currentUser
 
-        println("Trying to upload....")
         if (bitmapToUpload != null) {
-            println("bitmapToUpload is not null")
-
             val stream = ByteArrayOutputStream()
             bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
             val byteArray = stream.toByteArray()
             stream.close()
 
-            val pathString = "profile_pic/" + user!!.uid + ".jpg"
-            storage.child(pathString).putBytes(byteArray)
-                .addOnSuccessListener(this) { println("Success upload") }
-                .addOnFailureListener(this) { println("Failure upload") }
-                .addOnCompleteListener(this) { println("Upload complete!") }
+            // Save the profile picture in Storage
+            val randomUUID = UUID.randomUUID().toString().replace("-", "")
+            val uuidPath = "profile_pic/$randomUUID.jpg"
+            println("UserProfileActivity uploadImage: uploading image $uuidPath")
+
+            storage.child(uuidPath).putBytes(byteArray).addOnSuccessListener {
+                // Write the profile picture's UUID in the user's info
+                database.child("users").child(user.uid)
+                    .child("profile_pic").setValue(uuidPath)
+                println("UserProfileActivity uploadImage: Saved $randomUUID to database")
+            }
         }
     }
 }
