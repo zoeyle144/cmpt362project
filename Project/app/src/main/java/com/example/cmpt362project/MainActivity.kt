@@ -62,6 +62,18 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+
+        class DrawerListener : DrawerLayout.DrawerListener {
+            override fun onDrawerOpened(drawerView: View) {
+                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerClosed(drawerView: View) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+        }
+
+        drawerLayout.addDrawerListener(DrawerListener())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
