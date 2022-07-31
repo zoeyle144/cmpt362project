@@ -2,6 +2,8 @@ package com.example.cmpt362project
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -44,14 +46,18 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        val drawerUsernameView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username)
+        val drawerEmailView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email)
+        val drawerProfilePicView = navView.getHeaderView(0).findViewById<ImageView>(R.id.drawer_header_profile_pic)
+
         if (auth.currentUser != null) {
             val user = auth.currentUser
             database.child("users").child(user!!.uid).get().addOnSuccessListener {
                 if (it != null) {
                     val userData = it.value as Map<*, *>
-                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = userData["username"].toString()
-                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = userData["email"].toString()
-                    ImageUtility.setImageViewToProfilePic(navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic))
+                    drawerUsernameView.text = userData["username"].toString()
+                    drawerEmailView.text = userData["email"].toString()
+                    ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
                 }
 
             }
