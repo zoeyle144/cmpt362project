@@ -49,7 +49,6 @@ class SearchUserAdapter(
     }
 
     override fun getFilter(): Filter {
-        TODO("Not yet implemented")
     }
 
 }
