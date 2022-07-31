@@ -79,9 +79,6 @@ class SearchUserFragment : Fragment() {
         override fun onQueryTextSubmit(query: String?): Boolean {
             if (listOfUsernames.contains(query)) {
                 recyclerViewAdapter.filter.filter(query)
-
-            } else {
-                Toast.makeText(activity, "Not found", Toast.LENGTH_LONG).show()
             }
             return false
         }
