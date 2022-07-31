@@ -12,8 +12,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
+import com.example.cmpt362project.database.User
 import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent
 import com.example.cmpt362project.ui.settings.UserProfileActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 
 class SearchUserFragment : Fragment() {
 
@@ -21,6 +29,8 @@ class SearchUserFragment : Fragment() {
     private lateinit var tempAdapter: ArrayAdapter<String>
     private var columnCount = 1
     private val tempItems = PlaceholderContent.ITEMS
+
+    private lateinit var database: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +46,25 @@ class SearchUserFragment : Fragment() {
         tempAdapter = activity?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, tempList) }!!
         val myListView = view.findViewById<ListView>(R.id.search_user_search_results)
         myListView.adapter = tempAdapter
+
+        val listOfNames = ArrayList<String>()
+
+
+        database = Firebase.database.reference
+
+        val allUsers = database.child("users")
+        allUsers.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (i in snapshot.children) {
+                    val str = i.child("username").value
+                    println("str is $str")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+
 
 //        val recyclerView = view.findViewById<RecyclerView>(R.id.search_bar_search_results_recycler)
 //        recyclerView.layoutManager = when {

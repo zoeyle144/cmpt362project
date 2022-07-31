@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         sharedPref = this.getSharedPreferences(UserProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
         sharedPref.registerOnSharedPreferenceChangeListener(this)
         setProfilePicRecentlyChangedFalse()
-        
+
     }
 
     override fun onDestroy() {
