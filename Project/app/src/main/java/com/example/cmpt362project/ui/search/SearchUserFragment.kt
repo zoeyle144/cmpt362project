@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
-import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -21,7 +20,6 @@ import com.google.firebase.ktx.Firebase
 class SearchUserFragment : Fragment() {
 
     private var columnCount = 1
-    private val tempItems = PlaceholderContent.ITEMS
 
     private val listOfUsernames = ArrayList<String>()
     private val listOfUsers = ArrayList<User>()

@@ -17,10 +17,8 @@ import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_EMAIL
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_USERNAME
 
-import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent.PlaceholderItem
-
 /**
- * [RecyclerView.Adapter] that can display a [PlaceholderItem].
+ * [RecyclerView.Adapter] that can display a [User].
  * TODO: Replace the implementation with code for your data type.
  */
 class SearchUserAdapter(private val context: Context, private var list: ArrayList<User>)
