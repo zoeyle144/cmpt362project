@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
+import com.example.cmpt362project.database.User
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -90,6 +91,22 @@ class UserProfileActivity : AppCompatActivity() {
             .addOnSuccessListener(this) {
                 if (it.value != null) {
                     aboutMeView.editText?.setText(it.value as String)
+                }
+            }
+
+        database.child("users").child(user.uid).get()
+            .addOnSuccessListener {
+//                val test2 = it.value as User
+//                println("test2 is $test2")
+                println("it.value is ${it.value}")
+
+                val userData = it.value as Map<*, *>
+                println("userData is $userData")
+
+                if (userData.containsKey("name")) {
+                    println("name is ${userData["name"]}")
+                } else {
+                    println("Not spe")
                 }
             }
 
