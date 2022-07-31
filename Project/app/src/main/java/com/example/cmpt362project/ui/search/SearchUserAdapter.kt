@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
+import com.example.cmpt362project.database.User
 //import com.example.cmpt362project.databinding.FragmentItemBinding
 import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
 
@@ -15,9 +16,10 @@ import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent.Place
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
  * TODO: Replace the implementation with code for your data type.
  */
-class SearchUserAdapter(
-    private val values: List<PlaceholderItem>
-) : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
+class SearchUserAdapter(private var list: ArrayList<User>)
+    : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
+
+    private var originalList = list
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -32,35 +34,57 @@ class SearchUserAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        holder.idView.text = item.id
-        holder.contentView.text = item.content
+        val item = list[position]
+        holder.usernameView.text = item.username
+        holder.emailView.text = item.email
     }
 
-    override fun getItemCount(): Int = values.size
+    override fun getItemCount(): Int = list.size
 
     inner class ViewHolder(binding: FragmentSearchUserEntryBinding) : RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
+        val usernameView: TextView = binding.searchUserEntryUsername
+        val emailView: TextView = binding.searchUserEntryEmail
 
         override fun toString(): String {
-            return super.toString() + " '" + contentView.text + "'"
+            return super.toString() + " '" + emailView.text + "'"
         }
     }
 
+    // Adapted from https://stackoverflow.com/a/37735562
     override fun getFilter(): Filter {
         val customFilter = object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                TODO("Not yet implemented")
-            }
-
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                TODO("Not yet implemented")
+                list = results?.values as ArrayList<User> /* = java.util.ArrayList<com.example.cmpt362project.database.User> */
+                notifyDataSetChanged()
             }
 
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                var filteredResults = ArrayList<User>()
+                if (constraint != null) {
+                    filteredResults = (if (constraint.isEmpty()) originalList
+                    else getFilteredResults(constraint))
+                }
+
+                val filterResults = FilterResults()
+                filterResults.values = filteredResults
+
+                return filterResults
+            }
         }
 
         return customFilter
     }
 
+    // Adapted from https://stackoverflow.com/a/37735562
+    private fun getFilteredResults(constraint: CharSequence?) : ArrayList<User> {
+        val results = ArrayList<User>()
+
+        if (constraint != null) {
+            for (i in originalList) {
+                if (i.username.contains(constraint)) results.add(i)
+            }
+        }
+
+        return results
+    }
 }

@@ -54,13 +54,13 @@ class SearchUserFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {}
         })
-        
+
         recyclerView = view.findViewById(R.id.search_user_search_results_recycler)
         recyclerView.layoutManager = when {
             columnCount <= 1 -> LinearLayoutManager(context)
             else -> GridLayoutManager(context, columnCount)
         }
-        recyclerViewAdapter = SearchUserAdapter(PlaceholderContent.ITEMS)
+        recyclerViewAdapter = SearchUserAdapter(listOfUsers)
         recyclerView.adapter = recyclerViewAdapter
 
         val searchView = view.findViewById<SearchView>(R.id.search_user_search_bar)
