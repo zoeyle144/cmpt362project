@@ -159,25 +159,37 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun uploadImage() {
         val storage = Firebase.storage.reference
-        val bitmapToUpload = userProfileViewModel.getImage()
+        val bitmapToUpload = userProfileViewModel.getImage() ?: return
 
-        if (bitmapToUpload != null) {
-            val stream = ByteArrayOutputStream()
-            bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
-            val byteArray = stream.toByteArray()
-            stream.close()
+        val stream = ByteArrayOutputStream()
+        bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+        val byteArray = stream.toByteArray()
+        stream.close()
 
-            // Save the profile picture in Storage
-            val randomUUID = UUID.randomUUID().toString().replace("-", "")
-            val uuidPath = "profile_pic/$randomUUID.jpg"
-            println("UserProfileActivity uploadImage: uploading image $uuidPath")
+        // Get the old profile picture path so we can delete the image later (if upload success)
+        database.child("users").child(user.uid).child("profile_pic").get()
+            .addOnSuccessListener { oldImgPath ->
+                println("Old image path is ${oldImgPath.value}")
 
-            storage.child(uuidPath).putBytes(byteArray).addOnSuccessListener {
-                // Write the profile picture's UUID in the user's info
-                database.child("users").child(user.uid)
-                    .child("profile_pic").setValue(uuidPath)
-                println("UserProfileActivity uploadImage: Saved $randomUUID to database")
-            }
+                // Write the new profile picture to Storage
+                val randomUUID = UUID.randomUUID().toString().replace("-", "")
+                val newImgPath = "profile_pic/$randomUUID.jpg"
+                println("UserProfileActivity uploadImage: uploading image $newImgPath")
+
+                storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
+                    // Write the new profile picture's path to the user's info
+                    database.child("users").child(user.uid)
+                        .child("profile_pic").setValue(newImgPath)
+                    println("UserProfileActivity uploadImage: Saved $randomUUID to database")
+
+                    // Delete the old profile picture
+
+                    val oldImgRef = storage.child(oldImgPath.value as String)
+                    println("oldImgRef is $oldImgRef")
+                    oldImgRef.delete().addOnSuccessListener {
+                        println("UserProfileActivity uploadImage: ${oldImgPath.value} deleted")
+                    }
+                }
         }
     }
 }
