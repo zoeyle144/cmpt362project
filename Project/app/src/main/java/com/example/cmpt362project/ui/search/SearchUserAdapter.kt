@@ -3,6 +3,8 @@ package com.example.cmpt362project.ui.search
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 //import com.example.cmpt362project.databinding.FragmentItemBinding
 import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
@@ -15,7 +17,7 @@ import com.example.cmpt362project.ui.search.placeholder.PlaceholderContent.Place
  */
 class SearchUserAdapter(
     private val values: List<PlaceholderItem>
-) : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -44,6 +46,10 @@ class SearchUserAdapter(
         override fun toString(): String {
             return super.toString() + " '" + contentView.text + "'"
         }
+    }
+
+    override fun getFilter(): Filter {
+        TODO("Not yet implemented")
     }
 
 }
