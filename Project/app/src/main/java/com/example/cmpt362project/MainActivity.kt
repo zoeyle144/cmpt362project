@@ -74,25 +74,27 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun setProfilePicture(imageView: ImageView) : Bitmap? {
+    private fun setProfilePicture(imageView: ImageView) {
         val storage = Firebase.storage.reference
         val auth = Firebase.auth
         val user = auth.currentUser
-        val path = "profile_pic/" + user!!.uid + ".jpg"
-        val pathReference = storage.child(path)
 
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        var bitmap: Bitmap? = null
+        database.child("users").child(user!!.uid).child("profile_pic").get()
+            .addOnSuccessListener { pathToProfilePic ->
 
-        pathReference.getBytes(ONE_MEGABYTE)
-            .addOnSuccessListener(this) {
-                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                println("Success download!")
-                if (bitmap != null) imageView.setImageBitmap(bitmap)
-            } .addOnFailureListener(this) {
-                println("Failure download!")
+                val pathReference = storage.child(pathToProfilePic.value as String)
+                val oneMegabyte: Long = 1024 * 1024
+
+                pathReference.getBytes(oneMegabyte)
+                    .addOnSuccessListener(this) {
+                        val bitmap: Bitmap? = BitmapFactory.decodeByteArray(it, 0, it.size)
+                        if (bitmap != null) imageView.setImageBitmap(bitmap)
+                    } .addOnFailureListener(this) {
+                        println("MainActivity setProfilePicture: Failed to download profile pic")
+                    }
             }
-
-        return bitmap
+            .addOnFailureListener {
+                println("MainActivity setProfilePicture: Failed to get value users/uid/profile_pic")
+            }
     }
 }
