@@ -1,5 +1,6 @@
 package com.example.cmpt362project.repositories
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Board
 import com.google.firebase.auth.ktx.auth
@@ -32,4 +33,21 @@ class BoardsRepository {
         })
     }
 
+    fun insert(board: Board){
+        boardsRef.child(board.boardID).setValue(board)
+            .addOnCompleteListener{
+                println("debug: add board success")
+            }.addOnFailureListener{ err ->
+                println("debug: add board fail Error ${err.message}")
+            }
+    }
+
+    fun delete(boardID:String){
+        boardsRef.child(boardID).removeValue()
+            .addOnSuccessListener {
+                println("debug: delete board success")
+            }.addOnFailureListener{ err ->
+                println("debug: delete board fail Error ${err.message}")
+            }
+    }
 }

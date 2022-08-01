@@ -1,44 +1,41 @@
 package com.example.cmpt362project.adaptors
 
-import android.content.Context
 import android.content.Intent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.Button
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.DisplayCategoryActivity
 import com.example.cmpt362project.models.Board
 
-class BoardListAdaptor(val context: Context, private var boardList: List<Board>): BaseAdapter() {
+class BoardListAdaptor(private var boardList: List<Board>) : RecyclerView.Adapter<BoardListAdaptor.ViewHolder>(){
 
-    override fun getCount(): Int {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardListAdaptor.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.board_list_adaptor, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: BoardListAdaptor.ViewHolder, position: Int) {
+        val boardEntry = holder.itemView.findViewById<Button>(R.id.board_entry)
+        boardEntry.text = boardList[position].boardName
+
+        boardEntry.setOnClickListener {
+            val intent = Intent(holder.itemView.context, DisplayCategoryActivity::class.java)
+            intent.putExtra("board", boardList[position])
+            holder.itemView.context.startActivity(intent)
+        }
+    }
+
+    override fun getItemCount(): Int {
         return boardList.size
     }
 
-    override fun getItem(p0: Int): Any {
-        return boardList[p0]
-    }
-
-    override fun getItemId(p0: Int): Long {
-        return p0.toLong()
-    }
-
-    override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
-        val view = View.inflate(context, R.layout.board_list_adaptor, null)
-        val boardEntry = view.findViewById<Button>(R.id.board_entry)
-        boardEntry.text = boardList[p0].boardName
-
-        boardEntry.setOnClickListener {
-            val intent = Intent(view.context, DisplayCategoryActivity::class.java)
-            intent.putExtra("boardTitle", boardList[p0].boardName)
-            view.context.startActivity(intent)
-        }
-        return view
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
     }
 
     fun updateList(newList:List<Board>){
         boardList = newList
     }
-
 }

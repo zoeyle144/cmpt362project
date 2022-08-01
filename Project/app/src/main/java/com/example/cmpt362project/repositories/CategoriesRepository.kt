@@ -1,6 +1,8 @@
 package com.example.cmpt362project.repositories
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -12,12 +14,13 @@ import com.google.firebase.ktx.Firebase
 class CategoriesRepository {
 
     val database = Firebase.database
-    val auth = Firebase.auth
-    val categoriesRef = database.getReference("categories")
+//    val auth = Firebase.auth
+    val categoriesRef = database.getReference("boards")
 
-    fun fetchCategories(liveData: MutableLiveData<List<Category>>){
+    fun fetchCategories(liveData: MutableLiveData<List<Category>>, boardID: String){
         categoriesRef
-            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
+            .child(boardID)
+            .child("categories")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val categories: List<Category> = snapshot.children.map { dataSnapshot ->
@@ -31,4 +34,21 @@ class CategoriesRepository {
             })
     }
 
+    fun insert(category: Category, boardID:String){
+        categoriesRef.child(boardID).child("categories").child(category.categoryID).setValue(category)
+            .addOnCompleteListener{
+                println("debug: add category success")
+            }.addOnFailureListener{ err ->
+                println("debug: add category fail Error ${err.message}")
+            }
+    }
+
+    fun delete(boardID:String, categoryID:String){
+        categoriesRef.child(boardID).child("categories").child(categoryID).removeValue()
+            .addOnSuccessListener {
+                println("debug: delete category success")
+            }.addOnFailureListener{ err ->
+                println("debug: delete category fail Error ${err.message}")
+            }
+    }
 }

@@ -15,4 +15,12 @@ class BoardListViewModel: ViewModel(){
     fun fetchBoards(){
         repository.fetchBoards(_boardsLiveData)
     }
+
+    fun insert(board: Board){
+        repository.insert(board)
+    }
+
+    fun delete(boardID:String){
+        repository.delete(boardID)
+    }
 }

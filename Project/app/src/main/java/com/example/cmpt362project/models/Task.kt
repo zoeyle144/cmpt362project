@@ -6,6 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class Task(
+    val taskID: String = "",
     val name: String = "",
     val summary: String = "",
     val type: String = "",
@@ -18,10 +19,12 @@ data class Task(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readString()!!,
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        parcel.writeString(taskID)
         parcel.writeString(name)
         parcel.writeString(summary)
         parcel.writeString(type)

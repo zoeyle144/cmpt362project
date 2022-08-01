@@ -6,25 +6,28 @@ import android.os.Parcelable
 
 @IgnoreExtraProperties
 data class Board(
+    val boardID: String = "",
     val boardName: String = "",
     val description: String = "",
     val createdBy: String = "",
-    val categories: List<Category> = ArrayList()
+//    val categories: List<Category> = ArrayList()
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
+        parcel.readString()!!,
+//        arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        parcel.writeString(boardID)
         parcel.writeString(boardName)
         parcel.writeString(description)
         parcel.writeString(createdBy)
-        parcel.writeTypedList(categories)
+//        parcel.writeTypedList(categories)
     }
 
     override fun describeContents(): Int {
