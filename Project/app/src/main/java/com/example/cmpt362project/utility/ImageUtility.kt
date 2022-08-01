@@ -15,7 +15,7 @@ object ImageUtility {
         val auth = Firebase.auth
         val user = auth.currentUser
 
-        database.child("users").child(user!!.uid).child("profile_pic").get()
+        database.child("users").child(user!!.uid).child("profilePic").get()
             .addOnSuccessListener { pathToProfilePic ->
 
                 val pathReference = storage.child(pathToProfilePic.value as String)
@@ -30,7 +30,7 @@ object ImageUtility {
                     }
             }
             .addOnFailureListener {
-                println("MainActivity setProfilePicture: Failed to get value users/uid/profile_pic")
+                println("MainActivity setProfilePicture: Failed to get value users/uid/profilePic")
             }
     }
 }

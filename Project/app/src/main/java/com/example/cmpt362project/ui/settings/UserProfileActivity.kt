@@ -192,12 +192,12 @@ class UserProfileActivity : AppCompatActivity() {
         stream.close()
 
         // Get the old profile picture path so we can delete the image later (if upload success)
-        val userReference = database.child("users").child(user.uid).child("profile_pic")
+        val userReference = database.child("users").child(user.uid).child("profilePic")
         userReference.get().addOnSuccessListener { oldImgPath ->
 
             // Write the new profile picture to Storage
             val randomUUID = UUID.randomUUID().toString().replace("-", "")
-            val newImgPath = "profile_pic/$randomUUID.jpg"
+            val newImgPath = "profilePic/$randomUUID.jpg"
             storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
 
                 // Write the new profile picture path to the user's info

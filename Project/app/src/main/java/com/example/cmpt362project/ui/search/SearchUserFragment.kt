@@ -43,7 +43,10 @@ class SearchUserFragment : Fragment() {
                 for (i in snapshot.children) {
                     val username = i.child("username").value as String
                     val email = i.child("email").value as String
-                    val user = User(username, email)
+                    val name = i.child("name").value as String
+                    val profilePic = i.child("profilePic").value as String
+                    val aboutMe = i.child("aboutMe").value as String
+                    val user = User(username, email, name, profilePic, aboutMe)
 
                     listOfUsernames.add(username)
                     listOfUsers.add(user)

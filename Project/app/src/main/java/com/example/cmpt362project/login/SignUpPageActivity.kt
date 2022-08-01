@@ -118,7 +118,7 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
                     .addOnSuccessListener(this) { task ->
                         // Sign up success
                         val user = auth.currentUser
-                        val userData = User(usernameTxt, emailTxt)
+                        val userData = User(usernameTxt, emailTxt, "", "defaults/default_pfp.png", "")
 
                         database.child("users").child(user!!.uid).setValue(userData)
 
@@ -126,9 +126,9 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
                         database.child("usernames").child(usernameTxt).setValue(user.uid)
 
                         // give user add default profile picture
-                        val defaultProfilePicPath = "defaults/default_pfp.png"
-                        database.child("users").child(user.uid)
-                            .child("profile_pic").setValue(defaultProfilePicPath)
+                        val defaultProfilePicPath =
+//                        database.child("users").child(user.uid)
+//                            .child("profile_pic").setValue(defaultProfilePicPath)
 
                         // inform the user of success
                         Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
