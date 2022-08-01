@@ -33,10 +33,13 @@ class CreateBoardActivity: AppCompatActivity() {
             val boardID = boardsRef.push().key!!
             val boardName = createBoardName.text
             val boardDescription = createBoardDescription.text
+            val groupName = intent.getSerializableExtra("groupTitle").toString()
+
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
             val board = Board(boardID,boardName.toString(), boardDescription.toString(), createdBy.toString())
             boardListViewModel.insert(board)
+            
             finish()
 
         }

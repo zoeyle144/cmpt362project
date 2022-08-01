@@ -1,7 +1,7 @@
 package com.example.cmpt362project
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.widget.ImageView
@@ -14,21 +14,23 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.cmpt362project.ui.settings.UserProfileActivity
+import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPref: SharedPreferences
+
+    private lateinit var drawerProfilePicView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,22 +47,36 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_settings, R.id.nav_groups), drawerLayout)
+                R.id.nav_home, R.id.nav_search, R.id.nav_settings, R.id.nav_groups), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val drawerUsernameView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username)
+        val drawerEmailView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email)
+        drawerProfilePicView = navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic)
 
         if (auth.currentUser != null) {
             val user = auth.currentUser
             database.child("users").child(user!!.uid).get().addOnSuccessListener {
                 if (it != null) {
                     val userData = it.value as Map<*, *>
-                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username).text = userData["username"].toString()
-                    navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email).text = userData["email"].toString()
-                    setProfilePicture(navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic))
+                    drawerUsernameView.text = userData["username"].toString()
+                    drawerEmailView.text = userData["email"].toString()
+                    ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
                 }
-
             }
         }
+
+        // The user's profile picture has not changed recently on app start. Set it to false
+        sharedPref = this.getSharedPreferences(UserProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
+        sharedPref.registerOnSharedPreferenceChangeListener(this)
+        setProfilePicRecentlyChangedFalse()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sharedPref.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,25 +90,25 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun setProfilePicture(imageView: ImageView) : Bitmap? {
-        val storage = Firebase.storage.reference
-        val auth = Firebase.auth
-        val user = auth.currentUser
-        val path = "profile_pic/" + user!!.uid + ".jpg"
-        val pathReference = storage.child(path)
 
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        var bitmap: Bitmap? = null
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        // Check if the profile picture has changed recently. If it has, update the sidebar's PFP
+        if (key == UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED) {
+            val pfpRecentlyChanged = sharedPref.getBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
 
-        pathReference.getBytes(ONE_MEGABYTE)
-            .addOnSuccessListener(this) {
-                bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                println("Success download!")
-                if (bitmap != null) imageView.setImageBitmap(bitmap)
-            } .addOnFailureListener(this) {
-                println("Failure download!")
+            // The code setting KEY_PROFILE_PIC_RECENTLY_CHANGED to false calls this function again
+            // Need to check if true to avoid calling setImageViewToProfilePic twice
+            if (pfpRecentlyChanged) {
+                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+                setProfilePicRecentlyChangedFalse()
             }
+        }
+    }
 
-        return bitmap
+    private fun setProfilePicRecentlyChangedFalse() {
+        with(sharedPref.edit()) {
+            putBoolean(UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, false)
+            apply()
+        }
     }
 }

@@ -118,13 +118,13 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
                     .addOnSuccessListener(this) { task ->
                         // Sign up success
                         val user = auth.currentUser
-                        val userData = User(usernameTxt, emailTxt)
+                        val userData = User(usernameTxt, emailTxt, "", "defaults/default_pfp.png", "")
 
                         database.child("users").child(user!!.uid).setValue(userData)
 
                         // add unique username into database
                         database.child("usernames").child(usernameTxt).setValue(user.uid)
-
+                        
                         // inform the user of success
                         Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
                             Toast.LENGTH_SHORT).show()

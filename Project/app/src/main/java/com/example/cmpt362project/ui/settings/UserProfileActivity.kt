@@ -1,26 +1,25 @@
 package com.example.cmpt362project.ui.settings
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
-import com.google.android.material.textfield.TextInputEditText
+import com.example.cmpt362project.database.User
+import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -28,18 +27,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageException.ERROR_OBJECT_NOT_FOUND
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import java.util.*
 
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var user: FirebaseUser
 
     private lateinit var nameView: EditText
     private lateinit var aboutMeView: TextInputLayout
@@ -48,13 +44,18 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
 
+    companion object {
+        const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
+        const val SHARED_PREF = "SHARED_PREF"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
 
         database = Firebase.database.reference
         auth = Firebase.auth
-        val user = auth.currentUser
+        user = auth.currentUser!!
 
         pictureView = findViewById(R.id.profile_picture)
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
@@ -63,7 +64,7 @@ class UserProfileActivity : AppCompatActivity() {
         nameView = findViewById(R.id.profile_edit_name)
         aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
 
-        database.child("users").child(user!!.uid).child("username").get()
+        database.child("users").child(user.uid).child("username").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
                     val usernameView = findViewById<EditText>(R.id.profile_username)
@@ -71,7 +72,7 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
-        database.child("users").child(user.uid).child("email").get()
+        database.child("users").child(user!!.uid).child("email").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
                     val emailView = findViewById<EditText>(R.id.profile_email)
@@ -93,6 +94,22 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
+        database.child("users").child(user.uid).get()
+            .addOnSuccessListener {
+//                val test2 = it.value as User
+//                println("test2 is $test2")
+                println("it.value is ${it.value}")
+
+                val userData = it.value as Map<*, *>
+                println("userData is $userData")
+
+                if (userData.containsKey("name")) {
+                    println("name is ${userData["name"]}")
+                } else {
+                    println("Not spe")
+                }
+            }
+
 
         // If cannot find an image, use a place holder
 //        val placeholderImage = userProfileViewModel.getImage()
@@ -106,16 +123,7 @@ class UserProfileActivity : AppCompatActivity() {
 //            pictureView.setImageBitmap(placeholderImage)
 //        }
 
-        val pl2 = downloadAndSetImage()
-        if (pl2 == null) {
-            println("Could not download pfp, it might be is null. using default")
-            // Don't use drawable, use bitmap
-            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
-            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
-        } else {
-            println("pfp is not null, using view model!")
-            pictureView.setImageBitmap(pl2)
-        }
+        ImageUtility.setImageViewToProfilePic(pictureView)
 
 
         // Initialize the gallery activity
@@ -173,49 +181,45 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
+        val printIdentifier = "UserProfileActivity uploadImage"
         val storage = Firebase.storage.reference
-        val bitmapToUpload = userProfileViewModel.getImage()
-        val user = auth.currentUser
+        val image = userProfileViewModel.getImage() ?: return
 
-        println("Trying to upload....")
-        if (bitmapToUpload != null) {
-            println("bitmapToUpload is not null")
+        val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
+        val stream = ByteArrayOutputStream()
+        imageScaled.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+        val byteArray = stream.toByteArray()
+        stream.close()
 
-            val stream = ByteArrayOutputStream()
-            bitmapToUpload.compress(Bitmap.CompressFormat.JPEG, 75, stream)
-            val byteArray = stream.toByteArray()
-            stream.close()
+        // Get the old profile picture path so we can delete the image later (if upload success)
+        val userReference = database.child("users").child(user.uid).child("profilePic")
+        userReference.get().addOnSuccessListener { oldImgPath ->
 
-            val pathString = "profile_pic/" + user!!.uid + ".jpg"
-            storage.child(pathString).putBytes(byteArray)
-                .addOnSuccessListener(this) { println("Success upload") }
-                .addOnFailureListener(this) { println("Failure upload") }
-                .addOnCompleteListener(this) { println("Upload complete!") }
+            // Write the new profile picture to Storage
+            val randomUUID = UUID.randomUUID().toString().replace("-", "")
+            val newImgPath = "profilePic/$randomUUID.jpg"
+            storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
+
+                // Write the new profile picture path to the user's info
+                userReference.setValue(newImgPath).addOnSuccessListener {
+                    println("$printIdentifier: Uploaded $randomUUID to database")
+
+                    // Delete the old profile picture from Storage, tell sidebar to update PFP
+                    val oldImgRef = storage.child(oldImgPath.value as String)
+                    oldImgRef.delete().addOnSuccessListener {
+                        println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                        updateProfilePicSharedPref()
+                    }
+                }
+            }
         }
     }
 
-    private fun downloadAndSetImage() : Bitmap? {
-        val storage = Firebase.storage.reference
-        val user = auth.currentUser
-        val path = "profile_pic/" + user!!.uid + ".jpg"
-        val pathReference = storage.child(path)
-
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        var bitmap: Bitmap? = null
-
-        try {
-            pathReference.getBytes(ONE_MEGABYTE)
-                .addOnSuccessListener(this) {
-                    bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                    println("Success download!")
-                    if (bitmap != null) userProfileViewModel.setImage(bitmap!!)
-                } .addOnFailureListener(this) {
-                    println("Failure download!")
-                }
-        } catch (e: Exception) {
-            println("UserProfileActivity: Ran into exception after failing to download profile picture")
+    private fun updateProfilePicSharedPref() {
+        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+            apply()
         }
-
-        return bitmap
     }
 }
