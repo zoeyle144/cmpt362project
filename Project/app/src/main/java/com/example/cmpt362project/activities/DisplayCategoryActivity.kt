@@ -1,15 +1,22 @@
 package com.example.cmpt362project.activities
 
+import android.content.ClipDescription
 import android.os.Bundle
+import android.view.*
 import android.widget.ListView
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.adaptors.CategoryListAdaptor
+//import com.example.cmpt362project.adaptors.DragManageAdapter
 import com.example.cmpt362project.adaptors.TaskListAdaptor
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
@@ -28,26 +35,21 @@ class DisplayCategoryActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_category)
 
-        val boardTitle  = intent.getSerializableExtra("boardTitle").toString()
-
-        val taskListViewModel: TaskListViewModel = ViewModelProvider(this)[TaskListViewModel::class.java]
-        taskListViewModel.fetchTasks()
+        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
+        val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, boardTitle,this)
+        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID, this)
         recyclerView.adapter = adapter
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
-        categoryListViewModel.fetchCategories()
+        categoryListViewModel.fetchCategories(boardID)
         categoryListViewModel.categoriesLiveData.observe(this){
-            val mutableIt = it.toMutableList()
-            mutableIt.removeIf{ it -> it.board != boardTitle}
-            val mutableList = mutableIt.toList()
-            (adapter as CategoryListAdaptor).updateList(mutableList)
+            (adapter as CategoryListAdaptor).updateList(it)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()
         }
 
@@ -55,27 +57,41 @@ class DisplayCategoryActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val taskListViewModel: TaskListViewModel = ViewModelProvider(this)[TaskListViewModel::class.java]
-        taskListViewModel.fetchTasks()
 
-        val boardTitle  = intent.getSerializableExtra("boardTitle").toString()
+        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
+        val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, taskListViewModel.tasksLiveData, boardTitle ,this)
+        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID, this)
         recyclerView.adapter = adapter
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
-        categoryListViewModel.fetchCategories()
+        categoryListViewModel.fetchCategories(boardID)
         categoryListViewModel.categoriesLiveData.observe(this){
-            val mutableIt = it.toMutableList()
-            mutableIt.removeIf{ it -> it.board != boardTitle}
-            val mutableList = mutableIt.toList()
-            (adapter as CategoryListAdaptor).updateList(mutableList)
+            (adapter as CategoryListAdaptor).updateList(it)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()
+
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.custom_category_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
+        if (itemId == R.id.delete_category_button){
+            val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
+            val boardListViewModel: BoardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+            boardListViewModel.delete(boardID)
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

@@ -6,8 +6,18 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/task_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/delete_category_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Delete Category"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/item_title"
@@ -15,15 +25,17 @@
             android:layout_height="39dp"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/delete_category_button" />
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/task_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:background="@drawable/border"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_title">
-        </ListView>
+            app:layout_constraintTop_toBottomOf="@id/item_title"/>
 
         <Button
             android:id="@+id/add_task_button"

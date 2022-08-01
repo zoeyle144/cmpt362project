@@ -1,29 +1,30 @@
 package com.example.cmpt362project.adaptors
 
+import android.content.ClipDescription
 import android.content.Intent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
-import android.widget.ListView
+import android.widget.ScrollView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateCategoryActivity
 import com.example.cmpt362project.activities.CreateTaskActivity
-import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
 import com.example.cmpt362project.models.Task
-import com.example.cmpt362project.viewModels.BoardListViewModel
+import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
-class CategoryListAdaptor(private var categoryList: List<Category>, private var taskLiveData: LiveData<List<Task>>, private var boardTitle:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
 
-    private lateinit var taskListAdaptor: TaskListAdaptor
-    private lateinit var taskList: List<Task>
-    private lateinit var taskListView: ListView
-
+class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
+    private lateinit var correspondTaskList: List<Task>
+    private lateinit var vmsForDrag: ViewModelStoreOwner
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
         if(viewType == 0){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.category_list_adaptor, parent, false)
@@ -35,6 +36,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             addCategoryButton.setOnClickListener {
                 val intent = Intent(view.context, CreateCategoryActivity::class.java)
                 intent.putExtra("boardTitle", boardTitle)
+                intent.putExtra("boardID", boardID)
                 view.context.startActivity(intent)
             }
 
@@ -43,29 +45,45 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
     }
 
     override fun onBindViewHolder(holder: CategoryListAdaptor.ViewHolder, position: Int) {
+        println("debug: onbindviewhodler ran")
         if (position < itemCount-1){
+            vmsForDrag = holder.vms
             holder.itemTitle?.text = categoryList[position].title
             val categoryTitle = categoryList[position].title
-            taskListView =holder.itemView.findViewById(R.id.task_list)
-            taskList =  ArrayList()
-            taskListAdaptor = TaskListAdaptor(holder.itemView.context, taskList)
-            taskListView.adapter = taskListAdaptor
-            taskListView.divider = null
 
-            taskLiveData.observe(lifecycleOwner){
+            val taskListView: RecyclerView = holder.itemView.findViewById(R.id.task_list)
+//            taskListView.isNestedScrollingEnabled = false;
+            val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.VERTICAL, false)
+            taskListView.layoutManager = layoutManager
+            val taskList: List<Task> = ArrayList()
+            val adapter: RecyclerView.Adapter<TaskListAdaptor.ViewHolder> = TaskListAdaptor(taskList, boardID)
+            taskListView.adapter = adapter
+            taskListView.setOnDragListener(dragListener)
+
+            holder.taskListViewModel.fetchTasks(boardID)
+            holder.taskListViewModel.tasksLiveData.observe(lifecycleOwner){
                 val mutableIt = it.toMutableList()
                 mutableIt.removeIf{ it -> it.category != categoryTitle}
                 val mutableList = mutableIt.toList()
-                taskListAdaptor.updateList(mutableList)
-                taskListAdaptor.notifyDataSetChanged()
+                correspondTaskList = mutableList
+                (adapter as TaskListAdaptor).updateList(mutableList)
+                (adapter as TaskListAdaptor).notifyDataSetChanged()
+            }
+
+            val deleteCategoryButton = holder.itemView.findViewById<Button>(R.id.delete_category_button)
+            deleteCategoryButton.setOnClickListener {
+                val categoryListViewModel: CategoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
+                categoryListViewModel.delete(boardID, categoryList[position].categoryID, correspondTaskList)
             }
 
             val addTaskButton = holder.itemView.findViewById<Button>(R.id.add_task_button)
             addTaskButton.setOnClickListener {
                 val intent = Intent(holder.itemView.context, CreateTaskActivity::class.java)
                 intent.putExtra("category_title", categoryTitle)
+                intent.putExtra("boardID", boardID)
                 holder.itemView.context.startActivity(intent)
             }
+
         }
     }
 
@@ -83,9 +101,71 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var itemTitle: TextView? = itemView.findViewById(R.id.item_title)
+        var vms: ViewModelStoreOwner = itemView.context as ViewModelStoreOwner
+        var taskListViewModel: TaskListViewModel = ViewModelProvider(vms)[TaskListViewModel::class.java]
     }
 
     fun updateList(newList:List<Category>){
         categoryList = newList
+    }
+
+    private val dragListener = View.OnDragListener{view, event ->
+        when(event.action){
+            DragEvent.ACTION_DRAG_STARTED -> {
+                println("debug: ACTION_DRAG_STARTED ")
+                event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+            }
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                println("debug: ACTION_DRAG_ENTERED")
+                view.invalidate()
+                true
+            }
+            DragEvent.ACTION_DRAG_LOCATION -> true
+            DragEvent.ACTION_DRAG_EXITED -> {
+                println("debug: ACTION_DRAG_EXITED")
+                view.invalidate()
+                true
+            }
+            DragEvent.ACTION_DROP -> {
+                println("debug: ACTION_DROP")
+                val item = event.clipData.getItemAt(0)
+                val dragData = item.text
+                println("debug: dragData is $dragData")
+                view.invalidate()
+                val v = event.localState as CardView
+                val taskID = v.findViewById<TextView>(R.id.task_id).text.toString()
+                val taskBoardID = v.findViewById<TextView>(R.id.task_board_id).text.toString()
+                println("debug: cardview v title: $taskID")
+                val owner = v.parent as RecyclerView
+                owner.removeView(v)
+                val destination = view as RecyclerView
+                val destParent = view.parent as ConstraintLayout
+                val categoryName = destParent.findViewById<TextView>(R.id.item_title).text.toString()
+                println("debug: dest: $destination")
+                println("debug: destParent: ${destination.parent}")
+                println("debug: category: $categoryName")
+                val taskListViewModel: TaskListViewModel = ViewModelProvider(vmsForDrag)[TaskListViewModel::class.java]
+                taskListViewModel.updateCategory(taskBoardID, taskID, categoryName)
+                destination.addView(v)
+                v.visibility = View.VISIBLE
+                true
+            }
+            DragEvent.ACTION_DRAG_ENDED -> {
+                print("debug: ACTION_DRAG_ENDED")
+                if (event.result){
+                    view.invalidate()
+                }else{
+                    val v = event.localState as CardView
+                    v.visibility = View.VISIBLE
+                    view.invalidate()
+                }
+                view.invalidate()
+                true
+            }
+            else -> {
+                println("debug: else occured")
+                false
+            }
+        }
     }
 }

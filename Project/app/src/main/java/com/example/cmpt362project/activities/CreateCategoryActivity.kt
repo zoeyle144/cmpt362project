@@ -5,9 +5,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
+import com.example.cmpt362project.viewModels.BoardListViewModel
+import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -28,20 +31,14 @@ class CreateCategoryActivity: AppCompatActivity() {
             val database = Firebase.database
             val categoriesRef = database.getReference("categories")
             val categoryID = categoriesRef.push().key!!
+            val categoryListViewModel: CategoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
             val categoryName = createCategoryName.text
             val boardTitle = intent.getSerializableExtra("boardTitle").toString()
+            val boardID = intent.getSerializableExtra("boardID").toString()
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
-            val category = Category(categoryName.toString(), createdBy.toString(), boardTitle,ArrayList())
-
-            categoriesRef.child(categoryID).setValue(category)
-                .addOnCompleteListener{
-                    Toast.makeText(this, "Category Created Successfully", Toast.LENGTH_LONG).show()
-                }
-                .addOnFailureListener{ err ->
-                    Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_LONG).show()
-                }
-
+            val category = Category(categoryID, categoryName.toString(), createdBy.toString(), boardTitle)
+            categoryListViewModel.insert(category, boardID)
             finish()
 
         }
