@@ -124,12 +124,7 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
 
                         // add unique username into database
                         database.child("usernames").child(usernameTxt).setValue(user.uid)
-
-                        // give user add default profile picture
-                        val defaultProfilePicPath =
-//                        database.child("users").child(user.uid)
-//                            .child("profile_pic").setValue(defaultProfilePicPath)
-
+                        
                         // inform the user of success
                         Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
                             Toast.LENGTH_SHORT).show()

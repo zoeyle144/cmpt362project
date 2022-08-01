@@ -41,12 +41,15 @@ class SearchUserFragment : Fragment() {
         allUsersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (i in snapshot.children) {
-                    val username = i.child("username").value as String
-                    val email = i.child("email").value as String
-                    val name = i.child("name").value as String
-                    val profilePic = i.child("profilePic").value as String
-                    val aboutMe = i.child("aboutMe").value as String
-                    val user = User(username, email, name, profilePic, aboutMe)
+                    val data = i.value as Map<*, *>
+                    val username = data["username"] as String
+
+                    val user = User(username,
+                        data["email"] as String,
+                        data["name"] as String,
+                        data["profilePic"] as String,
+                        data["aboutMe"] as String
+                    )
 
                     listOfUsernames.add(username)
                     listOfUsers.add(user)
