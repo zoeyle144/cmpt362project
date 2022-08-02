@@ -66,6 +66,7 @@ class UserProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_profile)
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         database = Firebase.database.reference
         auth = Firebase.auth
@@ -252,7 +253,8 @@ class UserProfileActivity : AppCompatActivity() {
             true
         }
         else -> {
-            super.onOptionsItemSelected(item)
+            finish()
+            true
         }
     }
 }
