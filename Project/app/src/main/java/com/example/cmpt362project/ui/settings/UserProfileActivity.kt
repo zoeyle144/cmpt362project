@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -178,6 +179,21 @@ class UserProfileActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun saveProfile() {
+        println("Save profile ALT")
+        val user = auth.currentUser
+        val nameToAdd = nameView.editText?.text.toString()
+        val aboutMeToAdd = aboutMeView.editText?.text.toString()
+
+        database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
+        database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
+        uploadImage()
+
+        Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
+
+        finish()
+    }
+
     fun cancelButton(v: View) {
         finish()
     }
@@ -227,7 +243,16 @@ class UserProfileActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.profile_toolbar, menu)
-
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+        R.id.profile_toolbar_save -> {
+            saveProfile()
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
     }
 }
