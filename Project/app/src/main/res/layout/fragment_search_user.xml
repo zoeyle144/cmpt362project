@@ -7,6 +7,13 @@
     android:fillViewport="true"
     >
 
+    <Button
+        android:id="@+id/search_user_add_account_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add new random account"
+        />
+
     <SearchView
         android:id="@+id/search_user_search_bar"
         android:layout_width="match_parent"
