@@ -41,6 +41,9 @@ class SearchUserFragment : Fragment() {
         allUsersRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (i in snapshot.children) {
+                    listOfUsernames.clear()
+                    listOfUsers.clear()
+
                     val data = i.value as Map<*, *>
                     val username = data["username"] as String
 
@@ -75,11 +78,6 @@ class SearchUserFragment : Fragment() {
         return view
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-    }
-
     inner class SearchListener : SearchView.OnQueryTextListener {
         // https://www.geeksforgeeks.org/android-searchview-with-example/
         override fun onQueryTextSubmit(query: String?): Boolean {
@@ -95,4 +93,5 @@ class SearchUserFragment : Fragment() {
         }
     }
 
+    
 }
