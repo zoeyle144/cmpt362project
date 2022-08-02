@@ -14,7 +14,10 @@ import android.widget.TextView
 import com.example.cmpt362project.database.User
 //import com.example.cmpt362project.databinding.FragmentItemBinding
 import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
+import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_ABOUT_ME
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_EMAIL
+import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_NAME
+import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_PROFILE_PIC
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_USERNAME
 
 /**
@@ -46,6 +49,9 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
             val intent = Intent(context, SearchUserResultActivity::class.java)
             intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
             intent.putExtra(KEY_SEARCH_USER_RESULT_EMAIL, item.email)
+            intent.putExtra(KEY_SEARCH_USER_RESULT_NAME, item.name)
+            intent.putExtra(KEY_SEARCH_USER_RESULT_PROFILE_PIC, item.profilePic)
+            intent.putExtra(KEY_SEARCH_USER_RESULT_ABOUT_ME, item.aboutMe)
             context.startActivity(intent)
         }
     }
