@@ -37,7 +37,9 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
 
-    private lateinit var nameView: EditText
+    private lateinit var usernameView: TextInputLayout
+    private lateinit var emailView: TextInputLayout
+    private lateinit var nameView: TextInputLayout
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
@@ -61,29 +63,29 @@ class UserProfileActivity : AppCompatActivity() {
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
         userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
-        nameView = findViewById(R.id.profile_edit_name)
-        aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
+        usernameView = findViewById(R.id.profile_username_field)
+        emailView = findViewById(R.id.profile_email_field)
+        nameView = findViewById(R.id.profile_name_field)
+        aboutMeView = findViewById(R.id.profile_about_me_field)
 
         database.child("users").child(user.uid).child("username").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
-                    val usernameView = findViewById<EditText>(R.id.profile_username)
-                    usernameView.setText(it.value as String)
+                    usernameView.editText?.setText(it.value as String)
                 }
             }
 
-        database.child("users").child(user!!.uid).child("email").get()
+        database.child("users").child(user.uid).child("email").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
-                    val emailView = findViewById<EditText>(R.id.profile_email)
-                    emailView.setText(it.value as String)
+                    emailView.editText?.setText(it.value as String)
                 }
             }
 
         database.child("users").child(user.uid).child("name").get()
             .addOnSuccessListener(this) {
                 if (it.value != null) {
-                    nameView.setText(it.value as String)
+                    nameView.editText?.setText(it.value as String)
                 }
             }
 
@@ -93,6 +95,7 @@ class UserProfileActivity : AppCompatActivity() {
                     aboutMeView.editText?.setText(it.value as String)
                 }
             }
+
 
         database.child("users").child(user.uid).get()
             .addOnSuccessListener {
@@ -111,20 +114,7 @@ class UserProfileActivity : AppCompatActivity() {
             }
 
 
-        // If cannot find an image, use a place holder
-//        val placeholderImage = userProfileViewModel.getImage()
-//        if (placeholderImage == null) {
-//            println("Placeholder is null, using default")
-//            // Don't use drawable, use bitmap
-//            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
-//            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
-//        } else {
-//            println("Placeholder is not null, using view model!")
-//            pictureView.setImageBitmap(placeholderImage)
-//        }
-
         ImageUtility.setImageViewToProfilePic(pictureView)
-
 
         // Initialize the gallery activity
         // How to save image inside ViewModel to handle orientation change?
@@ -164,7 +154,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     fun saveProfile(v: View) {
         val user = auth.currentUser
-        val nameToAdd = nameView.text.toString()
+        val nameToAdd = nameView.editText?.text.toString()
         val aboutMeToAdd = aboutMeView.editText?.text.toString()
 
         database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
