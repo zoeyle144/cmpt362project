@@ -7,16 +7,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.settings.UserProfileActivity"
-    android:padding="16dp"
     >
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/profile_image_background"
-        >
+        android:paddingTop="24dp">
+
         <ImageView
             android:id="@+id/profile_picture"
             android:layout_width="120dp"
@@ -26,20 +37,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/empty_profile_pic" />
+
         <com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button.Icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="-24dp"
             android:layout_marginBottom="-24dp"
+            android:onClick="onClickChangePhoto"
             app:cornerRadius="24dp"
             app:icon="@drawable/ic_outline_photo_camera_24"
             app:iconPadding="0dp"
             app:iconSize="24dp"
             app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
-            app:layout_constraintEnd_toEndOf="@+id/profile_picture"
-            android:onClick="onClickChangePhoto"
-            />
+            app:layout_constraintEnd_toEndOf="@+id/profile_picture" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Space
@@ -53,6 +64,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Username"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         />
     <Space
         android:layout_width="match_parent"
@@ -65,7 +78,8 @@
         android:layout_height="wrap_content"
         app:startIconDrawable="@drawable/ic_outline_person_24"
         android:enabled="false"
-        >
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
@@ -85,19 +99,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="E-mail"
-        />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="4dp"
-        />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/profile_email_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:startIconDrawable="@drawable/ic_outline_email_24"
         android:enabled="false"
-        >
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
@@ -117,12 +134,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
-        />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="4dp"
-        />
+        android:minHeight="4dp" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/profile_name_field"
         android:layout_width="match_parent"
@@ -131,7 +148,8 @@
         app:startIconDrawable="@drawable/ic_outline_badge_24"
         app:hintAnimationEnabled="false"
         app:hintEnabled="false"
-        >
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
@@ -152,7 +170,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="About me"
-        />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -166,7 +185,8 @@
         app:counterMaxLength="200"
         app:endIconMode="clear_text"
         app:startIconDrawable="@drawable/ic_outline_subject_24"
-        >
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"

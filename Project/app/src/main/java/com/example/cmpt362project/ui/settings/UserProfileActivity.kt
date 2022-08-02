@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
@@ -61,6 +63,8 @@ class UserProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
+        val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
+        setSupportActionBar(toolbar)
 
         database = Firebase.database.reference
         auth = Firebase.auth
@@ -219,5 +223,11 @@ class UserProfileActivity : AppCompatActivity() {
             putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
             apply()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.profile_toolbar, menu)
+
+        return true
     }
 }
