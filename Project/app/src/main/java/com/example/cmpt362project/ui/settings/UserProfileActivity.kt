@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.TooltipCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
@@ -64,6 +65,7 @@ class UserProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
+
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -166,22 +168,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
-    fun saveProfile(v: View) {
-        val user = auth.currentUser
-        val nameToAdd = nameView.editText?.text.toString()
-        val aboutMeToAdd = aboutMeView.editText?.text.toString()
-
-        database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
-        database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
-        uploadImage()
-
-        Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
-
-        finish()
-    }
-
     private fun saveProfile() {
-        println("Save profile ALT")
         val user = auth.currentUser
         val nameToAdd = nameView.editText?.text.toString()
         val aboutMeToAdd = aboutMeView.editText?.text.toString()
@@ -192,10 +179,6 @@ class UserProfileActivity : AppCompatActivity() {
 
         Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
 
-        finish()
-    }
-
-    fun cancelButton(v: View) {
         finish()
     }
 
