@@ -16,6 +16,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_baseline_delete_24"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
