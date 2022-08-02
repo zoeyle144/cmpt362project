@@ -89,6 +89,7 @@ class SearchUserFragment : Fragment() {
         addAccountButton.setOnClickListener {
             addNewAccount()
         }
+        addAccountButton.visibility = View.GONE
 
         return view
     }
