@@ -17,6 +17,7 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:navigationIcon="@drawable/ic_baseline_delete_24"
+        app:navigationContentDescription="Discard changes"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
