@@ -2,11 +2,14 @@ package com.example.cmpt362project.ui.search
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.example.cmpt362project.R
 import com.example.cmpt362project.utility.ImageUtility
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 
 class SearchUserResultActivity : AppCompatActivity() {
@@ -25,7 +28,6 @@ class SearchUserResultActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Profile"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         var username = ""
@@ -47,6 +49,9 @@ class SearchUserResultActivity : AppCompatActivity() {
             name = extras.getString(KEY_SEARCH_USER_RESULT_NAME, "")
             profilePic = extras.getString(KEY_SEARCH_USER_RESULT_PROFILE_PIC, "")
             aboutMe = extras.getString(KEY_SEARCH_USER_RESULT_ABOUT_ME, "")
+
+            supportActionBar?.title = "$username's Profile"
+
         }
 
         usernameView.editText?.setText(username)
@@ -54,5 +59,17 @@ class SearchUserResultActivity : AppCompatActivity() {
         nameView.editText?.setText(name)
         ImageUtility.setImageViewToProfilePic(profilePic, pictureView)
         aboutMeView.editText?.setText(aboutMe)
+
+        // Disable functionality of the R.layout.activity_user_profile layout
+        nameView.isEnabled = false
+        aboutMeView.isEnabled = false
+
+        val changePictureButton = findViewById<MaterialButton>(R.id.profile_picture_change_picture_button)
+        changePictureButton.visibility = View.INVISIBLE
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        finish()
+        return true
     }
 }

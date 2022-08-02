@@ -41,6 +41,7 @@
             app:srcCompat="@drawable/empty_profile_pic" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_picture_change_picture_button"
             style="@style/Widget.MaterialComponents.Button.Icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
