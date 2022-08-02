@@ -6,7 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.settings.UserProfileActivity">
+    tools:context=".ui.settings.UserProfileActivity"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,65 +36,127 @@
             />
     </LinearLayout>
 
+
+    <!-- Username -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Username"
         />
-    <EditText
-        android:id="@+id/profile_username"
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_person_24"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Username -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
         />
 
+    <!-- E-mail -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="E-mail"
         />
-    <EditText
-        android:id="@+id/profile_email"
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:minHeight="4dp"
         />
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change name" />
-    <EditText
-        android:id="@+id/profile_edit_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change about me" />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_about_me_edit_text_layout"
+        android:id="@+id/profile_email_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_email_24"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- E-mail -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- Name -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:startIconDrawable="@drawable/ic_outline_badge_24"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Name -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- About me -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About me"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_about_me_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:counterEnabled="true"
         app:counterMaxLength="200"
         app:endIconMode="clear_text"
+        app:startIconDrawable="@drawable/ic_outline_subject_24"
         >
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_about_me_edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:maxLength="200"
             android:inputType="textMultiLine"
-            android:minHeight="48dp"
             />
-
     </com.google.android.material.textfield.TextInputLayout>
+    <!-- About me -->
 
     <LinearLayout
         android:layout_width="match_parent"
