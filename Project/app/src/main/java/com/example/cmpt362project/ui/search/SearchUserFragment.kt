@@ -12,10 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -43,13 +40,12 @@ class SearchUserFragment : Fragment() {
 
         database = Firebase.database.reference
 
-        val allUsersRef = database.child("users")
-        allUsersRef.addValueEventListener(object : ValueEventListener {
+        val userQuery = database.child("users").orderByChild("username")
+        userQuery.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listOfUsernames.clear()
                 listOfUsers.clear()
                 for (i in snapshot.children) {
-
                     val data = i.value as Map<*, *>
                     val username = data["username"] as String
 
