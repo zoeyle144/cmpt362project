@@ -34,7 +34,7 @@
             android:id="@+id/profile_picture"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:contentDescription="Your profile picture"
+            android:contentDescription="@string/profile_picture_content_desc"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -65,7 +65,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/profile_picture_username_label"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         />
@@ -100,7 +100,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="E-mail"
+        android:text="@string/profile_picture_email_label"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"/>
     <Space
@@ -135,7 +135,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:text="@string/profile_picture_name_label"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"/>
     <Space
@@ -171,7 +171,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="About me"
+        android:text="@string/profile_picture_about_me_label"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"/>
     <Space

@@ -68,6 +68,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.profile_toolbar_title_settings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         database = Firebase.database.reference
