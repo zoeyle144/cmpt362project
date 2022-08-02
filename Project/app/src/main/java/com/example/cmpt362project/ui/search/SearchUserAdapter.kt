@@ -7,10 +7,7 @@ import android.os.Parcel
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.example.cmpt362project.database.User
 //import com.example.cmpt362project.databinding.FragmentItemBinding
 import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
@@ -19,6 +16,7 @@ import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.K
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_NAME
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_PROFILE_PIC
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_USERNAME
+import com.example.cmpt362project.utility.ImageUtility
 
 /**
  * [RecyclerView.Adapter] that can display a [User].
@@ -44,7 +42,8 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
         holder.usernameView.text = item.username
-        holder.emailView.text = item.email
+        ImageUtility.setImageViewToProfilePic(item.profilePic, holder.pictureView)
+
         holder.entryView.setOnClickListener {
             val intent = Intent(context, SearchUserResultActivity::class.java)
             intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
@@ -61,11 +60,11 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
     inner class ViewHolder(binding: FragmentSearchUserEntryBinding) : RecyclerView.ViewHolder(binding.root) {
         val entryView: LinearLayout = binding.searchUserEntryAll
         val usernameView: TextView = binding.searchUserEntryUsername
-        val emailView: TextView = binding.searchUserEntryEmail
+        val pictureView: ImageView = binding.searchUserEntryProfilePic
 
-        override fun toString(): String {
-            return super.toString() + " '" + emailView.text + "'"
-        }
+//        override fun toString(): String {
+//            return super.toString() + " '" + emailView.text + "'"
+//        }
     }
 
     // Adapted from https://stackoverflow.com/a/37735562
