@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var drawerProfilePicView: ImageView
+    private lateinit var pathToProfilePic: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +63,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     val userData = it.value as Map<*, *>
                     drawerUsernameView.text = userData["username"].toString()
                     drawerEmailView.text = userData["email"].toString()
-                    ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+                    pathToProfilePic = userData["profilePic"].toString()
+                    ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
                 }
             }
         }
@@ -99,7 +101,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // The code setting KEY_PROFILE_PIC_RECENTLY_CHANGED to false calls this function again
             // Need to check if true to avoid calling setImageViewToProfilePic twice
             if (pfpRecentlyChanged) {
-                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+                ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
                 setProfilePicRecentlyChangedFalse()
             }
         }

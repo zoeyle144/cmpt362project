@@ -77,10 +77,9 @@ class UserProfileActivity : AppCompatActivity() {
                     emailView.editText?.setText(userData["email"] as String)
                     nameView.editText?.setText(userData["name"] as String)
                     aboutMeView.editText?.setText(userData["aboutMe"] as String)
+                    ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
                 }
             }
-
-        ImageUtility.setImageViewToProfilePic(pictureView)
 
         // Initialize the gallery activity
         // How to save image inside ViewModel to handle orientation change?
