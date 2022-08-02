@@ -63,6 +63,7 @@ class SearchUserResultActivity : AppCompatActivity() {
         // Disable functionality of the R.layout.activity_user_profile layout
         nameView.isEnabled = false
         aboutMeView.isEnabled = false
+        aboutMeView.isCounterEnabled = false
 
         val changePictureButton = findViewById<MaterialButton>(R.id.profile_picture_change_picture_button)
         changePictureButton.visibility = View.INVISIBLE
