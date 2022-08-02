@@ -99,7 +99,13 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
 
         if (constraint != null) {
             for (i in originalList) {
-                if (i.username.contains(constraint)) results.add(i)
+                if (results.size == 5) {
+                    println("Reached results limit")
+                    return results
+                }
+                if (i.username.contains(constraint)) {
+                    results.add(i)
+                }
             }
         }
 

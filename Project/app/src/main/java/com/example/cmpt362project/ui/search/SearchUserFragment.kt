@@ -83,7 +83,7 @@ class SearchUserFragment : Fragment() {
         addAccountButton.setOnClickListener {
             addNewAccount()
         }
-        addAccountButton.visibility = View.GONE
+        //addAccountButton.visibility = View.GONE
 
         return view
     }
@@ -92,8 +92,8 @@ class SearchUserFragment : Fragment() {
         val usernameTxt = UUID.randomUUID().toString().replace("-", "").take(8)
         val emailTxt = UUID.randomUUID().toString().replace("-", "").take(8)
 
-        val userData = User(usernameTxt, "$emailTxt@test.com", "", "defaults/default_pfp.png", "")
-        val entryID = "testUser_$usernameTxt"
+        val userData = User("d$usernameTxt", "$emailTxt@test.com", "", "defaults/default_pfp.png", "")
+        val entryID = "testUser_d$usernameTxt"
         database.child("users").child(entryID).setValue(userData)
         println("Added user $entryID")
     }
