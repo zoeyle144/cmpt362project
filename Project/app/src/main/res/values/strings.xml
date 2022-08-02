@@ -54,6 +54,7 @@
     <string name="profile_picture_name_label">Name</string>
     <string name="profile_picture_about_me_label">About me</string>
     <string name="profile_toolbar_title_settings">Profile settings</string>
+    <string name="profile_toolbar_save">Save changes</string>
 
 
 </resources>

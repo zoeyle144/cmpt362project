@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/profile_toolbar_save"
-        android:title="Save changes"
+        android:title="@string/profile_toolbar_save"
         android:icon="@drawable/ic_outline_save_24"
         app:showAsAction="always"
         />
