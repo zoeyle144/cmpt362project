@@ -1,20 +1,17 @@
 package com.example.cmpt362project.ui.search
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
-import com.example.cmpt362project.login.LoginPageActivity
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -22,7 +19,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
-import kotlin.collections.ArrayList
 
 class SearchUserFragment : Fragment() {
 
@@ -35,6 +31,8 @@ class SearchUserFragment : Fragment() {
     private var initRecyclerViewAdapter = false
 
     private lateinit var database: DatabaseReference
+
+    private lateinit var searchView: SearchView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,7 +79,7 @@ class SearchUserFragment : Fragment() {
         recyclerView.adapter = recyclerViewAdapter
         initRecyclerViewAdapter = true
 
-        val searchView = view.findViewById<SearchView>(R.id.search_user_search_bar)
+        searchView = view.findViewById(R.id.search_user_search_bar)
         val mySearchListener = SearchListener()
         searchView.setOnQueryTextListener(mySearchListener)
 
@@ -117,5 +115,10 @@ class SearchUserFragment : Fragment() {
             recyclerViewAdapter.filter.filter(newText)
             return false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        searchView.clearFocus()
     }
 }
