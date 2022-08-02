@@ -20,14 +20,10 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
 
         <activity
-            android:name=".SearchUserResultActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.settings.UserProfileActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
