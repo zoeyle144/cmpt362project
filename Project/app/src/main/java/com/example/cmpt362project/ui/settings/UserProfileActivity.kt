@@ -68,51 +68,17 @@ class UserProfileActivity : AppCompatActivity() {
         nameView = findViewById(R.id.profile_name_field)
         aboutMeView = findViewById(R.id.profile_about_me_field)
 
-        database.child("users").child(user.uid).child("username").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    usernameView.editText?.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user.uid).child("email").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    emailView.editText?.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user.uid).child("name").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    nameView.editText?.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user.uid).child("aboutMe").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    aboutMeView.editText?.setText(it.value as String)
-                }
-            }
-
-
         database.child("users").child(user.uid).get()
             .addOnSuccessListener {
-//                val test2 = it.value as User
-//                println("test2 is $test2")
-                println("it.value is ${it.value}")
+                if (it.value != null) {
+                    val userData = it.value as Map<*, *>
 
-                val userData = it.value as Map<*, *>
-                println("userData is $userData")
-
-                if (userData.containsKey("name")) {
-                    println("name is ${userData["name"]}")
-                } else {
-                    println("Not spe")
+                    usernameView.editText?.setText(userData["username"] as String)
+                    emailView.editText?.setText(userData["email"] as String)
+                    nameView.editText?.setText(userData["name"] as String)
+                    aboutMeView.editText?.setText(userData["aboutMe"] as String)
                 }
             }
-
 
         ImageUtility.setImageViewToProfilePic(pictureView)
 
