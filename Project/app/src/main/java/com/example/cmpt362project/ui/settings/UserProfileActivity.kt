@@ -1,11 +1,14 @@
 package com.example.cmpt362project.ui.settings
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -45,10 +48,14 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var pictureView: ImageView
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
+    private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
+    private lateinit var cameraImageUri: Uri
 
     companion object {
         const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
         const val SHARED_PREF = "SHARED_PREF"
+
+        const val REQUEST_CAMERA_PERMISSION_CODE = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +77,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         database.child("users").child(user.uid).get()
             .addOnSuccessListener {
-                if (it.value != null) {
+                if (it != null) {
                     val userData = it.value as Map<*, *>
 
                     usernameView.editText?.setText(userData["username"] as String)
@@ -93,6 +100,18 @@ class UserProfileActivity : AppCompatActivity() {
                 userProfileViewModel.setImage(image)
             }
         }
+
+        cameraImageUri = Uri.EMPTY
+        cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+            if (it) {
+                println("Camera success")
+                if (cameraImageUri != Uri.EMPTY) {
+                    println("URI not empty")
+                }
+            } else {
+                println("Camera failure")
+            }
+        }
     }
 
 
@@ -105,6 +124,9 @@ class UserProfileActivity : AppCompatActivity() {
                 _: DialogInterface, i: Int ->
             if (dialogOptions[i] == "Open camera") {
                 println("Camera!")
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION_CODE)
+                } else launchCamera()
             }
             else {
                 println("Gallery!")
@@ -115,6 +137,27 @@ class UserProfileActivity : AppCompatActivity() {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+
+    private fun launchCamera() {
+//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        cameraActivityResult.launch(cameraIntent)
+        cameraActivityResult.launch(cameraImageUri)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                println("Camera permission granted")
+                launchCamera()
+            } else println("Camera permission denied!")
+        }
     }
 
     fun saveProfile(v: View) {
