@@ -29,6 +29,8 @@ class SearchUserResultActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_baseline_close_24, theme))
+        supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_close))
 
         var username = ""
         var email = ""
