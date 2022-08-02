@@ -61,6 +61,8 @@ class SearchUserResultActivity : AppCompatActivity() {
         aboutMeView.editText?.setText(aboutMe)
 
         // Disable functionality of the R.layout.activity_user_profile layout
+        usernameView.isEnabled = false
+        emailView.isEnabled = false
         nameView.isEnabled = false
         aboutMeView.isEnabled = false
         aboutMeView.isCounterEnabled = false

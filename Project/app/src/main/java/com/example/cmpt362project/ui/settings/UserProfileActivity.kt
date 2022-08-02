@@ -83,6 +83,8 @@ class UserProfileActivity : AppCompatActivity() {
         emailView = findViewById(R.id.profile_email_field)
         nameView = findViewById(R.id.profile_name_field)
         aboutMeView = findViewById(R.id.profile_about_me_field)
+        usernameView.isEnabled = false
+        emailView.isEnabled = false
 
         database.child("users").child(user.uid).get()
             .addOnSuccessListener {

@@ -80,7 +80,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:startIconDrawable="@drawable/ic_outline_person_24"
-        android:enabled="false"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
@@ -115,7 +114,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:startIconDrawable="@drawable/ic_outline_email_24"
-        android:enabled="false"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
