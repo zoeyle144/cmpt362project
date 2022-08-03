@@ -13,6 +13,7 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_groups">Group</string>
 
+
     <string name="menu_settings">Settings</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -45,8 +46,12 @@
     <string name="create_group_button">Confirm</string>
     <string name="members"> Members</string>
     <string name="invite">Invite Members</string>
+
     <string name="menu_search">Search</string>
     <string name="search_user_hint">Search for users</string>
+
+    <string name="menu_chats">Private Chats</string>
+    <string name="send">SEND</string>
 
 
 </resources>
