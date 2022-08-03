@@ -26,6 +26,7 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
     : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
 
     private var originalList = list
+    private var cappedList = ArrayList<Int>(10)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -43,7 +44,7 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
         val item = list[position]
         holder.usernameView.text = item.username
         ImageUtility.setImageViewToProfilePic(item.profilePic, holder.pictureView)
-
+        println("onBindViewHolder called")
         holder.entryView.setOnClickListener {
             val intent = Intent(context, SearchUserResultActivity::class.java)
             intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
@@ -73,14 +74,17 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 @Suppress("UNCHECKED_CAST")
                 list = results?.values as ArrayList<User>
+                println("publishResults called once")
                 notifyDataSetChanged()
             }
 
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 var filteredResults = ArrayList<User>()
+
                 if (constraint != null) {
-                    filteredResults = (if (constraint.isEmpty()) originalList
-                    else getFilteredResults(constraint))
+//                    filteredResults = (if (constraint.isEmpty()) originalList
+//                    else getFilteredResults(constraint))
+                    filteredResults = getFilteredResults(constraint)
                 }
 
                 val filterResults = FilterResults()
