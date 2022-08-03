@@ -26,7 +26,6 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
     : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
 
     private var originalList = list
-    private var cappedList = ArrayList<Int>(10)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -82,9 +81,9 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
                 var filteredResults = ArrayList<User>()
 
                 if (constraint != null) {
-//                    filteredResults = (if (constraint.isEmpty()) originalList
-//                    else getFilteredResults(constraint))
-                    filteredResults = getFilteredResults(constraint)
+                    filteredResults = (if (constraint.isEmpty()) originalList
+                    else getFilteredResults(constraint))
+//                    filteredResults = getFilteredResults(constraint)
                 }
 
                 val filterResults = FilterResults()
@@ -103,10 +102,10 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
 
         if (constraint != null) {
             for (i in originalList) {
-                if (results.size == 5) {
-                    println("Reached results limit")
-                    return results
-                }
+//                if (results.size == 5) {
+//                    println("Reached results limit")
+//                    return results
+//                }
                 if (i.username.startsWith(constraint)) {
                     results.add(i)
                 }
