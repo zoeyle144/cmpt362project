@@ -15,6 +15,7 @@ class MessageRepository {
     val database = Firebase.database
     val auth = Firebase.auth
     private val msgRef = database.getReference("chat_messages")
+    private val chatRef = database.getReference("chats")
 
     fun fetchMsgs(liveData: MutableLiveData<List<Message>>, chatId: String){
         msgRef.child(chatId)
@@ -34,6 +35,7 @@ class MessageRepository {
     }
     fun insert(msg: Message){
         msgRef.child(msg.chatId).push().setValue(msg).addOnCompleteListener{
+            chatRef.child(msg.chatId).child("lastUpdateTimestamp").setValue(System.currentTimeMillis())
             println("debug: add message success")
         }.addOnFailureListener { err ->
             println("debug: add message fail Error ${err.message}")

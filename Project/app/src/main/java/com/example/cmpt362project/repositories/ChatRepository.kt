@@ -20,11 +20,13 @@ class ChatRepository {
             .orderByChild("lastUpdateTimestamp")
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val chats: List<Chat> = snapshot.children.map { dataSnapshot ->
+                    var chats: List<Chat> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(Chat::class.java)!!
                     }
-
+                    Log.w("DEBUG", chats.toString())
+                    chats = chats.filter{it.user1 == auth.currentUser!!.uid || it.user2 == auth.currentUser!!.uid}
                     liveData.postValue(chats.reversed())
+                    Log.w("DEBUG", chats.toString())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
