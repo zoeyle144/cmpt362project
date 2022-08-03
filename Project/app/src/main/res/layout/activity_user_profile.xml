@@ -6,115 +6,196 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.settings.UserProfileActivity">
+    tools:context=".ui.settings.UserProfileActivity"
+    >
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_baseline_delete_24"
+        app:navigationContentDescription="Discard changes"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/profile_image_background"
+        android:paddingTop="24dp">
+
         <ImageView
             android:id="@+id/profile_picture"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:contentDescription="@string/profile_picture_content_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:srcCompat="@drawable/empty_profile_pic"
-            android:contentDescription="Your profile picture"
-            android:layout_weight="3"/>
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Change"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
+            app:srcCompat="@drawable/empty_profile_pic" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/profile_picture_change_picture_button"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="-24dp"
+            android:layout_marginBottom="-24dp"
             android:onClick="onClickChangePhoto"
-            />
-    </LinearLayout>
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_outline_photo_camera_24"
+            app:iconPadding="0dp"
+            app:iconSize="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
+            app:layout_constraintEnd_toEndOf="@+id/profile_picture" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- Username -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/profile_picture_username_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         />
-    <EditText
-        android:id="@+id/profile_username"
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:minHeight="4dp"
         />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="E-mail"
-        />
-    <EditText
-        android:id="@+id/profile_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        />
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change name" />
-    <EditText
-        android:id="@+id/profile_edit_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change about me" />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_about_me_edit_text_layout"
+        android:id="@+id/profile_username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_person_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Username -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- E-mail -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_email_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_email_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_email_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- E-mail -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- Name -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_name_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:startIconDrawable="@drawable/ic_outline_badge_24"
+        app:hintAnimationEnabled="false"
+        app:hintEnabled="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Name -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- About me -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_about_me_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_about_me_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:counterEnabled="true"
         app:counterMaxLength="200"
         app:endIconMode="clear_text"
-        >
+        app:startIconDrawable="@drawable/ic_outline_subject_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_about_me_edit_text"
+            android:padding="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:maxLength="200"
             android:inputType="textMultiLine"
-            android:minHeight="48dp"
             />
-
     </com.google.android.material.textfield.TextInputLayout>
+    <!-- About me -->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/profile_save_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="saveProfile"
-            android:text="Save" />
-
-        <Button
-            android:id="@+id/profile_cancel_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="cancelButton"
-            android:text="Cancel" />
-
-    </LinearLayout>
 </LinearLayout>
