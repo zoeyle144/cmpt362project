@@ -2,6 +2,7 @@ package com.example.cmpt362project.ui.search
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -73,8 +74,24 @@ class SearchUserResultActivity : AppCompatActivity() {
         changePictureButton.visibility = View.INVISIBLE
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        finish()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.profile_search_toolbar, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+        R.id.profile_search_toolbar_chat -> {
+            println("Click chat")
+            true
+        }
+        R.id.profile_search_toolbar_invite -> {
+            println("Click invite")
+            true
+        }
+        else -> {
+            println("Click close")
+            finish()
+            true
+        }
     }
 }
