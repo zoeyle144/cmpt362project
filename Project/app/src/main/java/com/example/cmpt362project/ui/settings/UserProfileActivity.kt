@@ -70,6 +70,8 @@ class UserProfileActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = getString(R.string.profile_toolbar_title_settings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_baseline_close_24, theme))
+        supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_discard))
 
         database = Firebase.database.reference
         auth = Firebase.auth
