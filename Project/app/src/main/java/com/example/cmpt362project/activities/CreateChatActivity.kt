@@ -27,14 +27,15 @@ class CreateChatActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_chat)
 
-        val createBoardButton = findViewById<Button>(R.id.create_chat_button)
+        val createChatButton = findViewById<Button>(R.id.create_chat_button)
         val userid1 = findViewById<TextView>(R.id.user1_uid_input)
         val userid2 = findViewById<EditText>(R.id.user2_uid_input)
 
         userid1.text = auth.currentUser?.uid
         userid2.setText("liHbzqfBStYNLjAqtNWb1C7szPj2")
 
-        createBoardButton.setOnClickListener{
+        createChatButton.setOnClickListener{
+
             val chatListViewModel: ChatListViewModel = ViewModelProvider(this)[ChatListViewModel::class.java]
             val database = Firebase.database
             val chatsRef = database.getReference("chats")

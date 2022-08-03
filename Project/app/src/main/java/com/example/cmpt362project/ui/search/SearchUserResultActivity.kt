@@ -1,17 +1,25 @@
 package com.example.cmpt362project.ui.search
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
+import com.example.cmpt362project.activities.ChatConversationActivity
+import com.example.cmpt362project.models.Chat
 import com.example.cmpt362project.utility.ImageUtility
+import com.example.cmpt362project.viewModels.ChatListViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.ktx.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class SearchUserResultActivity : AppCompatActivity() {
 
@@ -23,6 +31,8 @@ class SearchUserResultActivity : AppCompatActivity() {
         const val KEY_SEARCH_USER_RESULT_ABOUT_ME = "KEY_SEARCH_USER_RESULT_ABOUT_ME"
     }
 
+    var username = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
@@ -33,7 +43,6 @@ class SearchUserResultActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_baseline_close_24, theme))
         supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_close))
 
-        var username = ""
         var email = ""
         var name = ""
         var profilePic = ""
@@ -81,7 +90,59 @@ class SearchUserResultActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
         R.id.profile_search_toolbar_chat -> {
-            println("Click chat")
+            val chatListViewModel: ChatListViewModel = ViewModelProvider(this)[ChatListViewModel::class.java]
+            val database = Firebase.database
+            val auth = Firebase.auth
+            val chatsRef = database.getReference("chats")
+            val usernamesRef = database.getReference("usernames")
+            val usersRef = database.getReference("users")
+            val chatID = chatsRef.push().key!!
+            val user1uid = auth.uid
+            var user2uid = ""
+            var myUsername = ""
+
+            Log.w("DEBUGU", username)
+            usernamesRef.child(username).get().addOnSuccessListener {
+                Log.w("DEBUGZ", it.value.toString())
+                user2uid = it.value.toString()
+                usersRef.child(auth.currentUser!!.uid).get().addOnSuccessListener {
+                    var usersListEntry = it.value as Map<*, *>
+                    myUsername = usersListEntry["username"].toString()
+
+                    val chat = Chat(chatID, user1uid as String, user2uid, System.currentTimeMillis())
+                    var actualChatID = chatID
+
+                    chatsRef.get().addOnSuccessListener {
+                        var exists = false
+                        if (it.value != null) {
+                            val chatList = it.value as Map<*, *>
+                            for ((key, value) in chatList) {
+                                var chatListEntry = value as Map<*, *>
+                                if (chatListEntry["user1"] == chat.user1 && chatListEntry["user2"] == chat.user2
+                                    || chatListEntry["user2"] == chat.user1 && chatListEntry["user1"] == chat.user2
+                                ) {
+                                    Log.w("DEBUGT", chatListEntry["chatId"].toString())
+                                    actualChatID = chatListEntry["chatId"].toString()
+                                    break
+                                }
+                            }
+
+                        }
+                        if (!exists) {
+                            chatListViewModel.insert(Chat(actualChatID, user1uid, user2uid, System.currentTimeMillis()))
+                        }
+
+
+                        val intent = Intent(this, ChatConversationActivity::class.java)
+                        intent.putExtra("chatId", actualChatID)
+                        intent.putExtra("otherUser", user2uid)
+                        intent.putExtra("otherUserUsername", username)
+                        intent.putExtra("myUsername", myUsername)
+                        startActivity(intent)
+                    }
+                }
+            }
+
             true
         }
         R.id.profile_search_toolbar_invite -> {
