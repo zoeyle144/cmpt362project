@@ -107,7 +107,7 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
                     println("Reached results limit")
                     return results
                 }
-                if (i.username.contains(constraint)) {
+                if (i.username.startsWith(constraint)) {
                     results.add(i)
                 }
             }
