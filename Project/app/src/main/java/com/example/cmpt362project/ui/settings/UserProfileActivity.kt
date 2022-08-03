@@ -207,12 +207,18 @@ class UserProfileActivity : AppCompatActivity() {
 
                 // Write the new profile picture path to the user's info
                 userReference.setValue(newImgPath).addOnSuccessListener {
-                    println("$printIdentifier: Uploaded $randomUUID to database")
+                    println("$printIdentifier: Uploaded $newImgPath to database")
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
-                    val oldImgRef = storage.child(oldImgPath.value as String)
-                    oldImgRef.delete().addOnSuccessListener {
-                        println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                    // Do not delete the old PFP if it's the default one
+                    val pathToDelete = oldImgPath.value as String
+                    if (pathToDelete != getString(R.string.default_pfp_path)) {
+                        val oldImgRef = storage.child(oldImgPath.value as String)
+                        oldImgRef.delete().addOnSuccessListener {
+                            println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                            updateProfilePicSharedPref()
+                        }
+                    } else {
                         updateProfilePicSharedPref()
                     }
                 }

@@ -118,7 +118,7 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
                     .addOnSuccessListener(this) { task ->
                         // Sign up success
                         val user = auth.currentUser
-                        val userData = User(usernameTxt, emailTxt, "", "defaults/default_pfp.png", "")
+                        val userData = User(usernameTxt, emailTxt, "", getString(R.string.default_pfp_path), "")
 
                         database.child("users").child(user!!.uid).setValue(userData)
 

@@ -119,7 +119,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     if (it != null) {
                         val userData = it.value as Map<*, *>
                         pathToProfilePic = userData["profilePic"].toString()
-
                         ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
                         setProfilePicRecentlyChangedFalse()
                     }

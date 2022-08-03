@@ -67,4 +67,5 @@
 
     <string name="menu_chats">Private Chats</string>
     <string name="send">SEND</string>
+    <string name="default_pfp_path">defaults/default_pfp.png</string>
 </resources>
