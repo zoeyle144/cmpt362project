@@ -3,6 +3,7 @@ package com.example.cmpt362project.models
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.database.IgnoreExtraProperties
+import java.util.*
 
 @IgnoreExtraProperties
 data class Task(
@@ -11,9 +12,13 @@ data class Task(
     val summary: String = "",
     val type: String = "",
     val createdBy: String = "",
-    val category: String = ""
+    val category: String = "",
+    val startDate: String = "",
+    val endDate: String = ""
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -30,6 +35,8 @@ data class Task(
         parcel.writeString(type)
         parcel.writeString(createdBy)
         parcel.writeString(category)
+        parcel.writeString(startDate)
+        parcel.writeString(endDate)
     }
 
     override fun describeContents(): Int {

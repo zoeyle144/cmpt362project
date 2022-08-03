@@ -21,15 +21,21 @@ class DisplayTaskActivity : AppCompatActivity() {
         val taskName = findViewById<EditText>(R.id.task_name)
         val taskSummary = findViewById<EditText>(R.id.task_summary)
         val taskType = findViewById<EditText>(R.id.task_type)
+        val taskStartDate = findViewById<EditText>(R.id.task_start_date)
+        val taskEndDate = findViewById<EditText>(R.id.task_end_date)
         val closeButton = findViewById<Button>(R.id.close_display_task)
 
         taskName.isEnabled = false
         taskSummary.isEnabled = false
         taskType.isEnabled = false
+        taskStartDate.isEnabled = false
+        taskEndDate.isEnabled = false
 
         taskName.setText(t?.name)
         taskSummary.setText(t?.summary)
         taskType.setText(t?.type)
+        taskStartDate.setText(t?.startDate)
+        taskEndDate.setText(t?.endDate)
 
         closeButton.setOnClickListener {
             finish()

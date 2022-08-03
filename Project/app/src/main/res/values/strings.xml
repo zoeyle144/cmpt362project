@@ -50,6 +50,12 @@
     <string name="menu_search">Search</string>
     <string name="search_user_hint">Search for users</string>
 
+    <string-array name="prioLvs">
+        <item>High Priority</item>
+        <item>Medium Priority</item>
+        <item>Low Priority</item>
+    </string-array>
+    
     <string name="profile_picture_content_desc">Your profile picture</string>
     <string name="profile_picture_username_label">Username</string>
     <string name="profile_picture_email_label">E-mail</string>
@@ -61,7 +67,4 @@
 
     <string name="menu_chats">Private Chats</string>
     <string name="send">SEND</string>
-
-
-
 </resources>
