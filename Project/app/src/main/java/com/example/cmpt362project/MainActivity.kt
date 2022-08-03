@@ -18,6 +18,7 @@ import com.example.cmpt362project.ui.settings.UserProfileActivity
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -28,9 +29,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private var user: FirebaseUser? = null
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var drawerProfilePicView: ImageView
+    private lateinit var pathToProfilePic: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         database = Firebase.database.reference
         auth = Firebase.auth
+        if (auth.currentUser != null) {
+            user = auth.currentUser
+        }
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -55,14 +61,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val drawerEmailView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email)
         drawerProfilePicView = navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic)
 
-        if (auth.currentUser != null) {
-            val user = auth.currentUser
+        if (user != null) {
             database.child("users").child(user!!.uid).get().addOnSuccessListener {
                 if (it != null) {
                     val userData = it.value as Map<*, *>
                     drawerUsernameView.text = userData["username"].toString()
                     drawerEmailView.text = userData["email"].toString()
-                    ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
+                    pathToProfilePic = userData["profilePic"].toString()
+                    ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
                 }
             }
         }
@@ -90,7 +96,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         // Check if the profile picture has changed recently. If it has, update the sidebar's PFP
         if (key == UserProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED) {
@@ -98,9 +103,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             // The code setting KEY_PROFILE_PIC_RECENTLY_CHANGED to false calls this function again
             // Need to check if true to avoid calling setImageViewToProfilePic twice
-            if (pfpRecentlyChanged) {
-                ImageUtility.setImageViewToProfilePic(drawerProfilePicView)
-                setProfilePicRecentlyChangedFalse()
+            if (pfpRecentlyChanged && user != null) {
+                database.child("users").child(user!!.uid).get().addOnSuccessListener {
+                    if (it != null) {
+                        val userData = it.value as Map<*, *>
+                        pathToProfilePic = userData["profilePic"].toString()
+
+                        ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
+                        setProfilePicRecentlyChangedFalse()
+                    }
+                }
             }
         }
     }

@@ -1,13 +1,18 @@
 package com.example.cmpt362project.ui.settings
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -16,6 +21,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.TooltipCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
@@ -37,21 +44,32 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
 
-    private lateinit var nameView: EditText
+    private lateinit var usernameView: TextInputLayout
+    private lateinit var emailView: TextInputLayout
+    private lateinit var nameView: TextInputLayout
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
+    private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
+    private lateinit var cameraImageUri: Uri
 
     companion object {
         const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
         const val SHARED_PREF = "SHARED_PREF"
+
+        const val REQUEST_CAMERA_PERMISSION_CODE = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
+
+        val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = getString(R.string.profile_toolbar_title_settings)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         database = Firebase.database.reference
         auth = Firebase.auth
@@ -61,70 +79,25 @@ class UserProfileActivity : AppCompatActivity() {
         userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
         userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
-        nameView = findViewById(R.id.profile_edit_name)
-        aboutMeView = findViewById(R.id.profile_about_me_edit_text_layout)
-
-        database.child("users").child(user.uid).child("username").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    val usernameView = findViewById<EditText>(R.id.profile_username)
-                    usernameView.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user!!.uid).child("email").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    val emailView = findViewById<EditText>(R.id.profile_email)
-                    emailView.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user.uid).child("name").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    nameView.setText(it.value as String)
-                }
-            }
-
-        database.child("users").child(user.uid).child("aboutMe").get()
-            .addOnSuccessListener(this) {
-                if (it.value != null) {
-                    aboutMeView.editText?.setText(it.value as String)
-                }
-            }
+        usernameView = findViewById(R.id.profile_username_field)
+        emailView = findViewById(R.id.profile_email_field)
+        nameView = findViewById(R.id.profile_name_field)
+        aboutMeView = findViewById(R.id.profile_about_me_field)
+        usernameView.isEnabled = false
+        emailView.isEnabled = false
 
         database.child("users").child(user.uid).get()
             .addOnSuccessListener {
-//                val test2 = it.value as User
-//                println("test2 is $test2")
-                println("it.value is ${it.value}")
+                if (it != null) {
+                    val userData = it.value as Map<*, *>
 
-                val userData = it.value as Map<*, *>
-                println("userData is $userData")
-
-                if (userData.containsKey("name")) {
-                    println("name is ${userData["name"]}")
-                } else {
-                    println("Not spe")
+                    usernameView.editText?.setText(userData["username"] as String)
+                    emailView.editText?.setText(userData["email"] as String)
+                    nameView.editText?.setText(userData["name"] as String)
+                    aboutMeView.editText?.setText(userData["aboutMe"] as String)
+                    ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
                 }
             }
-
-
-        // If cannot find an image, use a place holder
-//        val placeholderImage = userProfileViewModel.getImage()
-//        if (placeholderImage == null) {
-//            println("Placeholder is null, using default")
-//            // Don't use drawable, use bitmap
-//            // https://github.com/firebase/snippets-android/blob/f29858162c455292d3d18c1cc31d6776b299acbd/storage/app/src/main/java/com/google/firebase/referencecode/storage/kotlin/StorageActivity.kt#L148
-//            pictureView.setImageDrawable(getDrawable(R.drawable.ic_launcher_background))
-//        } else {
-//            println("Placeholder is not null, using view model!")
-//            pictureView.setImageBitmap(placeholderImage)
-//        }
-
-        ImageUtility.setImageViewToProfilePic(pictureView)
-
 
         // Initialize the gallery activity
         // How to save image inside ViewModel to handle orientation change?
@@ -136,6 +109,18 @@ class UserProfileActivity : AppCompatActivity() {
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
                 println("Image found. Calling userProfileViewModel.setImage")
                 userProfileViewModel.setImage(image)
+            }
+        }
+
+        cameraImageUri = Uri.EMPTY
+        cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+            if (it) {
+                println("Camera success")
+                if (cameraImageUri != Uri.EMPTY) {
+                    println("URI not empty")
+                }
+            } else {
+                println("Camera failure")
             }
         }
     }
@@ -150,6 +135,9 @@ class UserProfileActivity : AppCompatActivity() {
                 _: DialogInterface, i: Int ->
             if (dialogOptions[i] == "Open camera") {
                 println("Camera!")
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION_CODE)
+                } else launchCamera()
             }
             else {
                 println("Gallery!")
@@ -162,9 +150,30 @@ class UserProfileActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    fun saveProfile(v: View) {
+
+    private fun launchCamera() {
+//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        cameraActivityResult.launch(cameraIntent)
+        cameraActivityResult.launch(cameraImageUri)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                println("Camera permission granted")
+                launchCamera()
+            } else println("Camera permission denied!")
+        }
+    }
+
+    private fun saveProfile() {
         val user = auth.currentUser
-        val nameToAdd = nameView.text.toString()
+        val nameToAdd = nameView.editText?.text.toString()
         val aboutMeToAdd = aboutMeView.editText?.text.toString()
 
         database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
@@ -173,10 +182,6 @@ class UserProfileActivity : AppCompatActivity() {
 
         Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
 
-        finish()
-    }
-
-    fun cancelButton(v: View) {
         finish()
     }
 
@@ -220,6 +225,22 @@ class UserProfileActivity : AppCompatActivity() {
         with(sharedPref.edit()) {
             putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
             apply()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.profile_toolbar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+        R.id.profile_toolbar_save -> {
+            saveProfile()
+            true
+        }
+        else -> {
+            finish()
+            true
         }
     }
 }

@@ -50,8 +50,18 @@
     <string name="menu_search">Search</string>
     <string name="search_user_hint">Search for users</string>
 
+    <string name="profile_picture_content_desc">Your profile picture</string>
+    <string name="profile_picture_username_label">Username</string>
+    <string name="profile_picture_email_label">E-mail</string>
+    <string name="profile_picture_name_label">Name</string>
+    <string name="profile_picture_about_me_label">About me</string>
+    <string name="profile_toolbar_title_settings">Profile settings</string>
+    <string name="profile_toolbar_save">Save changes</string>
+    <string name="profile_toolbar_close">Close profile</string>
+
     <string name="menu_chats">Private Chats</string>
     <string name="send">SEND</string>
+
 
 
 </resources>
