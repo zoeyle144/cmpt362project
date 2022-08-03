@@ -7,6 +7,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -56,6 +57,11 @@
         <activity android:name=".activities.DisplayTaskActivity" />
         <activity android:name=".activities.DisplayBoardActivity" />
         <activity android:name=".ui.search.SearchUserResultActivity"/>
+
+        <service
+            android:name=".services.NotificationService"
+            android:enabled="true" >
+        </service>
     </application>
 
 </manifest>

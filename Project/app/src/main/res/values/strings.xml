@@ -48,5 +48,9 @@
     <string name="menu_search">Search</string>
     <string name="search_user_hint">Search for users</string>
 
-
+    <string-array name="prioLvs">
+        <item>High Priority</item>
+        <item>Medium Priority</item>
+        <item>Low Priority</item>
+    </string-array>
 </resources>

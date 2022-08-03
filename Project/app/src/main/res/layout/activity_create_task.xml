@@ -45,18 +45,45 @@
         android:layout_height="wrap_content"
         android:text="Type" />
 
-    <EditText
+    <Spinner
         android:id="@+id/create_task_type_input"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/start_date_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text" />
+        android:text="Start Date"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/start_date_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/end_date_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="End Date"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/end_date_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
 
     <Button
         android:id="@+id/create_task_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Confirm"
-        />
+        android:layout_margin="50dp"/>
 
 </LinearLayout>

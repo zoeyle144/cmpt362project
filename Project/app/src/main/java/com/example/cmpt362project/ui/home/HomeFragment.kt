@@ -1,16 +1,21 @@
 package com.example.cmpt362project.ui.home
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import android.widget.TextView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,13 +25,9 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateBoardActivity
 import com.example.cmpt362project.adaptors.*
 import com.example.cmpt362project.models.Board
-import com.example.cmpt362project.models.Category
 import com.example.cmpt362project.viewModels.BoardListViewModel
-import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+
 
 class HomeFragment : Fragment() {
 
@@ -70,6 +71,8 @@ class HomeFragment : Fragment() {
             view.context.startActivity(intent)
         }
 
+//        showNotification(requireActivity(),"This is the title", "This is the body", Intent());
+
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
         val prefSignature = prefs.getString("signature", "")
         val prefReply = prefs.getString("reply", "")
@@ -79,8 +82,7 @@ class HomeFragment : Fragment() {
         println("prefSignature is $prefSignature, prefReply is $prefReply, " +
                 "prefSync is $prefSync, prefAttachment is $prefAttachment")
 
-
-//        return root
         return view
     }
+
 }

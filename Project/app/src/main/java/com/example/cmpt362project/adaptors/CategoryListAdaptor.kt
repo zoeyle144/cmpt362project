@@ -4,13 +4,11 @@ import android.content.ClipDescription
 import android.content.Intent
 import android.view.*
 import android.widget.Button
-import android.widget.ScrollView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
@@ -25,6 +23,7 @@ import com.example.cmpt362project.viewModels.TaskListViewModel
 class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
     private lateinit var correspondTaskList: List<Task>
     private lateinit var vmsForDrag: ViewModelStoreOwner
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
         if(viewType == 0){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.category_list_adaptor, parent, false)
@@ -45,20 +44,24 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
     }
 
     override fun onBindViewHolder(holder: CategoryListAdaptor.ViewHolder, position: Int) {
-        println("debug: onbindviewhodler ran")
         if (position < itemCount-1){
             vmsForDrag = holder.vms
             holder.itemTitle?.text = categoryList[position].title
             val categoryTitle = categoryList[position].title
 
             val taskListView: RecyclerView = holder.itemView.findViewById(R.id.task_list)
-//            taskListView.isNestedScrollingEnabled = false;
             val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.VERTICAL, false)
             taskListView.layoutManager = layoutManager
             val taskList: List<Task> = ArrayList()
             val adapter: RecyclerView.Adapter<TaskListAdaptor.ViewHolder> = TaskListAdaptor(taskList, boardID)
             taskListView.adapter = adapter
             taskListView.setOnDragListener(dragListener)
+            taskListView.addItemDecoration(
+                DividerItemDecoration(
+                    holder.itemView.context,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
 
             holder.taskListViewModel.fetchTasks(boardID)
             holder.taskListViewModel.tasksLiveData.observe(lifecycleOwner){

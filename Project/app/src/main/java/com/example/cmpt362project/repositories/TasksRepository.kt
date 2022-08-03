@@ -25,7 +25,6 @@ class TasksRepository {
                     val tasks: List<Task> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(Task::class.java)!!
                     }
-                    println("debug: tasks: $tasks")
                     liveData.postValue(tasks)
                 }
 

@@ -1,12 +1,17 @@
 package com.example.cmpt362project.activities
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ClipDescription
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.ListView
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
@@ -45,6 +50,12 @@ class DisplayCategoryActivity: AppCompatActivity() {
         categoryList = ArrayList()
         adapter = CategoryListAdaptor(categoryList, boardTitle, boardID, this)
         recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.HORIZONTAL
+            )
+        )
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
         categoryListViewModel.fetchCategories(boardID)
@@ -68,6 +79,12 @@ class DisplayCategoryActivity: AppCompatActivity() {
         categoryList = ArrayList()
         adapter = CategoryListAdaptor(categoryList, boardTitle , boardID, this)
         recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.HORIZONTAL
+            )
+        )
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
         categoryListViewModel.fetchCategories(boardID)
