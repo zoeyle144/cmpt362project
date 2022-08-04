@@ -19,7 +19,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.cmpt362project.services.NotificationService
-import com.example.cmpt362project.ui.settings.SettingsProfileActivity
+import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth

@@ -1,4 +1,4 @@
-package com.example.cmpt362project.ui.settings
+package com.example.cmpt362project.ui.settings.profile
 
 import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
