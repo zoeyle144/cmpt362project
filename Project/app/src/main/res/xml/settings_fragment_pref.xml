@@ -7,7 +7,7 @@
             app:title="Edit your profile"
             app:icon="@drawable/settings_sym_account_circle"
             app:summary="Profile picture, name, about me">
-            <intent android:action="com.example.cmpt362project.ui.settings.UserProfileActivity" />
+            <intent android:action="com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity" />
         </Preference>
 
         <Preference

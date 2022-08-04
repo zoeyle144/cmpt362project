@@ -40,7 +40,7 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
-                <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity" />
+                <action android:name="com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
