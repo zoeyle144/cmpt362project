@@ -59,35 +59,29 @@ class EmailDialogFragment : DialogFragment() {
 
 
     private fun setNewEmail(newEmail: Editable) {
-        println("In setNewEmail")
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
             Toast.makeText(context, "Error: invalid email", Toast.LENGTH_SHORT)
         } else if (newEmail.isEmpty()) {
             Toast.makeText(context, "Error: empty email", Toast.LENGTH_SHORT)
         } else {
-            println("In setNewEmail, email not null")
-
             if (user != null) {
-                println("In setNewEmail, user not null. new email iis $newEmail")
+                // Set a user's email address
+                // https://firebase.google.com/docs/auth/android/manage-users#set_a_users_email_address
 
+                // Handle re-authenticate
+                // https://firebase.google.com/docs/auth/android/manage-users#re-authenticate_a_user
+
+                // Types of exceptions to check for
+                // https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#updateEmail(java.lang.String)
                 user!!.updateEmail(newEmail.toString())
-//                    .addOnSuccessListener {
-//                        println("In setNewEmail, success")
-//                        Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT)
-//                        dismiss()
-//                    }
-//                    .addOnFailureListener {
-//                        println("In setNewEmail, failure")
-//                        Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT)
-//                        dismiss()
-//                    }
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            println("User email address updated.")
-                            dismiss()
-                        }
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
+                        dismiss()
                     }
-
+                    .addOnFailureListener {
+                        Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
+                        dismiss()
+                    }
             }
         }
 
