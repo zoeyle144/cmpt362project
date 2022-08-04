@@ -55,7 +55,7 @@
         <item>Medium Priority</item>
         <item>Low Priority</item>
     </string-array>
-    
+
     <string name="profile_picture_content_desc">Your profile picture</string>
     <string name="profile_picture_username_label">Username</string>
     <string name="profile_picture_email_label">E-mail</string>
