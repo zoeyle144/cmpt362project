@@ -41,7 +41,7 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
         }
 
         taskEntry.setOnLongClickListener{
-            val clipText = " This is taskEntry"
+            val clipText = "This is taskEntry"
             val item = ClipData.Item(clipText)
             val dragData = ClipData(clipText, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item)
             val myshadow = View.DragShadowBuilder(it)

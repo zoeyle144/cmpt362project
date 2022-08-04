@@ -22,14 +22,15 @@ import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
 
-class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
+class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
     private lateinit var vmsForDrag: ViewModelStoreOwner
     private lateinit var  categoryListViewModel: CategoryListViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
+        val lifecycleOwner = parent.context as LifecycleOwner
         if(viewType == 0){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.category_list_adaptor, parent, false)
-            return ViewHolder(view)
+            return ViewHolder(view, lifecycleOwner)
         }else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_category_button, parent, false)
             val addCategoryButton = view.findViewById<Button>(R.id.add_category_button)
@@ -40,8 +41,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 intent.putExtra("boardID", boardID)
                 view.context.startActivity(intent)
             }
-
-            return ViewHolder(view)
+            return ViewHolder(view, lifecycleOwner)
         }
     }
 
@@ -66,7 +66,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             )
 
             holder.taskListViewModel.fetchTasks(boardID)
-            holder.taskListViewModel.tasksLiveData.observe(lifecycleOwner){
+            holder.taskListViewModel.tasksLiveData.observe(holder.lifecycleOwner){
                 val mutableIt = it.toMutableList()
                 mutableIt.removeIf{ it -> it.category != categoryTitle}
                 val mutableList = mutableIt.toList()
@@ -119,10 +119,11 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
         }
     }
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View, lifecycleOwner: LifecycleOwner): RecyclerView.ViewHolder(itemView){
         var itemTitle: TextView? = itemView.findViewById(R.id.item_title)
         var vms: ViewModelStoreOwner = itemView.context as ViewModelStoreOwner
         var taskListViewModel: TaskListViewModel = ViewModelProvider(vms)[TaskListViewModel::class.java]
+        var lifecycleOwner:LifecycleOwner = lifecycleOwner
     }
 
     fun updateList(newList:List<Category>){

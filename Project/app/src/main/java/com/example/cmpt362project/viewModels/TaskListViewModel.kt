@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cmpt362project.models.Category
 import com.example.cmpt362project.models.Task
+import com.example.cmpt362project.models.TaskUpdateData
 import com.example.cmpt362project.repositories.TasksRepository
 
 class TaskListViewModel(): ViewModel(){
@@ -27,5 +28,9 @@ class TaskListViewModel(): ViewModel(){
 
     fun updateCategory(boardID: String, taskID:String, category:String){
         repository.updateCategory(boardID, taskID, category)
+    }
+
+    fun updateTask(boardID: String, task: TaskUpdateData){
+        repository.updateTask(boardID, task)
     }
 }
