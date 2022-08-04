@@ -14,7 +14,6 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -22,10 +21,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.appcompat.widget.TooltipCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
-import com.example.cmpt362project.database.User
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -38,7 +35,7 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class UserProfileActivity : AppCompatActivity() {
+class SettingsProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -182,13 +179,13 @@ class UserProfileActivity : AppCompatActivity() {
         database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
         uploadImage()
 
-        Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
 
         finish()
     }
 
     private fun uploadImage() {
-        val printIdentifier = "UserProfileActivity uploadImage"
+        val printIdentifier = "SettingsProfileActivity uploadImage"
         val storage = Firebase.storage.reference
         val image = userProfileViewModel.getImage() ?: return
 

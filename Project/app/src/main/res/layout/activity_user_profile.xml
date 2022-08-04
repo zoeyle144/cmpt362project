@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.settings.UserProfileActivity"
+    tools:context=".ui.settings.SettingsProfileActivity"
     >
 
     <androidx.appcompat.widget.Toolbar
