@@ -13,9 +13,8 @@
         <Preference
             app:title="Edit your account"
             app:icon="@drawable/settings_sym_key"
-            app:summary="Log out, e-mail, password"
-            android:fragment="com.example.cmpt362project.ui.settings.account.SettingsAccountFragment"
-            >
+            app:summary="Log out, e-mail, password">
+            <intent android:action="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
         </Preference>
     </PreferenceCategory>
 

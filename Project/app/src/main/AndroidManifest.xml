@@ -7,10 +7,12 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -19,21 +21,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
-
+        <activity
+            android:name=".ui.settings.account.SettingsAccountActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.ChatConversationActivity"
             android:exported="false" />
         <activity
             android:name=".SearchUserResultActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.settings.profile.SettingsProfileActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            >
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.cmpt362project.ui.settings.UserProfileActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -68,15 +76,13 @@
         <activity android:name=".activities.DisplayCategoryActivity" />
         <activity android:name=".activities.DisplayTaskActivity" />
         <activity android:name=".activities.DisplayBoardActivity" />
-        <activity android:name=".ui.search.SearchUserResultActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            />
+        <activity
+            android:name=".ui.search.SearchUserResultActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
 
         <service
             android:name=".services.NotificationService"
-            android:enabled="true" >
-        </service>
-
+            android:enabled="true"></service>
     </application>
 
 </manifest>
