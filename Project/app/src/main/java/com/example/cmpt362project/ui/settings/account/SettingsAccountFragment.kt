@@ -14,6 +14,12 @@ class SettingsAccountFragment : PreferenceFragmentCompat() {
 
         val auth = Firebase.auth
         val logoutBtn = findPreference<Preference>("logout")
+        val emailPreference = findPreference<Preference>("email")
+
+        val user = auth.currentUser
+        if (user != null) {
+            emailPreference!!.summary = user.email
+        }
 
         logoutBtn!!.setOnPreferenceClickListener {
             auth.signOut()

@@ -15,6 +15,7 @@
         <Preference
             app:title="Change e-mail"
             app:icon="@drawable/settings_sym_account_email"
+            android:key="email"
             />
         <Preference
             app:title="Change password"
