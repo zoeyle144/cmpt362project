@@ -5,14 +5,14 @@
     <PreferenceCategory app:title="Your account">
         <Preference
             app:title="Edit your profile"
-            app:icon="@drawable/settings_sym_account_circle"
+            app:icon="@drawable/settings_sym_profile"
             app:summary="Profile picture, name, about me">
             <intent android:action="com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity" />
         </Preference>
 
         <Preference
             app:title="Edit your account"
-            app:icon="@drawable/settings_sym_key"
+            app:icon="@drawable/settings_sym_account"
             app:summary="Log out, e-mail, password">
             <intent android:action="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
         </Preference>

@@ -6,7 +6,7 @@
         <Preference
             app:title="Logout"
             app:summary="Sign out of current session"
-            app:icon="@drawable/settings_sym_logout"
+            app:icon="@drawable/settings_sym_account_logout"
             android:key="logout">
         </Preference>
     </PreferenceCategory>
