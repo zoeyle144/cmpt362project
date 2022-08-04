@@ -1,5 +1,6 @@
 package com.example.cmpt362project.adaptors
 
+import android.app.AlertDialog
 import android.content.ClipDescription
 import android.content.Intent
 import android.view.*
@@ -7,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,8 +23,8 @@ import com.example.cmpt362project.viewModels.TaskListViewModel
 
 
 class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
-    private lateinit var correspondTaskList: List<Task>
     private lateinit var vmsForDrag: ViewModelStoreOwner
+    private lateinit var  categoryListViewModel: CategoryListViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
         if(viewType == 0){
@@ -68,15 +70,30 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 val mutableIt = it.toMutableList()
                 mutableIt.removeIf{ it -> it.category != categoryTitle}
                 val mutableList = mutableIt.toList()
-                correspondTaskList = mutableList
                 (adapter as TaskListAdaptor).updateList(mutableList)
                 (adapter as TaskListAdaptor).notifyDataSetChanged()
             }
 
             val deleteCategoryButton = holder.itemView.findViewById<Button>(R.id.delete_category_button)
             deleteCategoryButton.setOnClickListener {
-                val categoryListViewModel: CategoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
-                categoryListViewModel.delete(boardID, categoryList[position].categoryID, correspondTaskList)
+                val confirmationBuilder = AlertDialog.Builder(holder.itemView.context)
+                confirmationBuilder.setMessage("Are you sure you want to Delete Category <$categoryTitle>?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes") { dialog, id ->
+                        val taskRecyclerView = holder.itemView.findViewById<RecyclerView>(R.id.task_list)
+                        val numOfTasksUnderCategory = taskRecyclerView.childCount
+                        var taskIDsToDelete: MutableList<String> = ArrayList()
+                        for (i in 0 until numOfTasksUnderCategory) {
+                            taskIDsToDelete.add(taskRecyclerView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
+                        }
+                        categoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
+                        categoryListViewModel.delete(boardID, categoryList[position].categoryID, taskIDsToDelete)
+                    }
+                    .setNegativeButton("No") { dialog, id ->
+                        dialog.dismiss()
+                    }
+                val alert = confirmationBuilder.create()
+                alert.show()
             }
 
             val addTaskButton = holder.itemView.findViewById<Button>(R.id.add_task_button)

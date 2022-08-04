@@ -23,10 +23,10 @@ class CategoryListViewModel: ViewModel(){
         repository.insert(category, boardID)
     }
 
-    fun delete(boardID: String, categoryID:String, correspondTaskList:List<Task>){
+    fun delete(boardID: String, categoryID:String, correspondTaskList:MutableList<String>){
         val iterator = correspondTaskList.listIterator()
         for (i in iterator) {
-            repository2.delete(boardID, i.taskID)
+            repository2.delete(boardID, i)
         }
         repository.delete(boardID, categoryID)
     }
