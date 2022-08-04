@@ -33,9 +33,6 @@
             android:name=".activities.ChatConversationActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchUserResultActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.settings.profile.SettingsProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
