@@ -1,5 +1,6 @@
 package com.example.cmpt362project.activities
 
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ClipDescription
@@ -35,6 +36,7 @@ class DisplayCategoryActivity: AppCompatActivity() {
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>? = null
     private lateinit var categoryList: List<Category>
+    private lateinit var boardListViewModel: BoardListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -103,12 +105,22 @@ class DisplayCategoryActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_category_button){
-            val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
-            val boardListViewModel: BoardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-            boardListViewModel.delete(boardID)
-            finish()
+            val confirmationBuilder = AlertDialog.Builder(this)
+            val selectedBoard = intent.getParcelableExtra<Board>("board")
+            confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    val boardID = selectedBoard?.boardID.toString()
+                    boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+                    boardListViewModel.delete(boardID)
+                    finish()
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    dialog.dismiss()
+                }
+            val alert = confirmationBuilder.create()
+            alert.show()
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

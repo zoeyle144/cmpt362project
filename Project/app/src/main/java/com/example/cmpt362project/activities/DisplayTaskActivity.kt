@@ -1,17 +1,23 @@
 package com.example.cmpt362project.activities
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Task
+import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
 class DisplayTaskActivity : AppCompatActivity() {
+    private lateinit var taskListViewModel: TaskListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +56,22 @@ class DisplayTaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_task_btn){
-            val id = intent.getParcelableExtra<Task>("task")?.taskID
-            var boardID = intent.getSerializableExtra("boardID").toString()
-            val taskListViewModel: TaskListViewModel = ViewModelProvider(this)[TaskListViewModel::class.java]
-            taskListViewModel.delete(boardID, id.toString())
-            finish()
+            val confirmationBuilder = AlertDialog.Builder(this)
+            val selectedTask = intent.getParcelableExtra<Task>("task")
+            confirmationBuilder.setMessage("Are you sure you want to Delete Task <${selectedTask?.name}>?")
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    val taskID = selectedTask?.taskID.toString()
+                    val boardID = intent.getSerializableExtra("boardID").toString()
+                    taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
+                    taskListViewModel.delete(boardID, taskID)
+                    finish()
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    dialog.dismiss()
+                }
+            val alert = confirmationBuilder.create()
+            alert.show()
         }
         return super.onOptionsItemSelected(item)
     }
