@@ -12,7 +12,7 @@
         android:elevation="4dp"
         app:navigationIcon="@drawable/toolbar_settings_dialog_close"
         app:title="Change your e-mail"
-        app:navigationContentDescription="@string/settings_account_nav_icon_content_desc"
+        app:navigationContentDescription="@string/profile_toolbar_discard"
         />
 
     <Space
