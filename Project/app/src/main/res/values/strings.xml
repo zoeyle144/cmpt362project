@@ -71,4 +71,8 @@
     <string name="profile_toolbar_discard">Discard changes</string>
     <string name="settings_account_toolbar_title">Account settings</string>
     <string name="settings_account_nav_icon_content_desc">Back</string>
+
+    <string name="account_settings_current_email_label">Current e-mail</string>
+    <string name="account_settings_new_email_label">Enter new e-mail</string>
+    <string name="account_settings_password_label">Enter current password</string>
 </resources>
