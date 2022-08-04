@@ -47,7 +47,7 @@ class SettingsProfileActivity : AppCompatActivity() {
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
-    private lateinit var userProfileViewModel: UserProfileViewModel
+    private lateinit var userProfileViewModel: SettingsProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
     private lateinit var cameraImageUri: Uri
@@ -75,7 +75,7 @@ class SettingsProfileActivity : AppCompatActivity() {
         user = auth.currentUser!!
 
         pictureView = findViewById(R.id.profile_picture)
-        userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
+        userProfileViewModel = ViewModelProvider(this).get(SettingsProfileViewModel::class.java)
         userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
         usernameView = findViewById(R.id.profile_username_field)
