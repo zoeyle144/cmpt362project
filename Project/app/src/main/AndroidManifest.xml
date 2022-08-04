@@ -23,7 +23,9 @@
         android:theme="@style/Theme.CMPT362Project">
         <activity
             android:name=".ui.settings.account.SettingsAccountActivity"
-            android:exported="false">
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

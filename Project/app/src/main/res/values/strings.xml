@@ -69,4 +69,6 @@
     <string name="send">SEND</string>
     <string name="default_pfp_path">defaults/default_pfp.png</string>
     <string name="profile_toolbar_discard">Discard changes</string>
+    <string name="settings_account_toolbar_title">Account settings</string>
+    <string name="settings_account_nav_icon_content_desc">Back</string>
 </resources>
