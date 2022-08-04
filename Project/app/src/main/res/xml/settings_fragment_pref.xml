@@ -18,13 +18,4 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Session">
-        <Preference
-            app:title="Logout"
-            app:summary="Sign out of current session"
-            app:icon="@drawable/settings_sym_logout"
-            android:key="logout">
-        </Preference>
-    </PreferenceCategory>
-
 </PreferenceScreen>
