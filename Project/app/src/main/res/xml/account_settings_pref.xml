@@ -11,19 +11,24 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="Credentials">
+        <Preference
+            app:title="Change e-mail"
+            app:icon="@drawable/settings_sym_account_email"
+            />
+        <Preference
+            app:title="Change password"
+            app:summary="Change your password to a new one"
+            app:icon="@drawable/settings_sym_account_password"
+            />
+    </PreferenceCategory>
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
+    <PreferenceCategory app:title="Advanced">
+        <Preference
+            app:title="Delete your account"
+            app:summary="Delete your account forever"
+            app:icon="@drawable/settings_sym_account_delete"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>
