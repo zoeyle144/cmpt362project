@@ -4,9 +4,16 @@
 
     <PreferenceCategory app:title="Your profile">
         <Preference
-            app:title="Edit user profile"
-            app:icon="@drawable/ic_baseline_account_circle_24"
+            app:title="Edit your profile"
+            app:icon="@drawable/settings_sym_account_circle"
             app:summary="Profile picture, name, about me">
+            <intent android:action="com.example.cmpt362project.ui.settings.UserProfileActivity" />
+        </Preference>
+
+        <Preference
+            app:title="Edit your account"
+            app:icon="@drawable/settings_sym_key"
+            app:summary="Log out, e-mail, password">
             <intent android:action="com.example.cmpt362project.ui.settings.UserProfileActivity" />
         </Preference>
     </PreferenceCategory>
@@ -15,7 +22,7 @@
         <Preference
             app:title="Logout"
             app:summary="Sign out of current session"
-            app:icon="@drawable/settings_logout"
+            app:icon="@drawable/settings_sym_logout"
             android:key="logout">
         </Preference>
     </PreferenceCategory>
