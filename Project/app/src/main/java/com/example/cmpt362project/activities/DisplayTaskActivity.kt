@@ -10,15 +10,25 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
+import com.example.cmpt362project.adaptors.BoardDragManageAdaptor
+import com.example.cmpt362project.adaptors.BoardListAdaptor
+import com.example.cmpt362project.adaptors.TaskChecklistAdaptor
+import com.example.cmpt362project.adaptors.TaskChecklistDragManageAdaptor
 import com.example.cmpt362project.models.Task
+import com.example.cmpt362project.models.TaskChecklistItem
 import com.example.cmpt362project.models.TaskUpdateData
 import com.example.cmpt362project.viewModels.CategoryListViewModel
+import com.example.cmpt362project.viewModels.TaskChecklistViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
 class DisplayTaskActivity : AppCompatActivity() {
     private lateinit var taskListViewModel: TaskListViewModel
+    private lateinit var taskChecklistViewModel: TaskChecklistViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,12 +54,40 @@ class DisplayTaskActivity : AppCompatActivity() {
 
         val taskID = t?.taskID.toString()
 
+        val taskChecklistView: RecyclerView = findViewById(R.id.task_checklist)
+        val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        taskChecklistView.layoutManager = layoutManager
+        val taskChecklistItemList: List<TaskChecklistItem> = ArrayList()
+        val adapter: RecyclerView.Adapter<TaskChecklistAdaptor.ViewHolder> = TaskChecklistAdaptor(taskChecklistItemList, boardID, taskID)
+        taskChecklistView.adapter = adapter
+        taskChecklistView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+        taskChecklistViewModel = ViewModelProvider(this)[TaskChecklistViewModel::class.java]
+        taskChecklistViewModel.fetchTasks(boardID, taskID)
+        taskChecklistViewModel.taskChecklistItemsLiveData.observe(this){
+            (adapter as TaskChecklistAdaptor).updateList(it)
+            (adapter as TaskChecklistAdaptor).notifyDataSetChanged()
+        }
+
+        val dividerItemDecoration = DividerItemDecoration(this, (layoutManager as LinearLayoutManager).orientation)
+        taskChecklistView.addItemDecoration(dividerItemDecoration)
+        // Setup ItemTouchHelper
+        val callback = TaskChecklistDragManageAdaptor(
+            adapter as TaskChecklistAdaptor, this,
+            ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT))
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(taskChecklistView)
+
         saveButton.setOnClickListener {
-            val taskNameForUpdate = findViewById<EditText>(R.id.task_name).text.toString()
-            val taskSummaryForUpdate = findViewById<EditText>(R.id.task_summary).text.toString()
-            val taskTypeForUpdate = findViewById<EditText>(R.id.task_type).text.toString()
-            val taskStartDateForUpdate = findViewById<EditText>(R.id.task_start_date).text.toString()
-            val taskEndDateForUpdate = findViewById<EditText>(R.id.task_end_date).text.toString()
+            val taskNameForUpdate = taskName.text.toString()
+            val taskSummaryForUpdate = taskSummary.text.toString()
+            val taskTypeForUpdate = taskType.text.toString()
+            val taskStartDateForUpdate = taskStartDate.text.toString()
+            val taskEndDateForUpdate = taskEndDate.text.toString()
             val taskForUpdate = TaskUpdateData(taskID, taskNameForUpdate, taskSummaryForUpdate, taskTypeForUpdate, taskStartDateForUpdate, taskEndDateForUpdate)
             taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
             taskListViewModel.updateTask(boardID, taskForUpdate)
