@@ -53,6 +53,7 @@ class EmailDialogFragment : DialogFragment() {
         passwordView = view.findViewById(R.id.account_settings_password_field)
 
         newEmailView.editText!!.addTextChangedListener { newEmailView.error = null }
+        passwordView.editText!!.addTextChangedListener { passwordView.error = null }
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_toolbar)
@@ -76,15 +77,12 @@ class EmailDialogFragment : DialogFragment() {
 
 
     private fun setNewEmail(newEmail: String) {
-
         val password = passwordView.editText!!.text.toString()
 
         viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
-            val changeFailStr = "Failed to change e-mail."
-
             when (waitBoolean) {
                 EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
-                    Toast.makeText(context, "$changeFailStr Check your password.", Toast.LENGTH_SHORT).show()
+                    passwordView.error = "Password is incorrect."
                 }
                 EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
                     if (user != null) {
