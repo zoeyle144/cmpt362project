@@ -19,7 +19,7 @@ import com.google.firebase.ktx.Firebase
 class PasswordDialogFragment : DialogFragment() {
 
     private var user: FirebaseUser? = null
-    private lateinit var viewModel: EmailDialogFragmentViewModel
+    private lateinit var viewModel: ReAuthenticator
 
     private lateinit var currentPasswordView: TextInputLayout
     private lateinit var newPasswordView: TextInputLayout
@@ -38,7 +38,7 @@ class PasswordDialogFragment : DialogFragment() {
         val view = inflater.inflate(R.layout.account_settings_password_dialog, container, false)
 
         user = Firebase.auth.currentUser
-        viewModel = ViewModelProvider(requireActivity())[EmailDialogFragmentViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ReAuthenticator::class.java]
 
         currentPasswordView = view.findViewById(R.id.enter_current_password_field)
         newPasswordView = view.findViewById(R.id.enter_new_password_field)
@@ -70,8 +70,8 @@ class PasswordDialogFragment : DialogFragment() {
     private fun setNewPassword(currPass: String, newPass: String, reNewPass: String) {
         viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when(waitBoolean) {
-                WaitBoolean.FALSE -> currentPasswordView.error = "Current password is incorrect."
-                WaitBoolean.TRUE -> {
+                ReAuthenticateBoolean.FALSE -> currentPasswordView.error = "Current password is incorrect."
+                ReAuthenticateBoolean.TRUE -> {
                     if (user != null) {
                         if (newPass.isEmpty()) newPasswordView.error = "Enter new password field cannot empty."
                         else if (newPass != reNewPass) reNewPasswordView.error = "Does not match the new password field."

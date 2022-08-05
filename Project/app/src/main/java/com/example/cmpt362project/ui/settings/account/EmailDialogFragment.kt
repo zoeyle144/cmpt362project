@@ -20,7 +20,7 @@ class EmailDialogFragment : DialogFragment() {
     private var user: FirebaseUser? = null
     private lateinit var newEmailView: TextInputLayout
     private lateinit var passwordView: TextInputLayout
-    private lateinit var viewModel: EmailDialogFragmentViewModel
+    private lateinit var viewModel: ReAuthenticator
 
     companion object {
         const val KEY_EMAIL_RECENTLY_CHANGED = "KEY_EMAIL_RECENTLY_CHANGED"
@@ -37,7 +37,7 @@ class EmailDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         user = Firebase.auth.currentUser
-        viewModel = ViewModelProvider(requireActivity())[EmailDialogFragmentViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ReAuthenticator::class.java]
 
         val view = inflater.inflate(R.layout.account_settings_email_dialog, container, false)
 
@@ -78,10 +78,10 @@ class EmailDialogFragment : DialogFragment() {
 
         viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
             when (waitBoolean) {
-                WaitBoolean.FALSE -> {
+                ReAuthenticateBoolean.FALSE -> {
                     passwordView.error = "Password is incorrect."
                 }
-                WaitBoolean.TRUE -> {
+                ReAuthenticateBoolean.TRUE -> {
                     if (user != null) {
                         if (newEmail.isNotEmpty()) {
                             user!!.updateEmail(newEmail)
