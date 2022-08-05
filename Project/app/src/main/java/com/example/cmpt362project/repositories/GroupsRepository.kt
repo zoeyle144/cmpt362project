@@ -31,4 +31,23 @@ class GroupsRepository {
             })
     }
 
+    fun insert(group: Group){
+        groupsRef.child(group.groupID).setValue(group)
+            .addOnCompleteListener{
+                println("debug: add group success")
+            }.addOnFailureListener{ err ->
+                println("debug: add group fail Error ${err.message}")
+            }
+    }
+
+
+    fun delete(groupID: String){
+        groupsRef.child(groupID).removeValue()
+            .addOnSuccessListener {
+                println("debug: delete group success")
+            }.addOnFailureListener{ err ->
+                println("debug: delete group fail Error ${err.message}")
+            }
+    }
+
 }

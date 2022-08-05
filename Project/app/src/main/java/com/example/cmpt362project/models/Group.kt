@@ -7,31 +7,32 @@ import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class Group(
+    val groupID: String = "",
     val groupName: String = "",
     val description: String = "",
     val createdBy: String = "",
-    val members: List<String> = ArrayList(),
-    val boards: List<Board> = ArrayList()
+    val assignedTo: ArrayList<String> = ArrayList(),
+    val roles: List<Permission> = ArrayList()
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-//        val files = parcel.createStringList(),
-        parcel.createStringList(),
-
-        arrayListOf<Board>().also { parcel.readTypedList(it,Board.CREATOR) },
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        arrayListOf<Permission>().also { parcel.readTypedList(it,Permission.CREATOR) },
     //    arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        parcel.writeString(groupID)
         parcel.writeString(groupName)
         parcel.writeString(description)
         parcel.writeString(createdBy)
-        parcel.writeStringList(members)
-        parcel.writeTypedList(boards)
+        parcel.writeStringList(assignedTo)
+        parcel.writeTypedList(roles)
     //    parcel.writeTypedList(categories)
     }
 
@@ -48,18 +49,4 @@ data class Group(
             return arrayOfNulls(size)
         }
     }
-}
-
-fun Parcel.createStringList(): List<String> {
-    val size = readString()!!.length
-    val output = ArrayList<String>(size)
-    for (i in 0 until size) {
-        readString()?.let { output.add(it) }
-    }
-    return output
-}
-
-fun Parcel.writeStringList(input:List<String>) {
-    writeInt(input.size) // Save number of elements.
-    return input.forEach(this::writeString) // Save each element.
 }

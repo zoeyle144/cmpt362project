@@ -9,6 +9,8 @@ import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateBoardActivity
 import com.example.cmpt362project.activities.CreateGroupActivity
@@ -22,10 +24,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class GroupsFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
-    private lateinit var groupListAdapter: GroupListAdapter
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var adapter: RecyclerView.Adapter<GroupListAdapter.ViewHolder>? = null
     private lateinit var groupList: List<Group>
-    private lateinit var groupListView: ListView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,16 +37,18 @@ class GroupsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_groups, container, false)
         val floatActionButton = view.findViewById<FloatingActionButton>(R.id.add_group_button)
         val groupListViewModel: GroupListViewModel = ViewModelProvider(requireActivity())[GroupListViewModel::class.java]
+        val groupListView = view.findViewById<RecyclerView>(R.id.group_list)
 
-        groupListView = view.findViewById(R.id.group_list)
+        layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        groupListView.layoutManager = layoutManager
         groupList =  ArrayList()
-        groupListAdapter = GroupListAdapter(requireActivity(), groupList)
-        groupListView.adapter = groupListAdapter
+        adapter = GroupListAdapter(groupList)
+        groupListView.adapter = adapter
 
         groupListViewModel.getGroups()
         groupListViewModel.groupsLiveData.observe(requireActivity()){
-            groupListAdapter.updateList(it)
-            groupListAdapter.notifyDataSetChanged()
+            (adapter as GroupListAdapter).updateList(it)
+            (adapter as GroupListAdapter).notifyDataSetChanged()
         }
 
         floatActionButton.setOnClickListener{
