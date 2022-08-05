@@ -22,12 +22,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
         <activity
+            android:name=".ui.settings.AboutAppActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.AboutAppActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.settings.account.SettingsAccountActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            >
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -81,7 +90,7 @@
 
         <service
             android:name=".services.NotificationService"
-            android:enabled="true"></service>
+            android:enabled="true" />
     </application>
 
 </manifest>

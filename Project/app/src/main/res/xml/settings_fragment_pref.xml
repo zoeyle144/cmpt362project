@@ -22,8 +22,8 @@
         <Preference
             app:title="About Horizon"
             app:icon="@drawable/settings_sym_about"
-            app:summary="Version number, credits"
-            >
+            app:summary="Version number, credits">
+            <intent android:action="com.example.cmpt362project.ui.settings.AboutAppActivity" />
         </Preference>
         <Preference
             app:title="Our website"
