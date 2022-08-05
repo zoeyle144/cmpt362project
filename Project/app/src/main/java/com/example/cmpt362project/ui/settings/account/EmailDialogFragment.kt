@@ -81,7 +81,7 @@ class EmailDialogFragment : DialogFragment() {
             viewModel.reAuthenticate(user, pass).observe(viewLifecycleOwner) { waitBoolean ->
                 when (waitBoolean) {
                     EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
-                        Toast.makeText(context, "Error: re-authentication failed. Check your password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Error: failed to change email. Check your password", Toast.LENGTH_SHORT).show()
                     }
                     EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
                         if (user != null) {
@@ -101,29 +101,7 @@ class EmailDialogFragment : DialogFragment() {
                     else -> {}
                 }
             }
-
-            if (false) {
-                if (false) {
-                    // Set a user's email address
-                    // https://firebase.google.com/docs/auth/android/manage-users#set_a_users_email_address
-
-                    // Handle re-authenticate
-                    // https://firebase.google.com/docs/auth/android/manage-users#re-authenticate_a_user
-
-                    // Types of exceptions to check for
-                    // https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#updateEmail(java.lang.String)
-
-                } else {
-                    Toast.makeText(context, "Error: re-authentication failed. Check your password", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
-
-        /*
-         TODO: - doesn't check for password
-         TODO: - SettingsAccountFragment doesn't update its field based on the new email
-         TODO: - user profile (and Realtime Database) don't get the new e-mail
-         */
     }
 
     private fun updateNewEmailSharedPref() {
@@ -133,7 +111,6 @@ class EmailDialogFragment : DialogFragment() {
                 putBoolean(KEY_EMAIL_RECENTLY_CHANGED, true)
                 apply()
             }
-            println("updateNewEmailSharedPref called")
         }
     }
 
