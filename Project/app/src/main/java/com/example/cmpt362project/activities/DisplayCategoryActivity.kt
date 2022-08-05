@@ -50,7 +50,7 @@ class DisplayCategoryActivity: AppCompatActivity() {
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID, this)
+        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -79,7 +79,7 @@ class DisplayCategoryActivity: AppCompatActivity() {
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID, this)
+        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(

@@ -22,7 +22,7 @@ import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
 
-class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var lifecycleOwner: LifecycleOwner) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
+class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
     private lateinit var vmsForDrag: ViewModelStoreOwner
     private lateinit var  categoryListViewModel: CategoryListViewModel
 
@@ -40,7 +40,6 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 intent.putExtra("boardID", boardID)
                 view.context.startActivity(intent)
             }
-
             return ViewHolder(view)
         }
     }
@@ -66,7 +65,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             )
 
             holder.taskListViewModel.fetchTasks(boardID)
-            holder.taskListViewModel.tasksLiveData.observe(lifecycleOwner){
+            holder.taskListViewModel.tasksLiveData.observe(holder.lifecycleOwner){
                 val mutableIt = it.toMutableList()
                 mutableIt.removeIf{ it -> it.category != categoryTitle}
                 val mutableList = mutableIt.toList()
@@ -80,11 +79,10 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 confirmationBuilder.setMessage("Are you sure you want to Delete Category <$categoryTitle>?")
                     .setCancelable(false)
                     .setPositiveButton("Yes") { dialog, id ->
-                        val taskRecyclerView = holder.itemView.findViewById<RecyclerView>(R.id.task_list)
-                        val numOfTasksUnderCategory = taskRecyclerView.childCount
+                        val numOfTasksUnderCategory = taskListView.childCount
                         var taskIDsToDelete: MutableList<String> = ArrayList()
                         for (i in 0 until numOfTasksUnderCategory) {
-                            taskIDsToDelete.add(taskRecyclerView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
+                            taskIDsToDelete.add(taskListView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
                         }
                         categoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
                         categoryListViewModel.delete(boardID, categoryList[position].categoryID, taskIDsToDelete)
@@ -123,6 +121,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
         var itemTitle: TextView? = itemView.findViewById(R.id.item_title)
         var vms: ViewModelStoreOwner = itemView.context as ViewModelStoreOwner
         var taskListViewModel: TaskListViewModel = ViewModelProvider(vms)[TaskListViewModel::class.java]
+        var lifecycleOwner:LifecycleOwner = itemView.context as LifecycleOwner
     }
 
     fun updateList(newList:List<Category>){

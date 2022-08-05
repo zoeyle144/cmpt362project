@@ -15,11 +15,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.sql.Timestamp
 
 class CreateTaskActivity: AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private var months = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+    private var days = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,10 @@ class CreateTaskActivity: AppCompatActivity() {
         val startDate = findViewById<TextView>(R.id.start_date_display)
         var endDateButton = findViewById<Button>(R.id.end_date_button)
         val endDate = findViewById<TextView>(R.id.end_date_display)
+        var startTimeInMillis: Long = 0
+        var endTimeInMillis: Long = 0
+
+
         ArrayAdapter.createFromResource(
             this,
             R.array.prioLvs,
@@ -49,7 +55,34 @@ class CreateTaskActivity: AppCompatActivity() {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                startDate.text = "$dayOfMonth ${months[month]}, $year"
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND,0)
+                startTimeInMillis = cal.timeInMillis
+                var startDateString = "$dayOfMonth ${months[month]}, $year"
+                startDate.text = startDateString
+                val builder2 = TimePickerDialog.OnTimeSetListener{
+                        _, hour, minute->
+                    cal.set(Calendar.HOUR_OF_DAY, hour)
+                    cal.set(Calendar.MINUTE, minute)
+                    cal.set(Calendar.SECOND, 0)
+                    cal.set(Calendar.MILLISECOND,0)
+                    val timeString = "%02d:%02d".format(hour,minute)
+                    val dayOfWeek = days[cal.get(Calendar.DAY_OF_WEEK)-2]
+                    val amPM = if(cal.get(Calendar.AM_PM) == Calendar.AM){"AM"}else{"PM"}
+                    startTimeInMillis = cal.timeInMillis
+                    startDateString = "${dayOfWeek}, ${months[month]} $dayOfMonth, $year at $timeString $amPM"
+                    startDate.text= startDateString
+                }
+                val res2 = TimePickerDialog(
+                    this,
+                    builder2,
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE),
+                    false
+                )
+                res2.show()
             }
             val res = DatePickerDialog(
                 this,
@@ -68,7 +101,34 @@ class CreateTaskActivity: AppCompatActivity() {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                endDate.text = "$dayOfMonth ${months[month]}, $year"
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND,0)
+                endTimeInMillis = cal.timeInMillis
+                var endDateString = "$dayOfMonth ${months[month]}, $year"
+                endDate.text = endDateString
+                val builder2 = TimePickerDialog.OnTimeSetListener{
+                        _, hour, minute->
+                    cal.set(Calendar.HOUR_OF_DAY, hour)
+                    cal.set(Calendar.MINUTE, minute)
+                    cal.set(Calendar.SECOND, 0)
+                    cal.set(Calendar.MILLISECOND,0)
+                    val timeString = "%02d:%02d".format(hour,minute)
+                    val dayOfWeek = days[cal.get(Calendar.DAY_OF_WEEK)-2]
+                    val amPM = if(cal.get(Calendar.AM_PM) == Calendar.AM){"AM"}else{"PM"}
+                    endTimeInMillis = cal.timeInMillis
+                    endDateString = "${dayOfWeek}, ${months[month]} $dayOfMonth, $year at $timeString $amPM"
+                    endDate.text= endDateString
+                }
+                val res2 = TimePickerDialog(
+                    this,
+                    builder2,
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE),
+                    false
+                )
+                res2.show()
             }
             val res = DatePickerDialog(
                 this,
@@ -92,7 +152,7 @@ class CreateTaskActivity: AppCompatActivity() {
             val category = intent.getSerializableExtra("category_title")
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
-            val task = Task(taskID,taskName.toString(), taskSummary.toString(), taskType.toString(), createdBy.toString(), category.toString(), startDate.text.toString(), endDate.text.toString())
+            val task = Task(taskID,taskName.toString(), taskSummary.toString(), taskType, createdBy.toString(), category.toString(), startTimeInMillis, endTimeInMillis)
             taskListViewModel.insert(task, boardID)
             finish()
         }
