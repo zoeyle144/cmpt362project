@@ -42,7 +42,8 @@ class EmailDialogFragment : DialogFragment() {
         val view = inflater.inflate(R.layout.account_settings_email_dialog, container, false)
 
         // Set the "current email" view
-        val currentEmailView = view.findViewById<TextInputLayout>(R.id.account_settings_current_email_field)
+        val currentEmailView =
+            view.findViewById<TextInputLayout>(R.id.account_settings_current_email_field)
         currentEmailView.editText!!.setText(user?.email ?: "")
         currentEmailView.isEnabled = false
 
@@ -60,7 +61,7 @@ class EmailDialogFragment : DialogFragment() {
 
         // Save button
         toolbar.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.profile_toolbar_save -> {
                     val newEmail = newEmailView.editText!!.text.toString()
                     val currPass = passwordView.editText!!.text.toString()
@@ -89,20 +90,16 @@ class EmailDialogFragment : DialogFragment() {
 
         viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when (waitBoolean) {
-                ReAuthenticateBoolean.FAILURE -> {
-                    passwordView.error = "Password is incorrect."
-                }
+                ReAuthenticateBoolean.FAILURE -> passwordView.error = "Password is incorrect."
                 ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
-                        user!!.updateEmail(newEmail)
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "Successfully changed e-mail.", Toast.LENGTH_SHORT).show()
-                                updateNewEmailSharedPref()
-                                dismiss()
-                            }
-                            .addOnFailureListener {
-                                newEmailView.error = it.message
-                            }
+                        user!!.updateEmail(newEmail).addOnSuccessListener {
+                            Toast.makeText(context, "Successfully changed e-mail.", Toast.LENGTH_SHORT).show()
+                            updateNewEmailSharedPref()
+                            dismiss()
+                        }.addOnFailureListener {
+                            newEmailView.error = it.message
+                        }
                     }
                 }
                 else -> {}
@@ -112,7 +109,10 @@ class EmailDialogFragment : DialogFragment() {
 
     private fun updateNewEmailSharedPref() {
         if (activity != null) {
-            val sharedPref = activity!!.getSharedPreferences(SettingsProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
+            val sharedPref = activity!!.getSharedPreferences(
+                SettingsProfileActivity.SHARED_PREF,
+                Context.MODE_PRIVATE
+            )
             with(sharedPref.edit()) {
                 putBoolean(KEY_EMAIL_RECENTLY_CHANGED, true)
                 apply()

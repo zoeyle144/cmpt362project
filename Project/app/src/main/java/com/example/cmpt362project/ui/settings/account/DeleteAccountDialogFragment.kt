@@ -80,7 +80,10 @@ class DeleteAccountDialogFragment : DialogFragment() {
             currentPasswordView.error = "Password field cannot be empty."
             checkFields = false
         }
-
+        if (confirmText != "CONFIRM") {
+            confirmView.error = "Text entered is not equal to CONFIRM."
+            checkFields = false
+        }
         if (!checkFields) return
 
         viewModel.reAuthenticateCheckEmail(user, currEmail, currPass).observe(viewLifecycleOwner) { waitBoolean ->
@@ -91,14 +94,11 @@ class DeleteAccountDialogFragment : DialogFragment() {
                 }
                 ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
-                        if (confirmText != "CONFIRM") confirmView.error = "Text entered is not equal to CONFIRM."
-                        else {
-                            user!!.delete().addOnSuccessListener {
-                                Toast.makeText(context, "Successfully deleted account.", Toast.LENGTH_SHORT).show()
-                                requireActivity().finishAffinity()
-                            } .addOnFailureListener {
-                                Toast.makeText(context, "Couldn't delete account. ${it.message}", Toast.LENGTH_LONG).show()
-                            }
+                        user!!.delete().addOnSuccessListener {
+                            Toast.makeText(context, "Successfully deleted account.", Toast.LENGTH_SHORT).show()
+                            requireActivity().finishAffinity()
+                        } .addOnFailureListener {
+                            Toast.makeText(context, "Couldn't delete account. ${it.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 }

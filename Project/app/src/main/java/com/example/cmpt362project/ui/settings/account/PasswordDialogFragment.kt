@@ -71,26 +71,32 @@ class PasswordDialogFragment : DialogFragment() {
     }
 
     private fun setNewPassword(currPass: String, newPass: String, reNewPass: String) {
+        var checkFields = true
         if (currPass.isEmpty()) {
             currentPasswordView.error = "Current password field cannot be empty"
-            return
+            checkFields = false
         }
+        if (newPass.isEmpty()) {
+            newPasswordView.error = "New password field cannot empty"
+            checkFields = false
+        } 
+        if (newPass != reNewPass) {
+            reNewPasswordView.error = "Does not match the new password field."
+            checkFields = false
+        }
+        if (!checkFields) return
 
         viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when(waitBoolean) {
                 ReAuthenticateBoolean.FAILURE -> currentPasswordView.error = "Current password is incorrect."
                 ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
-                        if (newPass.isEmpty()) newPasswordView.error = "Enter new password field cannot empty."
-                        else if (newPass != reNewPass) reNewPasswordView.error = "Does not match the new password field."
-                        else {
-                            user!!.updatePassword(newPass).addOnSuccessListener {
-                                Toast.makeText(context, "Successfully changed password.", Toast.LENGTH_SHORT).show()
-                                auth.signOut()
-                                requireActivity().finishAffinity()
-                            }.addOnFailureListener {
-                                newPasswordView.error = (it as FirebaseAuthWeakPasswordException).reason + "."
-                            }
+                        user!!.updatePassword(newPass).addOnSuccessListener {
+                            Toast.makeText(context, "Successfully changed password.", Toast.LENGTH_SHORT).show()
+                            auth.signOut()
+                            requireActivity().finishAffinity()
+                        }.addOnFailureListener {
+                            newPasswordView.error = (it as FirebaseAuthWeakPasswordException).reason + "."
                         }
                     }
                 }
