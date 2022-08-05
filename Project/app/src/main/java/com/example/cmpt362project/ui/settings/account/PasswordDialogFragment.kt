@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -18,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 
 class PasswordDialogFragment : DialogFragment() {
 
+    private lateinit var auth: FirebaseAuth
     private var user: FirebaseUser? = null
     private lateinit var viewModel: ReAuthenticator
 
@@ -37,7 +39,8 @@ class PasswordDialogFragment : DialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.account_settings_password_dialog, container, false)
 
-        user = Firebase.auth.currentUser
+        auth = Firebase.auth
+        user = auth.currentUser
         viewModel = ViewModelProvider(requireActivity())[ReAuthenticator::class.java]
 
         currentPasswordView = view.findViewById(R.id.enter_current_password_field)
@@ -78,7 +81,8 @@ class PasswordDialogFragment : DialogFragment() {
                         else {
                             user!!.updatePassword(newPass).addOnSuccessListener {
                                 Toast.makeText(context, "Successfully changed password.", Toast.LENGTH_SHORT).show()
-                                dismiss()
+                                auth.signOut()
+                                requireActivity().finishAffinity()
                             }.addOnFailureListener {
                                 newPasswordView.error = (it as FirebaseAuthWeakPasswordException).reason + "."
                             }

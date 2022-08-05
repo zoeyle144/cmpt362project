@@ -79,4 +79,5 @@
     <string name="account_settings_current_password_label">Enter current password</string>
     <string name="account_settings_new_password_label">Enter new password</string>
     <string name="account_settings_reenter_new_password_label">Re-enter new password</string>
+    <string name="account_settings_password_change_note">Note: you will get logged out of the app upon a successful password change</string>
 </resources>
