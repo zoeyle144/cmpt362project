@@ -70,8 +70,8 @@ class PasswordDialogFragment : DialogFragment() {
     private fun setNewPassword(currPass: String, newPass: String, reNewPass: String) {
         viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when(waitBoolean) {
-                ReAuthenticateBoolean.FALSE -> currentPasswordView.error = "Current password is incorrect."
-                ReAuthenticateBoolean.TRUE -> {
+                ReAuthenticateBoolean.FAILURE -> currentPasswordView.error = "Current password is incorrect."
+                ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
                         if (newPass.isEmpty()) newPasswordView.error = "Enter new password field cannot empty."
                         else if (newPass != reNewPass) reNewPasswordView.error = "Does not match the new password field."

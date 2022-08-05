@@ -78,10 +78,10 @@ class EmailDialogFragment : DialogFragment() {
 
         viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
             when (waitBoolean) {
-                ReAuthenticateBoolean.FALSE -> {
+                ReAuthenticateBoolean.FAILURE -> {
                     passwordView.error = "Password is incorrect."
                 }
-                ReAuthenticateBoolean.TRUE -> {
+                ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
                         if (newEmail.isNotEmpty()) {
                             user!!.updateEmail(newEmail)

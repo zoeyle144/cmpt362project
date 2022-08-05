@@ -20,9 +20,9 @@ class ReAuthenticator : ViewModel() {
             if (user != null) {
                 val credential = EmailAuthProvider.getCredential(user.email!!, password)
                 user.reauthenticate(credential).addOnCompleteListener {
-                    success.postValue(if (it.isSuccessful) ReAuthenticateBoolean.TRUE else ReAuthenticateBoolean.FALSE)
+                    success.postValue(if (it.isSuccessful) ReAuthenticateBoolean.SUCCESS else ReAuthenticateBoolean.FAILURE)
                 }
-            } else success.postValue(ReAuthenticateBoolean.FALSE)
+            } else success.postValue(ReAuthenticateBoolean.FAILURE)
         }
         return success
     }
