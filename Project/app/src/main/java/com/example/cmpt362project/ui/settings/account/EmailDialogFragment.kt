@@ -2,7 +2,6 @@ package com.example.cmpt362project.ui.settings.account
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
@@ -12,11 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CompletableDeferred
 
 class EmailDialogFragment : DialogFragment() {
 
@@ -81,10 +78,10 @@ class EmailDialogFragment : DialogFragment() {
 
         viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
             when (waitBoolean) {
-                EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
+                WaitBoolean.FALSE -> {
                     passwordView.error = "Password is incorrect."
                 }
-                EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
+                WaitBoolean.TRUE -> {
                     if (user != null) {
                         if (newEmail.isNotEmpty()) {
                             user!!.updateEmail(newEmail)
