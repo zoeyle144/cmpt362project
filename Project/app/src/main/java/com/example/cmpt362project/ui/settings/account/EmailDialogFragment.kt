@@ -52,6 +52,8 @@ class EmailDialogFragment : DialogFragment() {
 
         newEmailView.editText!!.addTextChangedListener { newEmailView.error = null }
         passwordView.editText!!.addTextChangedListener { passwordView.error = null }
+        newEmailView.editText!!.setOnClickListener { newEmailView.error = null }
+        passwordView.editText!!.setOnClickListener { passwordView.error = null }
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_toolbar)

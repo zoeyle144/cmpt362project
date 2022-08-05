@@ -50,6 +50,9 @@ class PasswordDialogFragment : DialogFragment() {
         currentPasswordView.editText!!.addTextChangedListener { currentPasswordView.error = null }
         newPasswordView.editText!!.addTextChangedListener { newPasswordView.error = null }
         reNewPasswordView.editText!!.addTextChangedListener { reNewPasswordView.error = null }
+        currentPasswordView.editText!!.setOnClickListener { currentPasswordView.error = null }
+        newPasswordView.editText!!.setOnClickListener { newPasswordView.error = null }
+        reNewPasswordView.editText!!.setOnClickListener { reNewPasswordView.error = null }
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_toolbar)
@@ -79,7 +82,7 @@ class PasswordDialogFragment : DialogFragment() {
         if (newPass.isEmpty()) {
             newPasswordView.error = "New password field cannot empty"
             checkFields = false
-        } 
+        }
         if (newPass != reNewPass) {
             reNewPasswordView.error = "Does not match the new password field."
             checkFields = false

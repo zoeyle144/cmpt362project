@@ -50,6 +50,9 @@ class DeleteAccountDialogFragment : DialogFragment() {
         currentEmailView.editText!!.addTextChangedListener { currentEmailView.error = null }
         currentPasswordView.editText!!.addTextChangedListener { currentPasswordView.error = null }
         confirmView.editText!!.addTextChangedListener { confirmView.error = null }
+        currentEmailView.editText!!.setOnClickListener { currentEmailView.error = null }
+        currentPasswordView.editText!!.setOnClickListener { currentPasswordView.error = null }
+        confirmView.editText!!.setOnClickListener { confirmView.error = null }
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_delete_acc_toolbar)
