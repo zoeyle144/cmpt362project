@@ -6,6 +6,7 @@ import android.text.Editable
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
@@ -20,6 +21,7 @@ import kotlinx.coroutines.CompletableDeferred
 class EmailDialogFragment : DialogFragment() {
 
     private var user: FirebaseUser? = null
+    private lateinit var newEmailView: TextInputLayout
     private lateinit var passwordView: TextInputLayout
     private lateinit var viewModel: EmailDialogFragmentViewModel
 
@@ -47,8 +49,10 @@ class EmailDialogFragment : DialogFragment() {
         currentEmailView.editText!!.setText(user?.email ?: "")
         currentEmailView.isEnabled = false
 
-        val newEmailView = view.findViewById<TextInputLayout>(R.id.account_settings_new_email_field)
+        newEmailView = view.findViewById(R.id.account_settings_new_email_field)
         passwordView = view.findViewById(R.id.account_settings_password_field)
+
+        newEmailView.editText!!.addTextChangedListener { newEmailView.error = null }
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_toolbar)
@@ -92,10 +96,10 @@ class EmailDialogFragment : DialogFragment() {
                                     dismiss()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(context, "$changeFailStr ${it.message}", Toast.LENGTH_LONG).show()
+                                    newEmailView.error = it.message
                                 }
                         } else {
-                            Toast.makeText(context, "$changeFailStr E-mail field empty.", Toast.LENGTH_LONG).show()
+                            newEmailView.error = "E-mail field cannot be empty."
                         }
                     }
                 }

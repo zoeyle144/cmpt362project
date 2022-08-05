@@ -76,6 +76,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         app:endIconMode="custom"
+        app:errorEnabled="true"
         >
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
@@ -117,6 +118,6 @@
             android:inputType="textPassword"
             android:padding="8dp" />
     </com.google.android.material.textfield.TextInputLayout>
-    <!-- Name -->
+    <!-- Password -->
 
 </LinearLayout>
