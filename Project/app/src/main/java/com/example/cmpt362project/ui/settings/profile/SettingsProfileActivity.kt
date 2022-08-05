@@ -117,12 +117,12 @@ class SettingsProfileActivity : AppCompatActivity() {
 
         cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
-                println("Camera success")
                 if (cameraImageUri != Uri.EMPTY) {
-                    println("URI not empty")
+                    val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
+                    userProfileViewModel.setImage(image)
                 }
             } else {
-                println("Camera failure")
+                Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -136,13 +136,11 @@ class SettingsProfileActivity : AppCompatActivity() {
         builder.setItems(dialogOptions) {
                 _: DialogInterface, i: Int ->
             if (dialogOptions[i] == "Open camera") {
-                println("Camera!")
                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION_CODE)
                 } else launchCamera()
             }
             else {
-                println("Gallery!")
                 val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 galleryActivityResult.launch(galleryIntent)
             }
