@@ -83,5 +83,5 @@
     <string name="account_settings_delete_note">Note: your account will be deleted forever! You cannot reverse this action!</string>
     <string name="account_settings_enter_current_email_label">Enter current e-mail</string>
     <string name="account_settings_toolbar_confirm">Confirm</string>
-    <string name="account_settings_enter_confirm_label">Enter CONFIRM to confirm your account deletion</string>
+    <string name="account_settings_enter_confirm_label">Type CONFIRM to confirm your account deletion</string>
 </resources>

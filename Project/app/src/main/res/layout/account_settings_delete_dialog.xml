@@ -35,7 +35,7 @@
         android:minHeight="4dp"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_current_password_field"
+        android:id="@+id/enter_current_email_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
@@ -74,7 +74,7 @@
         android:paddingEnd="16dp"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_new_password_field"
+        android:id="@+id/enter_current_password_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
@@ -111,7 +111,7 @@
         android:minHeight="4dp"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/reenter_new_password_field"
+        android:id="@+id/enter_confirm_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
