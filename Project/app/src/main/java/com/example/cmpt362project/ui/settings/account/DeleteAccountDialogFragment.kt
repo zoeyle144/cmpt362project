@@ -133,9 +133,20 @@ class DeleteAccountDialogFragment : DialogFragment() {
     }
 
     private fun deleteFieldsFromRealtimeDatabase(user: FirebaseUser) {
-        database.child("users").child(user.uid).removeValue().addOnSuccessListener {
-            println("DeleteAccountDialogFragment: Deleted fields of user ${user.uid} from Realtime Database")
-            deleteUserFromAuthentication(user)
+        // Get the user's username from the usernames field in Realtime Database
+        database.child("users").child(user.uid).child("username").get().addOnSuccessListener {
+            val username = it.value as String
+
+            // Delete the username from the usernames field
+            database.child("usernames").child(username).removeValue().addOnSuccessListener {
+                println("DeleteAccountDialogFragment: Deleted username $username from usernames in Realtime Database")
+
+                // Delete the user from the user fields
+                database.child("users").child(user.uid).removeValue().addOnSuccessListener {
+                    println("DeleteAccountDialogFragment: Deleted user ${user.uid} from users in Realtime Database")
+                    deleteUserFromAuthentication(user)
+                }
+            }
         }
     }
 
