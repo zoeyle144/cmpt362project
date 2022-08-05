@@ -22,6 +22,7 @@
             app:title="Change password"
             app:summary="Change your password to a new one"
             app:icon="@drawable/settings_sym_account_password"
+            android:key="password"
             />
     </PreferenceCategory>
 
