@@ -39,7 +39,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingEnd="16dp"
+        app:endIconMode="custom"
+        >
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
@@ -72,7 +74,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingEnd="16dp"
+        app:endIconMode="custom"
+        >
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
@@ -98,18 +102,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="4dp" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/account_settings_password_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingEnd="16dp"
+        app:passwordToggleEnabled="true">
+
         <com.google.android.material.textfield.TextInputEditText
-            android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            />
+            android:padding="8dp" />
     </com.google.android.material.textfield.TextInputLayout>
     <!-- Name -->
 
