@@ -60,7 +60,7 @@ class EmailDialogFragment : DialogFragment() {
         toolbar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.profile_toolbar_save -> {
-                    setNewEmail(newEmailView.editText!!.text)
+                    setNewEmail(newEmailView.editText!!.text.toString())
                     true
                 }
                 else -> true
@@ -71,35 +71,35 @@ class EmailDialogFragment : DialogFragment() {
     }
 
 
-    private fun setNewEmail(newEmail: Editable) {
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-            Toast.makeText(context, "Error: invalid email", Toast.LENGTH_SHORT)
-        } else if (newEmail.isEmpty()) {
-            Toast.makeText(context, "Error: empty email", Toast.LENGTH_SHORT)
-        } else {
-            val pass = passwordView.editText!!.text.toString()
-            viewModel.reAuthenticate(user, pass).observe(viewLifecycleOwner) { waitBoolean ->
-                when (waitBoolean) {
-                    EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
-                        Toast.makeText(context, "Error: failed to change email. Check your password", Toast.LENGTH_SHORT).show()
-                    }
-                    EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
-                        if (user != null) {
-                            user!!.updateEmail(newEmail.toString())
+    private fun setNewEmail(newEmail: String) {
+
+        val password = passwordView.editText!!.text.toString()
+
+        viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
+            val changeFailStr = "Failed to change e-mail."
+
+            when (waitBoolean) {
+                EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
+                    Toast.makeText(context, "$changeFailStr Check your password.", Toast.LENGTH_SHORT).show()
+                }
+                EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
+                    if (user != null) {
+                        if (newEmail.isNotEmpty()) {
+                            user!!.updateEmail(newEmail)
                                 .addOnSuccessListener {
-                                    Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Successfully changed e-mail.", Toast.LENGTH_SHORT).show()
                                     updateNewEmailSharedPref()
                                     dismiss()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
-                                    println(it.message)
-                                    dismiss()
+                                    Toast.makeText(context, "$changeFailStr ${it.message}", Toast.LENGTH_LONG).show()
                                 }
+                        } else {
+                            Toast.makeText(context, "$changeFailStr E-mail field empty.", Toast.LENGTH_LONG).show()
                         }
                     }
-                    else -> {}
                 }
+                else -> {}
             }
         }
     }
