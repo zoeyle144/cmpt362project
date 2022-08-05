@@ -13,12 +13,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.cmpt362project.services.NotificationService
+import com.example.cmpt362project.ui.settings.account.EmailDialogFragment
 import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.navigation.NavigationView
@@ -41,11 +43,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var drawerProfilePicView: ImageView
     private lateinit var pathToProfilePic: String
 
+    private lateinit var viewModel: MainActivityViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
 
         createNotificationChannel()
         val startIntent = Intent(applicationContext, NotificationService::class.java)
@@ -68,16 +73,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         val drawerUsernameView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_username)
         val drawerEmailView = navView.getHeaderView(0).findViewById<TextView>(R.id.drawer_header_email)
         drawerProfilePicView = navView.getHeaderView(0).findViewById(R.id.drawer_header_profile_pic)
+        viewModel.emailTextForDrawer.observe(this) { drawerEmailView.text = it }
 
         if (user != null) {
             database.child("users").child(user!!.uid).get().addOnSuccessListener {
                 if (it != null) {
                     val userData = it.value as Map<*, *>
                     drawerUsernameView.text = userData["username"].toString()
-                    drawerEmailView.text = userData["email"].toString()
+                    viewModel.emailTextForDrawer.value = user!!.email
                     pathToProfilePic = userData["profilePic"].toString()
                     ImageUtility.setImageViewToProfilePic(pathToProfilePic, drawerProfilePicView)
                 }
@@ -88,6 +95,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         sharedPref = this.getSharedPreferences(SettingsProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
         sharedPref.registerOnSharedPreferenceChangeListener(this)
         setProfilePicRecentlyChangedFalse()
+        setEmailRecentlyChangedFalse()
 
     }
 
@@ -125,11 +133,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 }
             }
         }
+        if (key == EmailDialogFragment.KEY_EMAIL_RECENTLY_CHANGED) {
+            println("onSharedPreferenceChanged EmailDialogFragment.KEY_EMAIL_RECENTLY_CHANGED true")
+            val emailRecentlyChanged = sharedPref.getBoolean(EmailDialogFragment.KEY_EMAIL_RECENTLY_CHANGED, true)
+            if (emailRecentlyChanged && user != null) {
+                println("emailRecentlyChanged true")
+                val newEmail = user!!.email
+                viewModel.emailTextForDrawer.value = newEmail
+                database.child("users").child(user!!.uid).child("email").setValue(newEmail)
+                setEmailRecentlyChangedFalse()
+
+            }
+        }
     }
 
     private fun setProfilePicRecentlyChangedFalse() {
         with(sharedPref.edit()) {
             putBoolean(SettingsProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, false)
+            apply()
+        }
+    }
+
+    private fun setEmailRecentlyChangedFalse() {
+        with(sharedPref.edit()) {
+            putBoolean(EmailDialogFragment.KEY_EMAIL_RECENTLY_CHANGED, false)
             apply()
         }
     }

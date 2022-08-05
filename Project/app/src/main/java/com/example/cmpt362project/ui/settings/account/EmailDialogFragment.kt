@@ -1,5 +1,6 @@
 package com.example.cmpt362project.ui.settings.account
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.*
@@ -7,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import com.example.cmpt362project.R
+import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -15,6 +17,10 @@ import com.google.firebase.ktx.Firebase
 class EmailDialogFragment : DialogFragment() {
 
     private var user: FirebaseUser? = null
+
+    companion object {
+        const val KEY_EMAIL_RECENTLY_CHANGED = "KEY_EMAIL_RECENTLY_CHANGED"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +82,12 @@ class EmailDialogFragment : DialogFragment() {
                 user!!.updateEmail(newEmail.toString())
                     .addOnSuccessListener {
                         Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
+                        updateNewEmailSharedPref()
                         dismiss()
                     }
                     .addOnFailureListener {
                         Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
+                        println(it.message)
                         dismiss()
                     }
             }
@@ -90,7 +98,17 @@ class EmailDialogFragment : DialogFragment() {
          TODO: - SettingsAccountFragment doesn't update its field based on the new email
          TODO: - user profile (and Realtime Database) don't get the new e-mail
          */
+    }
 
+    private fun updateNewEmailSharedPref() {
+        if (activity != null) {
+            val sharedPref = activity!!.getSharedPreferences(SettingsProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putBoolean(KEY_EMAIL_RECENTLY_CHANGED, true)
+                apply()
+            }
+            println("updateNewEmailSharedPref called")
+        }
     }
 
 }
