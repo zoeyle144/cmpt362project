@@ -77,4 +77,6 @@
     <string name="account_settings_password_label">Enter current password</string>
     <string name="profile_toolbar_cancel">Cancel</string>
     <string name="account_settings_current_password_label">Enter current password</string>
+    <string name="account_settings_new_password_label">Enter new password</string>
+    <string name="account_settings_reenter_new_password_label">Re-enter new password</string>
 </resources>
