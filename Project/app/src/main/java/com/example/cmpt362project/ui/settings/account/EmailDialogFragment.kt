@@ -7,16 +7,21 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CompletableDeferred
 
 class EmailDialogFragment : DialogFragment() {
 
     private var user: FirebaseUser? = null
+    private lateinit var passwordView: TextInputLayout
+    private lateinit var viewModel: EmailDialogFragmentViewModel
 
     companion object {
         const val KEY_EMAIL_RECENTLY_CHANGED = "KEY_EMAIL_RECENTLY_CHANGED"
@@ -33,6 +38,7 @@ class EmailDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         user = Firebase.auth.currentUser
+        viewModel = ViewModelProvider(requireActivity())[EmailDialogFragmentViewModel::class.java]
 
         val view = inflater.inflate(R.layout.account_settings_email_dialog, container, false)
 
@@ -42,6 +48,7 @@ class EmailDialogFragment : DialogFragment() {
         currentEmailView.isEnabled = false
 
         val newEmailView = view.findViewById<TextInputLayout>(R.id.account_settings_new_email_field)
+        passwordView = view.findViewById(R.id.account_settings_password_field)
 
         val toolbar = view.findViewById<Toolbar>(R.id.settings_account_toolbar)
         toolbar.inflateMenu(R.menu.account_settings_toolbar)
@@ -70,26 +77,34 @@ class EmailDialogFragment : DialogFragment() {
         } else if (newEmail.isEmpty()) {
             Toast.makeText(context, "Error: empty email", Toast.LENGTH_SHORT)
         } else {
+            val pass = passwordView.editText!!.text.toString()
+            viewModel.reauthenticate2(user, pass).observe(viewLifecycleOwner) {
+                println("Received value $it")
+            }
             if (user != null) {
-                // Set a user's email address
-                // https://firebase.google.com/docs/auth/android/manage-users#set_a_users_email_address
+                if (false) {
+                    // Set a user's email address
+                    // https://firebase.google.com/docs/auth/android/manage-users#set_a_users_email_address
 
-                // Handle re-authenticate
-                // https://firebase.google.com/docs/auth/android/manage-users#re-authenticate_a_user
+                    // Handle re-authenticate
+                    // https://firebase.google.com/docs/auth/android/manage-users#re-authenticate_a_user
 
-                // Types of exceptions to check for
-                // https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#updateEmail(java.lang.String)
-                user!!.updateEmail(newEmail.toString())
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
-                        updateNewEmailSharedPref()
-                        dismiss()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
-                        println(it.message)
-                        dismiss()
-                    }
+                    // Types of exceptions to check for
+                    // https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#updateEmail(java.lang.String)
+                    user!!.updateEmail(newEmail.toString())
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
+                            updateNewEmailSharedPref()
+                            dismiss()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
+                            println(it.message)
+                            dismiss()
+                        }
+                } else {
+                    Toast.makeText(context, "Error: re-authentication failed. Check your password", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -98,6 +113,39 @@ class EmailDialogFragment : DialogFragment() {
          TODO: - SettingsAccountFragment doesn't update its field based on the new email
          TODO: - user profile (and Realtime Database) don't get the new e-mail
          */
+    }
+
+    private suspend fun reauthenticate() : Boolean {
+        println("reauthenticate called")
+        if (user != null) {
+
+            println("user not null")
+
+            val credential = EmailAuthProvider.getCredential(user!!.email!!,
+                passwordView.editText!!.text.toString()
+            )
+            println("email ${user!!.email!!}, password ${passwordView.editText!!.text}")
+
+            val test1 = CompletableDeferred<Boolean>()
+            var authenticateSuccess = false
+            user!!.reauthenticate(credential)
+                .addOnCompleteListener {
+                    test1.complete(it.isSuccessful)
+                }
+            return test1.await()
+//                .addOnSuccessListener {
+//                authenticateSuccess = true
+//                println("reauthenticate works")
+//                return@addOnSuccessListener true
+//                }
+//                .addOnFailureListener {
+//                    println("reauthenticate fail")
+//                    println(it.toString())
+//                }
+
+            println("Returnning $authenticateSuccess")
+            return authenticateSuccess
+        } else return false
     }
 
     private fun updateNewEmailSharedPref() {
