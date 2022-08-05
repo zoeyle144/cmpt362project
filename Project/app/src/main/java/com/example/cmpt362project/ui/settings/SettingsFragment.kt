@@ -10,10 +10,8 @@ import com.google.firebase.ktx.Firebase
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_fragment_pref, rootKey)
 
     }
-
 }

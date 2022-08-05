@@ -18,4 +18,19 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Support">
+        <Preference
+            app:title="About Horizon"
+            app:icon="@drawable/settings_sym_about"
+            app:summary="Version number, credits"
+            >
+        </Preference>
+        <Preference
+            app:title="Our website"
+            app:icon="@drawable/settings_sym_website"
+            app:summary="Visit our website"
+            >
+        </Preference>
+    </PreferenceCategory>
+
 </PreferenceScreen>
