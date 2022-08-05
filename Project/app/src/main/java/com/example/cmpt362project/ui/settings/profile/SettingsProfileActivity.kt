@@ -168,7 +168,9 @@ class SettingsProfileActivity : AppCompatActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 println("Camera permission granted")
                 launchCamera()
-            } else println("Camera permission denied!")
+            } else {
+                Toast.makeText(this, "Camera permission denied!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
