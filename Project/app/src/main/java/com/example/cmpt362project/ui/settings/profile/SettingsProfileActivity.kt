@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.utility.ImageUtility
@@ -33,6 +35,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 class SettingsProfileActivity : AppCompatActivity() {
@@ -57,6 +60,7 @@ class SettingsProfileActivity : AppCompatActivity() {
         const val SHARED_PREF = "SHARED_PREF"
 
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
+        const val CAMERA_SAVED_FILE_NAME = "temp_pfp.jpg"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +115,6 @@ class SettingsProfileActivity : AppCompatActivity() {
             }
         }
 
-        cameraImageUri = Uri.EMPTY
         cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
                 println("Camera success")
@@ -151,8 +154,9 @@ class SettingsProfileActivity : AppCompatActivity() {
 
 
     private fun launchCamera() {
-//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        cameraActivityResult.launch(cameraIntent)
+        // Store image in app's storage
+        val imageFile = File(getExternalFilesDir(null), CAMERA_SAVED_FILE_NAME)
+        cameraImageUri = FileProvider.getUriForFile(this, "com.example.cmpt362project", imageFile)
         cameraActivityResult.launch(cameraImageUri)
     }
 
