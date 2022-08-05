@@ -14,6 +14,7 @@
     <PreferenceCategory app:title="Credentials">
         <Preference
             app:title="Change e-mail"
+            app:summary="Change your e-mail to a new one"
             app:icon="@drawable/settings_sym_account_email"
             android:key="email"
             />

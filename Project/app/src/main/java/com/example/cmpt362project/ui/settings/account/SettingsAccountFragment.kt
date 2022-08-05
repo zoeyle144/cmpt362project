@@ -1,5 +1,7 @@
 package com.example.cmpt362project.ui.settings.account
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.cmpt362project.R
+import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -20,13 +25,9 @@ class SettingsAccountFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.account_settings_pref, rootKey)
 
         val auth = Firebase.auth
+
         val logoutBtn = findPreference<Preference>("logout")
         val emailPreference = findPreference<Preference>("email")
-
-        val user = auth.currentUser
-        if (user != null) {
-            emailPreference!!.summary = user.email
-        }
 
         emailPreference!!.setOnPreferenceClickListener {
             showEmailDialog()

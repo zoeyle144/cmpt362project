@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 
 class EmailDialogFragmentViewModel : ViewModel() {
