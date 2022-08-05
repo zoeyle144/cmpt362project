@@ -26,4 +26,19 @@ class ReAuthenticator : ViewModel() {
         }
         return success
     }
+
+    fun reAuthenticateCheckEmail(user: FirebaseUser?, email:String, password: String) : LiveData<ReAuthenticateBoolean> {
+        val success = MutableLiveData<ReAuthenticateBoolean>()
+        success.value = ReAuthenticateBoolean.WAIT
+
+        viewModelScope.launch {
+            if (user != null) {
+                val credential = EmailAuthProvider.getCredential(email, password)
+                user.reauthenticate(credential).addOnCompleteListener {
+                    success.postValue(if (it.isSuccessful) ReAuthenticateBoolean.SUCCESS else ReAuthenticateBoolean.FAILURE)
+                }
+            } else success.postValue(ReAuthenticateBoolean.FAILURE)
+        }
+        return success
+    }
 }

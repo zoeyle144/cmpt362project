@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -69,6 +71,39 @@ class DeleteAccountDialogFragment : DialogFragment() {
     }
 
     private fun deleteAccount(currEmail: String, currPass: String, confirmText: String) {
-        println("currEmail $currEmail, currPass $currPass, confirmText $confirmText")
+        var checkFields = true
+        if (currEmail.isEmpty()) {
+            currentEmailView.error = "E-mail field cannot empty."
+            checkFields = false
+        }
+        if (currPass.isEmpty()) {
+            currentPasswordView.error = "Password field cannot empty."
+            checkFields = false
+        }
+
+        if (!checkFields) return
+
+        viewModel.reAuthenticateCheckEmail(user, currEmail, currPass).observe(viewLifecycleOwner) { waitBoolean ->
+            when(waitBoolean) {
+                ReAuthenticateBoolean.FAILURE -> {
+                    currentEmailView.error = "E-mail may be incorrect."
+                    currentPasswordView.error = "Password may be incorrect."
+                }
+                ReAuthenticateBoolean.SUCCESS -> {
+                    if (user != null) {
+                        if (confirmText != "CONFIRM") confirmView.error = "Text entered is not equal to CONFIRM."
+                        else {
+                            user!!.delete().addOnSuccessListener {
+                                Toast.makeText(context, "Successfully deleted account.", Toast.LENGTH_SHORT).show()
+                                requireActivity().finishAffinity()
+                            } .addOnFailureListener {
+                                Toast.makeText(context, "Couldn't delete account. ${it.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
     }
 }
