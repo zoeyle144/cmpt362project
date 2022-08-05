@@ -15,7 +15,7 @@ class EmailDialogFragmentViewModel : ViewModel() {
         TRUE, FALSE, WAIT
     }
 
-    fun reauthenticate2(user: FirebaseUser?, password: String) : LiveData<WaitBoolean> {
+    fun reAuthenticate(user: FirebaseUser?, password: String) : LiveData<WaitBoolean> {
         val success = MutableLiveData<WaitBoolean>()
         success.value = WaitBoolean.WAIT
 

@@ -78,10 +78,31 @@ class EmailDialogFragment : DialogFragment() {
             Toast.makeText(context, "Error: empty email", Toast.LENGTH_SHORT)
         } else {
             val pass = passwordView.editText!!.text.toString()
-            viewModel.reauthenticate2(user, pass).observe(viewLifecycleOwner) {
-                println("Received value $it")
+            viewModel.reAuthenticate(user, pass).observe(viewLifecycleOwner) { waitBoolean ->
+                when (waitBoolean) {
+                    EmailDialogFragmentViewModel.WaitBoolean.FALSE -> {
+                        Toast.makeText(context, "Error: re-authentication failed. Check your password", Toast.LENGTH_SHORT).show()
+                    }
+                    EmailDialogFragmentViewModel.WaitBoolean.TRUE -> {
+                        if (user != null) {
+                            user!!.updateEmail(newEmail.toString())
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
+                                    updateNewEmailSharedPref()
+                                    dismiss()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
+                                    println(it.message)
+                                    dismiss()
+                                }
+                        }
+                    }
+                    else -> {}
+                }
             }
-            if (user != null) {
+
+            if (false) {
                 if (false) {
                     // Set a user's email address
                     // https://firebase.google.com/docs/auth/android/manage-users#set_a_users_email_address
@@ -91,17 +112,7 @@ class EmailDialogFragment : DialogFragment() {
 
                     // Types of exceptions to check for
                     // https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#updateEmail(java.lang.String)
-                    user!!.updateEmail(newEmail.toString())
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Successfully changed email", Toast.LENGTH_SHORT).show()
-                            updateNewEmailSharedPref()
-                            dismiss()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Error: failed to change email", Toast.LENGTH_SHORT).show()
-                            println(it.message)
-                            dismiss()
-                        }
+
                 } else {
                     Toast.makeText(context, "Error: re-authentication failed. Check your password", Toast.LENGTH_SHORT).show()
                 }
@@ -113,39 +124,6 @@ class EmailDialogFragment : DialogFragment() {
          TODO: - SettingsAccountFragment doesn't update its field based on the new email
          TODO: - user profile (and Realtime Database) don't get the new e-mail
          */
-    }
-
-    private suspend fun reauthenticate() : Boolean {
-        println("reauthenticate called")
-        if (user != null) {
-
-            println("user not null")
-
-            val credential = EmailAuthProvider.getCredential(user!!.email!!,
-                passwordView.editText!!.text.toString()
-            )
-            println("email ${user!!.email!!}, password ${passwordView.editText!!.text}")
-
-            val test1 = CompletableDeferred<Boolean>()
-            var authenticateSuccess = false
-            user!!.reauthenticate(credential)
-                .addOnCompleteListener {
-                    test1.complete(it.isSuccessful)
-                }
-            return test1.await()
-//                .addOnSuccessListener {
-//                authenticateSuccess = true
-//                println("reauthenticate works")
-//                return@addOnSuccessListener true
-//                }
-//                .addOnFailureListener {
-//                    println("reauthenticate fail")
-//                    println(it.toString())
-//                }
-
-            println("Returnning $authenticateSuccess")
-            return authenticateSuccess
-        } else return false
     }
 
     private fun updateNewEmailSharedPref() {

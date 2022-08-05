@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 viewModel.emailTextForDrawer.value = newEmail
                 database.child("users").child(user!!.uid).child("email").setValue(newEmail)
                 setEmailRecentlyChangedFalse()
-
+                println("KEY_EMAIL_RECENTLY_CHANGED now ${sharedPref.getBoolean(EmailDialogFragment.KEY_EMAIL_RECENTLY_CHANGED, true)}")
             }
         }
     }
