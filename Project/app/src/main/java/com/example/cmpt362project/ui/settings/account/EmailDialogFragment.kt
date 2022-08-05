@@ -85,6 +85,12 @@ class EmailDialogFragment : DialogFragment() {
             }
         }
 
+        /*
+         TODO: - doesn't check for password
+         TODO: - SettingsAccountFragment doesn't update its field based on the new email
+         TODO: - user profile (and Realtime Database) don't get the new e-mail
+         */
+
     }
 
 }
