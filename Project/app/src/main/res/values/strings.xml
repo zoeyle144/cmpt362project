@@ -76,4 +76,5 @@
     <string name="account_settings_new_email_label">Enter new e-mail</string>
     <string name="account_settings_password_label">Enter current password</string>
     <string name="profile_toolbar_cancel">Cancel</string>
+    <string name="account_settings_current_password_label">Enter current password</string>
 </resources>
