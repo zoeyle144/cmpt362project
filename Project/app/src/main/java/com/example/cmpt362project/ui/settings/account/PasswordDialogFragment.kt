@@ -71,6 +71,11 @@ class PasswordDialogFragment : DialogFragment() {
     }
 
     private fun setNewPassword(currPass: String, newPass: String, reNewPass: String) {
+        if (currPass.isEmpty()) {
+            currentPasswordView.error = "Current password field cannot be empty"
+            return
+        }
+
         viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when(waitBoolean) {
                 ReAuthenticateBoolean.FAILURE -> currentPasswordView.error = "Current password is incorrect."

@@ -62,7 +62,9 @@ class EmailDialogFragment : DialogFragment() {
         toolbar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.profile_toolbar_save -> {
-                    setNewEmail(newEmailView.editText!!.text.toString())
+                    val newEmail = newEmailView.editText!!.text.toString()
+                    val currPass = passwordView.editText!!.text.toString()
+                    setNewEmail(newEmail, currPass)
                     true
                 }
                 else -> true
@@ -73,29 +75,34 @@ class EmailDialogFragment : DialogFragment() {
     }
 
 
-    private fun setNewEmail(newEmail: String) {
-        val password = passwordView.editText!!.text.toString()
+    private fun setNewEmail(newEmail: String, currPass: String) {
+        var checkFields = true
+        if (newEmail.isEmpty()) {
+            newEmailView.error = "E-mail field cannot be empty"
+            checkFields = false
+        }
+        if (currPass.isEmpty()) {
+            passwordView.error = "Password field cannot be empty"
+            checkFields = false
+        }
+        if (!checkFields) return
 
-        viewModel.reAuthenticate(user, password).observe(viewLifecycleOwner) { waitBoolean ->
+        viewModel.reAuthenticate(user, currPass).observe(viewLifecycleOwner) { waitBoolean ->
             when (waitBoolean) {
                 ReAuthenticateBoolean.FAILURE -> {
                     passwordView.error = "Password is incorrect."
                 }
                 ReAuthenticateBoolean.SUCCESS -> {
                     if (user != null) {
-                        if (newEmail.isNotEmpty()) {
-                            user!!.updateEmail(newEmail)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Successfully changed e-mail.", Toast.LENGTH_SHORT).show()
-                                    updateNewEmailSharedPref()
-                                    dismiss()
-                                }
-                                .addOnFailureListener {
-                                    newEmailView.error = it.message
-                                }
-                        } else {
-                            newEmailView.error = "E-mail field cannot be empty."
-                        }
+                        user!!.updateEmail(newEmail)
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Successfully changed e-mail.", Toast.LENGTH_SHORT).show()
+                                updateNewEmailSharedPref()
+                                dismiss()
+                            }
+                            .addOnFailureListener {
+                                newEmailView.error = it.message
+                            }
                     }
                 }
                 else -> {}

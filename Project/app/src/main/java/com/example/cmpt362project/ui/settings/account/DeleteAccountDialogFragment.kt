@@ -73,11 +73,11 @@ class DeleteAccountDialogFragment : DialogFragment() {
     private fun deleteAccount(currEmail: String, currPass: String, confirmText: String) {
         var checkFields = true
         if (currEmail.isEmpty()) {
-            currentEmailView.error = "E-mail field cannot empty."
+            currentEmailView.error = "E-mail field cannot be empty."
             checkFields = false
         }
         if (currPass.isEmpty()) {
-            currentPasswordView.error = "Password field cannot empty."
+            currentPasswordView.error = "Password field cannot be empty."
             checkFields = false
         }
 
