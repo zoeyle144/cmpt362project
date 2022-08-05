@@ -27,10 +27,9 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
     private lateinit var  categoryListViewModel: CategoryListViewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
-        val lifecycleOwner = parent.context as LifecycleOwner
         if(viewType == 0){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.category_list_adaptor, parent, false)
-            return ViewHolder(view, lifecycleOwner)
+            return ViewHolder(view)
         }else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_category_button, parent, false)
             val addCategoryButton = view.findViewById<Button>(R.id.add_category_button)
@@ -41,7 +40,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 intent.putExtra("boardID", boardID)
                 view.context.startActivity(intent)
             }
-            return ViewHolder(view, lifecycleOwner)
+            return ViewHolder(view)
         }
     }
 
@@ -80,11 +79,10 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 confirmationBuilder.setMessage("Are you sure you want to Delete Category <$categoryTitle>?")
                     .setCancelable(false)
                     .setPositiveButton("Yes") { dialog, id ->
-                        val taskRecyclerView = holder.itemView.findViewById<RecyclerView>(R.id.task_list)
-                        val numOfTasksUnderCategory = taskRecyclerView.childCount
+                        val numOfTasksUnderCategory = taskListView.childCount
                         var taskIDsToDelete: MutableList<String> = ArrayList()
                         for (i in 0 until numOfTasksUnderCategory) {
-                            taskIDsToDelete.add(taskRecyclerView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
+                            taskIDsToDelete.add(taskListView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
                         }
                         categoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
                         categoryListViewModel.delete(boardID, categoryList[position].categoryID, taskIDsToDelete)
@@ -119,11 +117,11 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
         }
     }
 
-    inner class ViewHolder(itemView: View, lifecycleOwner: LifecycleOwner): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var itemTitle: TextView? = itemView.findViewById(R.id.item_title)
         var vms: ViewModelStoreOwner = itemView.context as ViewModelStoreOwner
         var taskListViewModel: TaskListViewModel = ViewModelProvider(vms)[TaskListViewModel::class.java]
-        var lifecycleOwner:LifecycleOwner = lifecycleOwner
+        var lifecycleOwner:LifecycleOwner = itemView.context as LifecycleOwner
     }
 
     fun updateList(newList:List<Category>){

@@ -21,6 +21,7 @@ class TasksRepository {
         tasksRef
             .child(boardID)
             .child("tasks")
+            .orderByChild("endDate")
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val tasks: List<Task> = snapshot.children.map { dataSnapshot ->
