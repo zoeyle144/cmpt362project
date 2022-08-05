@@ -12,10 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class DeleteAccountDialogFragment : DialogFragment() {
 
@@ -26,6 +28,8 @@ class DeleteAccountDialogFragment : DialogFragment() {
     private lateinit var currentEmailView: TextInputLayout
     private lateinit var currentPasswordView: TextInputLayout
     private lateinit var confirmView: TextInputLayout
+
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,7 @@ class DeleteAccountDialogFragment : DialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.account_settings_delete_dialog, container, false)
 
+        database = Firebase.database.reference
         auth = Firebase.auth
         user = auth.currentUser
         viewModel = ViewModelProvider(requireActivity())[ReAuthenticator::class.java]
@@ -96,17 +101,52 @@ class DeleteAccountDialogFragment : DialogFragment() {
                     currentPasswordView.error = "Password may be incorrect."
                 }
                 ReAuthenticateBoolean.SUCCESS -> {
-                    if (user != null) {
-                        user!!.delete().addOnSuccessListener {
-                            Toast.makeText(context, "Successfully deleted account.", Toast.LENGTH_SHORT).show()
-                            requireActivity().finishAffinity()
-                        } .addOnFailureListener {
-                            Toast.makeText(context, "Couldn't delete account. ${it.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }
+                    if (user != null) deleteProfilePicFromStorage(user!!)
+                    else Toast.makeText(context, "Couldn't delete account. User is null", Toast.LENGTH_LONG).show()
                 }
                 else -> {}
             }
+        }
+    }
+
+    private fun deleteProfilePicFromStorage(user: FirebaseUser) {
+        val storage = Firebase.storage.reference
+
+        // Get the info in the user's profilePic field in Realtime Database
+        val userReference = database.child("users").child(user.uid).child("profilePic")
+        userReference.get().addOnSuccessListener { imagePathDB ->
+
+            // Get a reference to the profile picture in Storage
+            val imagePathStorage = imagePathDB.value as String
+
+            // If the profile picture is custom, delete it, then delete fields
+            if (imagePathStorage != getString(R.string.default_pfp_path)) {
+                val imageRef = storage.child(imagePathStorage)
+                imageRef.delete().addOnSuccessListener {
+                    println("DeleteAccountDialogFragment: Deleted file $imagePathStorage from Storage")
+                    deleteFieldsFromRealtimeDatabase(user)
+                }
+            }
+            // If the profile picture is default, skip deleting it. Just delete fields
+            else deleteFieldsFromRealtimeDatabase(user)
+        }
+    }
+
+    private fun deleteFieldsFromRealtimeDatabase(user: FirebaseUser) {
+        database.child("users").child(user.uid).removeValue().addOnSuccessListener {
+            println("DeleteAccountDialogFragment: Deleted fields of user ${user.uid} from Realtime Database")
+            deleteUserFromAuthentication(user)
+        }
+    }
+
+    private fun deleteUserFromAuthentication(user: FirebaseUser) {
+        val userID = user.uid
+        user.delete().addOnSuccessListener {
+            println("DeleteAccountDialogFragment: Deleted user $userID from Authentication")
+            Toast.makeText(context, "Successfully deleted account.", Toast.LENGTH_SHORT).show()
+            requireActivity().finishAffinity()
+        } .addOnFailureListener {
+            Toast.makeText(context, "Couldn't delete user from Authentication. ${it.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
