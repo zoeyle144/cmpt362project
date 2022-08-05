@@ -14,6 +14,8 @@ class EmailDialogFragmentViewModel : ViewModel() {
         TRUE, FALSE, WAIT
     }
 
+    // Use viewModelScope to do suspend functions: https://reddit.com/r/Kotlin/comments/iceztd//g3ogp49/
+    // Use viewModelScope to return value: https://stackoverflow.com/a/60911126
     fun reAuthenticate(user: FirebaseUser?, password: String) : LiveData<WaitBoolean> {
         val success = MutableLiveData<WaitBoolean>()
         success.value = WaitBoolean.WAIT
