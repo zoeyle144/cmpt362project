@@ -14,7 +14,7 @@ import com.google.firebase.ktx.Firebase
 class CategoriesRepository {
 
     val database = Firebase.database
-//    val auth = Firebase.auth
+    val auth = Firebase.auth
     val categoriesRef = database.getReference("boards")
 
     fun fetchCategories(liveData: MutableLiveData<List<Category>>, boardID: String){
@@ -35,12 +35,29 @@ class CategoriesRepository {
     }
 
     fun insert(category: Category, boardID:String){
-        categoriesRef.child(boardID).child("categories").child(category.categoryID).setValue(category)
-            .addOnCompleteListener{
-                println("debug: add category success")
-            }.addOnFailureListener{ err ->
-                println("debug: add category fail Error ${err.message}")
-            }
+
+        categoriesRef
+            .child(boardID)
+            .child("categories")
+            .orderByChild("title")
+            .equalTo(category.title)
+            .addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()){
+                        categoriesRef.child(boardID).child("categories").child(category.categoryID).setValue(category)
+                            .addOnCompleteListener{
+                                println("debug: add category success")
+                            }.addOnFailureListener{ err ->
+                                println("debug: add category fail Error ${err.message}")
+                            }
+                    }else{
+                        println("debug: add category failed because category already exist")
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    println("debug: check category failed Error: ${error.message}")
+                }
+            })
     }
 
     fun delete(boardID:String, categoryID:String){
