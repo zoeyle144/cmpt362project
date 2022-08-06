@@ -40,9 +40,11 @@ class SettingsProfileActivity : AppCompatActivity() {
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
-    private lateinit var viewModel: SettingsProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
+
+    private lateinit var viewModelFactory: SettingsProfileViewModelFactory
+    private lateinit var viewModel: SettingsProfileViewModel
 
     companion object {
         const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
@@ -63,7 +65,10 @@ class SettingsProfileActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_baseline_close_24, theme))
         supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_discard))
 
-        viewModel = ViewModelProvider(this)[SettingsProfileViewModel::class.java]
+        viewModelFactory = SettingsProfileViewModelFactory(
+            getString(R.string.default_pfp_path),
+            this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE))
+        viewModel = ViewModelProvider(this, viewModelFactory)[SettingsProfileViewModel::class.java]
         pictureView = findViewById(R.id.profile_picture)
         viewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
@@ -152,67 +157,67 @@ class SettingsProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveProfile() {
-        val nameToAdd = nameView.editText?.text.toString()
-        val aboutMeToAdd = aboutMeView.editText?.text.toString()
-
-        viewModel.database.child("users").child(viewModel.user.uid).child("name").setValue(nameToAdd)
-        viewModel.database.child("users").child(viewModel.user.uid).child("aboutMe").setValue(aboutMeToAdd)
-        uploadImage()
-
-        Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
-
-        finish()
-    }
-
-    private fun uploadImage() {
-        val printIdentifier = "SettingsProfileActivity uploadImage"
-        val storage = Firebase.storage.reference
-        val image = viewModel.getImage() ?: return
-
-        val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
-        val stream = ByteArrayOutputStream()
-        imageScaled.compress(Bitmap.CompressFormat.JPEG, 75, stream)
-        val byteArray = stream.toByteArray()
-        stream.close()
-
-        // Get the old profile picture path so we can delete the image later (if upload success)
-        val userReference = viewModel.database.child("users").child(viewModel.user.uid).child("profilePic")
-        userReference.get().addOnSuccessListener { oldImgPath ->
-
-            // Write the new profile picture to Storage
-            val randomUUID = UUID.randomUUID().toString().replace("-", "")
-            val newImgPath = "profilePic/$randomUUID.jpg"
-            storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
-
-                // Write the new profile picture path to the user's info
-                userReference.setValue(newImgPath).addOnSuccessListener {
-                    println("$printIdentifier: Uploaded $newImgPath to database")
-
-                    // Delete the old profile picture from Storage, tell sidebar to update PFP
-                    // Do not delete the old PFP if it's the default one
-                    val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != getString(R.string.default_pfp_path)) {
-                        val oldImgRef = storage.child(oldImgPath.value as String)
-                        oldImgRef.delete().addOnSuccessListener {
-                            println("$printIdentifier: Deleted ${oldImgPath.value} from database")
-                            updateProfilePicSharedPref()
-                        }
-                    } else {
-                        updateProfilePicSharedPref()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun updateProfilePicSharedPref() {
-        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
-            apply()
-        }
-    }
+//    private fun saveProfile() {
+//        val nameToAdd = nameView.editText?.text.toString()
+//        val aboutMeToAdd = aboutMeView.editText?.text.toString()
+//
+//        viewModel.database.child("users").child(viewModel.user.uid).child("name").setValue(nameToAdd)
+//        viewModel.database.child("users").child(viewModel.user.uid).child("aboutMe").setValue(aboutMeToAdd)
+//        uploadImage()
+//
+//        Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
+//
+//        finish()
+//    }
+//
+//    private fun uploadImage() {
+//        val printIdentifier = "SettingsProfileActivity uploadImage"
+//        val storage = Firebase.storage.reference
+//        val image = viewModel.getImage() ?: return
+//
+//        val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
+//        val stream = ByteArrayOutputStream()
+//        imageScaled.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+//        val byteArray = stream.toByteArray()
+//        stream.close()
+//
+//        // Get the old profile picture path so we can delete the image later (if upload success)
+//        val userReference = viewModel.database.child("users").child(viewModel.user.uid).child("profilePic")
+//        userReference.get().addOnSuccessListener { oldImgPath ->
+//
+//            // Write the new profile picture to Storage
+//            val randomUUID = UUID.randomUUID().toString().replace("-", "")
+//            val newImgPath = "profilePic/$randomUUID.jpg"
+//            storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
+//
+//                // Write the new profile picture path to the user's info
+//                userReference.setValue(newImgPath).addOnSuccessListener {
+//                    println("$printIdentifier: Uploaded $newImgPath to database")
+//
+//                    // Delete the old profile picture from Storage, tell sidebar to update PFP
+//                    // Do not delete the old PFP if it's the default one
+//                    val pathToDelete = oldImgPath.value as String
+//                    if (pathToDelete != getString(R.string.default_pfp_path)) {
+//                        val oldImgRef = storage.child(oldImgPath.value as String)
+//                        oldImgRef.delete().addOnSuccessListener {
+//                            println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+//                            updateProfilePicSharedPref()
+//                        }
+//                    } else {
+//                        updateProfilePicSharedPref()
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun updateProfilePicSharedPref() {
+//        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+//        with(sharedPref.edit()) {
+//            putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+//            apply()
+//        }
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.profile_toolbar, menu)
@@ -221,7 +226,10 @@ class SettingsProfileActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
         R.id.profile_toolbar_save -> {
-            saveProfile()
+            val nameToAdd = nameView.editText?.text.toString()
+            val aboutMeToAdd = aboutMeView.editText?.text.toString()
+            viewModel.saveProfile(nameToAdd, aboutMeToAdd)
+            finish()
             true
         }
         else -> {

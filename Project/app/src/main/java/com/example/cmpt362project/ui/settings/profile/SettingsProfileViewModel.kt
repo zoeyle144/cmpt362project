@@ -1,6 +1,7 @@
 package com.example.cmpt362project.ui.settings.profile
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
@@ -19,7 +20,8 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class SettingsProfileViewModel : ViewModel() {
+class SettingsProfileViewModel(private val defaultPFPPath: String,
+                               private val sharedPref: SharedPreferences) : ViewModel() {
 
     val database: DatabaseReference = Firebase.database.reference
     val auth: FirebaseAuth = Firebase.auth
@@ -104,11 +106,12 @@ class SettingsProfileViewModel : ViewModel() {
                 // Write the new profile picture path to the user's info
                 userReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $newImgPath to database")
+                    println("Upload successful")
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
                     val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != getString(R.string.default_pfp_path)) {
+                    if (pathToDelete != defaultPFPPath) {
                         val oldImgRef = storage.child(oldImgPath.value as String)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")
@@ -123,9 +126,9 @@ class SettingsProfileViewModel : ViewModel() {
     }
 
     private fun updateProfilePicSharedPref() {
-        val sharedPref = this.getSharedPreferences(SettingsProfileActivity.SHARED_PREF, Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putBoolean(com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
+        val prefs = sharedPref
+        with(prefs.edit()) {
+            putBoolean(SettingsProfileActivity.KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
             apply()
         }
     }
