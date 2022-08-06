@@ -23,8 +23,8 @@ class BoardListViewModel: ViewModel(){
         repository.insert(board)
     }
 
-    fun delete(boardID:String){
-        repository.delete(boardID)
+    fun delete(boardID:String, boardName:String){
+        repository.delete(boardID, boardName)
     }
 
     fun getImage() : Bitmap? {

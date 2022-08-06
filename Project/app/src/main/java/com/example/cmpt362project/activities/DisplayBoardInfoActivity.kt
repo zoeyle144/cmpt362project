@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -109,12 +110,12 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         cameraImageUri = Uri.EMPTY
         cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
-                println("Camera success")
                 if (cameraImageUri != Uri.EMPTY) {
-                    println("URI not empty")
+                    val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
+                    boardListViewModel.setImage(image)
                 }
             } else {
-                println("Camera failure")
+                Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -218,9 +219,8 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
             confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
                 .setCancelable(false)
                 .setPositiveButton("Yes") { _, _ ->
-                    val boardID = selectedBoard?.boardID.toString()
                     val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                    boardListViewModel.delete(boardID)
+                    boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString())
                     setResult(RESULT_OK, null)
                     finish()
                 }

@@ -108,7 +108,7 @@ class DisplayTaskActivity : AppCompatActivity() {
             )
         )
         taskChecklistViewModel = ViewModelProvider(this)[TaskChecklistViewModel::class.java]
-        taskChecklistViewModel.fetchTasks(boardID, taskID)
+        taskChecklistViewModel.fetchChecklistItems(boardID, taskID)
         taskChecklistViewModel.taskChecklistItemsLiveData.observe(this){
             (adapter as TaskChecklistAdaptor).updateList(it)
             (adapter as TaskChecklistAdaptor).notifyDataSetChanged()

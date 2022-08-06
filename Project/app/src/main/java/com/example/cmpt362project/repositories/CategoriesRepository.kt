@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
+import com.example.cmpt362project.models.ChangeNotification
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -35,7 +36,6 @@ class CategoriesRepository {
     }
 
     fun insert(category: Category, boardID:String){
-
         categoriesRef
             .child(boardID)
             .child("categories")
@@ -67,5 +67,6 @@ class CategoriesRepository {
             }.addOnFailureListener{ err ->
                 println("debug: delete category fail Error ${err.message}")
             }
+
     }
 }
