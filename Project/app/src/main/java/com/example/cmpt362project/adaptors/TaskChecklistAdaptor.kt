@@ -6,9 +6,9 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.TaskChecklistItem
@@ -40,7 +40,7 @@ class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklist
                         val boardsRef = database.getReference("boards")
                         val auth = Firebase.auth
                         val checklistItemName = input.text.toString()
-                        taskChecklistViewModel = TaskChecklistViewModel()
+                        taskChecklistViewModel = ViewModelProvider(parent.context as ViewModelStoreOwner)[TaskChecklistViewModel::class.java]
                         val taskChecklistItemID = boardsRef.child(boardID).child("tasks").child(taskID).child("checklist").push().key!!
                         val createdBy = auth.currentUser?.uid
                         val complete = false
@@ -67,10 +67,24 @@ class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklist
                 holder.itemView.findViewById<TextView>(R.id.task_checklist_item_id)
             val taskBoardID = holder.itemView.findViewById<TextView>(R.id.task_board_id)
             val checklistTaskID = holder.itemView.findViewById<TextView>(R.id.task_id)
+            val checkbox = holder.itemView.findViewById<CheckBox>(R.id.checlist_item_checkbox)
             taskCheckListItemName.text = taskChecklistItemList[position].name
             taskCheckListItemID.text = taskChecklistItemList[position].taskChecklistItemID
             taskBoardID.text = boardID
             checklistTaskID.text = taskID
+            checkbox.isChecked = taskChecklistItemList[position].complete
+
+            taskChecklistViewModel = ViewModelProvider(holder.itemView.context as ViewModelStoreOwner)[TaskChecklistViewModel::class.java]
+
+            checkbox.setOnClickListener{
+                taskChecklistViewModel.updateCompleteField(boardID, taskID, taskChecklistItemList[position].taskChecklistItemID, checkbox.isChecked)
+            }
+
+
+            val deleteButton = holder.itemView.findViewById<ImageView>(R.id.checlist_item_delete)
+            deleteButton.setOnClickListener{
+                taskChecklistViewModel.delete(boardID, taskID, taskChecklistItemList[position].taskChecklistItemID)
+            }
         }
     }
 
