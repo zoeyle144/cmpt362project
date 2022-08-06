@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -26,7 +25,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.BoardUpdateData
-import com.example.cmpt362project.ui.settings.UserProfileViewModel
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.button.MaterialButton
@@ -54,9 +52,6 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     private lateinit var boardListViewModel: BoardListViewModel
 
     companion object {
-        const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
-        const val SHARED_PREF = "SHARED_PREF"
-
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
         const val CAMERA_SAVED_FILE_NAME = "temp_bp.jpg"
     }
@@ -71,7 +66,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         val boardDescription = boardParcel?.boardName.toString()
         var boardPicString = boardParcel?.boardPic.toString()
         if (boardPicString == ""){
-           boardPicString = getString(R.string.default_pfp_path)
+           boardPicString = getString(R.string.default_bp_path)
         }
 
         pictureView = findViewById(R.id.board_picture)
@@ -88,7 +83,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
             val boardUpdateData = BoardUpdateData(boardNameField.text.toString(), boardDescriptionField.text.toString())
             boardListViewModel = ViewModelProvider(this)[boardListViewModel::class.java]
             boardListViewModel.update(boardID, boardUpdateData)
-            val intentData = Intent()
+//            val intentData = Intent()
 //            intentData.putExtra("boardNameField", boardNameField.text.toString())
 //            setResult(RESULT_OK, intentData)
             setResult(RESULT_OK, null)
@@ -207,7 +202,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
                     val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != getString(R.string.default_pfp_path)) {
+                    if (pathToDelete != getString(R.string.default_bp_path)) {
                         val oldImgRef = storage.child(oldImgPath.value as String)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")
