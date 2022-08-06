@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/delete_category_button"
-        android:title="Delete"
+        android:id="@+id/board_info_button"
+        android:title="INFO"
         app:showAsAction="always"
         />
 </menu>
