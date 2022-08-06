@@ -110,6 +110,16 @@ class SettingsProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
             }
         }
+
+        viewModel.toastMessage.observe(this) { event ->
+            event.getContentIfNotHandled()?.let {
+                println("getContentIfNotHandled")
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            println("Content changed")
+
+        }
     }
 
     fun onClickChangePhoto(v: View) {
@@ -129,7 +139,7 @@ class SettingsProfileActivity : AppCompatActivity() {
                 galleryActivityResult.launch(galleryIntent)
             }
         }
-        
+
         val dialog = builder.create()
         dialog.show()
     }
@@ -166,7 +176,6 @@ class SettingsProfileActivity : AppCompatActivity() {
             val nameToAdd = nameView.editText?.text.toString()
             val aboutMeToAdd = aboutMeView.editText?.text.toString()
             viewModel.saveProfile(nameToAdd, aboutMeToAdd)
-            finish()
             true
         }
         else -> {

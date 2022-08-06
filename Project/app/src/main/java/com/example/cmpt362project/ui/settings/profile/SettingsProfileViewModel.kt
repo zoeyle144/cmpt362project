@@ -84,7 +84,7 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
     }
 
     private fun uploadImage() {
-        val printIdentifier = "SettingsProfileActivity uploadImage"
+        val printIdentifier = "SettingsProfileViewModel uploadImage"
         val storage = Firebase.storage.reference
         val image = getImage() ?: return
 
@@ -106,7 +106,7 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
                 // Write the new profile picture path to the user's info
                 userReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $newImgPath to database")
-                    println("Upload successful")
+                    _toastMessage.value = SingleLiveEvent("Successfully updated your name, about me, and profile pic")
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
