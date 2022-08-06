@@ -4,6 +4,7 @@ import android.R.id
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Intent
+import android.graphics.Color
 import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -41,6 +43,15 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
         taskID.text = taskList[position].taskID
         taskBoardID.text = boardID
         val taskEntry = holder.itemView.findViewById<CardView>(R.id.task_entry)
+
+        if (taskList[position].type == "Easy"){
+            taskEntry.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.green))
+        }else if (taskList[position].type == "Medium"){
+            taskEntry.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.blue))
+        }else{
+            taskEntry.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.red))
+        }
+
         taskEntry.setOnClickListener {
             val intent = Intent(holder.itemView.context, DisplayTaskActivity::class.java)
             intent.putExtra("task", taskList[position])
