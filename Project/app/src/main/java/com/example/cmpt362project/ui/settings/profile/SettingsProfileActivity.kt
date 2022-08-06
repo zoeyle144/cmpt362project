@@ -129,11 +129,10 @@ class SettingsProfileActivity : AppCompatActivity() {
                 galleryActivityResult.launch(galleryIntent)
             }
         }
-
+        
         val dialog = builder.create()
         dialog.show()
     }
-
 
     private fun launchCamera() {
         // Store image in app's storage
@@ -156,68 +155,6 @@ class SettingsProfileActivity : AppCompatActivity() {
             }
         }
     }
-
-//    private fun saveProfile() {
-//        val nameToAdd = nameView.editText?.text.toString()
-//        val aboutMeToAdd = aboutMeView.editText?.text.toString()
-//
-//        viewModel.database.child("users").child(viewModel.user.uid).child("name").setValue(nameToAdd)
-//        viewModel.database.child("users").child(viewModel.user.uid).child("aboutMe").setValue(aboutMeToAdd)
-//        uploadImage()
-//
-//        Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
-//
-//        finish()
-//    }
-//
-//    private fun uploadImage() {
-//        val printIdentifier = "SettingsProfileActivity uploadImage"
-//        val storage = Firebase.storage.reference
-//        val image = viewModel.getImage() ?: return
-//
-//        val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
-//        val stream = ByteArrayOutputStream()
-//        imageScaled.compress(Bitmap.CompressFormat.JPEG, 75, stream)
-//        val byteArray = stream.toByteArray()
-//        stream.close()
-//
-//        // Get the old profile picture path so we can delete the image later (if upload success)
-//        val userReference = viewModel.database.child("users").child(viewModel.user.uid).child("profilePic")
-//        userReference.get().addOnSuccessListener { oldImgPath ->
-//
-//            // Write the new profile picture to Storage
-//            val randomUUID = UUID.randomUUID().toString().replace("-", "")
-//            val newImgPath = "profilePic/$randomUUID.jpg"
-//            storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
-//
-//                // Write the new profile picture path to the user's info
-//                userReference.setValue(newImgPath).addOnSuccessListener {
-//                    println("$printIdentifier: Uploaded $newImgPath to database")
-//
-//                    // Delete the old profile picture from Storage, tell sidebar to update PFP
-//                    // Do not delete the old PFP if it's the default one
-//                    val pathToDelete = oldImgPath.value as String
-//                    if (pathToDelete != getString(R.string.default_pfp_path)) {
-//                        val oldImgRef = storage.child(oldImgPath.value as String)
-//                        oldImgRef.delete().addOnSuccessListener {
-//                            println("$printIdentifier: Deleted ${oldImgPath.value} from database")
-//                            updateProfilePicSharedPref()
-//                        }
-//                    } else {
-//                        updateProfilePicSharedPref()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun updateProfilePicSharedPref() {
-//        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
-//        with(sharedPref.edit()) {
-//            putBoolean(KEY_PROFILE_PIC_RECENTLY_CHANGED, true)
-//            apply()
-//        }
-//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.profile_toolbar, menu)
