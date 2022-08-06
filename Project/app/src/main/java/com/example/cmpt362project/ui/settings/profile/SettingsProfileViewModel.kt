@@ -19,12 +19,10 @@ class SettingsProfileViewModel : ViewModel() {
     val auth: FirebaseAuth = Firebase.auth
     val user: FirebaseUser = auth.currentUser!!
 
-
     val profilePicture = MutableLiveData<Bitmap>()
     var imageSet = false
         private set
-    var cameraImageUri = Uri.EMPTY
-
+    var cameraImageUri = Uri.EMPTY!!
 
     private val _usernameViewText = MutableLiveData<String>()
     val usernameViewText: LiveData<String> get() = _usernameViewText
