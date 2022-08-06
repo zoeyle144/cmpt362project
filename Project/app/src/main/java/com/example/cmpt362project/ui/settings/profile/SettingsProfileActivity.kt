@@ -75,20 +75,15 @@ class SettingsProfileActivity : AppCompatActivity() {
         usernameView.isEnabled = false
         emailView.isEnabled = false
 
-        viewModel.database.child("users").child(viewModel.user.uid).get()
-            .addOnSuccessListener {
-                if (it != null) {
-                    val userData = it.value as Map<*, *>
-
-                    usernameView.editText?.setText(userData["username"] as String)
-                    emailView.editText?.setText(userData["email"] as String)
-                    nameView.editText?.setText(userData["name"] as String)
-                    aboutMeView.editText?.setText(userData["aboutMe"] as String)
-                    if (!viewModel.isImageSet()) {
-                        ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
-                    }
-                }
-            }
+        // Set text fields
+        viewModel.setValuesFromDatabase()
+        usernameView.editText?.setText(viewModel.usernameViewText)
+        emailView.editText?.setText(viewModel.emailViewText)
+        nameView.editText?.setText(viewModel.nameViewText)
+        aboutMeView.editText?.setText(viewModel.aboutMeViewText)
+        if (!viewModel.imageSet) {
+            ImageUtility.setImageViewToProfilePic(viewModel.profilePicPath, pictureView)
+        }
 
         // Initialize the gallery activity
         // How to save image inside ViewModel to handle orientation change?

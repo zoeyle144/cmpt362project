@@ -19,7 +19,19 @@ class SettingsProfileViewModel : ViewModel() {
     val user: FirebaseUser = auth.currentUser!!
 
     val profilePicture = MutableLiveData<Bitmap>()
-    private var imageSet = false
+    var imageSet = false
+        private set
+
+    var usernameViewText = ""
+        private set
+    var emailViewText = ""
+        private set
+    var nameViewText = ""
+        private set
+    var aboutMeViewText = ""
+        private set
+    var profilePicPath = ""
+        private set
 
     private val _toastMessage = MutableLiveData<SingleLiveEvent<String>>()
     val toastMessage : LiveData<SingleLiveEvent<String>>
@@ -35,7 +47,16 @@ class SettingsProfileViewModel : ViewModel() {
         imageSet = true
     }
 
-    fun isImageSet() : Boolean {
-        return imageSet
+    fun setValuesFromDatabase() {
+        database.child("users").child(user.uid).get().addOnSuccessListener {
+            if (it != null) {
+                val userData = it.value as Map<*, *>
+                usernameViewText = userData["username"] as String
+                emailViewText = userData["email"] as String
+                nameViewText = userData["name"] as String
+                aboutMeViewText = userData["aboutMe"] as String
+                profilePicPath = userData["profilePic"] as String
+            }
+        }
     }
 }
