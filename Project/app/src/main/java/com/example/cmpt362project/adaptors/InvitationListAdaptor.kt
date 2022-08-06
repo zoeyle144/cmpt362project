@@ -44,9 +44,25 @@ class InvitationListAdaptor(val context: Context, private var invitationList: Li
         val invitationDeclineBtn = view.findViewById<Button>(R.id.inv_decline_btn)
         invitationSenderUsername.text = invitationList[p0].sender_username
 
+
+        var groupName = ""
+        database.getReference("groups").child(invitationList[p0].groupId).get().addOnSuccessListener {
+            if (it.value != null) {
+                val groupData = it.value as Map<*, *>
+                groupName = groupData["groupName"].toString()
+                invitationGroupName.text = groupName
+            }
+
+            println(it.value)
+        }
+
         invitationDeclineBtn.setOnClickListener{
             viewModel.delete(invitationList[p0].invitationId)
-            Toast.makeText(context, "Declined invitation." ,Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Declined invitation for group: ${groupName}." ,Toast.LENGTH_SHORT).show()
+        }
+
+        invitationAcceptBtn.setOnClickListener{
+            Toast.makeText(context, "Accepted invitation for group: ${groupName}" ,Toast.LENGTH_SHORT).show()
         }
         return view
     }
