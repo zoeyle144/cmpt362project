@@ -74,7 +74,6 @@ class SettingsProfileActivity : AppCompatActivity() {
         usernameView.isEnabled = false
         emailView.isEnabled = false
 
-        // Set text fields
         viewModel.setValuesFromDatabase()
         viewModel.usernameViewText.observe(this) {usernameView.editText?.setText(it)}
         viewModel.emailViewText.observe(this) {emailView.editText?.setText(it)}
@@ -86,15 +85,11 @@ class SettingsProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Initialize the gallery activity
-        // How to save image inside ViewModel to handle orientation change?
-        // https://stackoverflow.com/q/52297555
         galleryActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 val resultIntent = it.data
                 val resultUri = resultIntent?.data
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
-                println("Image found. Calling userProfileViewModel.setImage")
                 viewModel.setImage(image)
             }
         }
@@ -111,7 +106,6 @@ class SettingsProfileActivity : AppCompatActivity() {
             }
         }
     }
-
 
     fun onClickChangePhoto(v: View) {
         val builder = AlertDialog.Builder(this)
@@ -151,7 +145,6 @@ class SettingsProfileActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                println("Camera permission granted")
                 launchCamera()
             } else {
                 Toast.makeText(this, "Camera permission denied!", Toast.LENGTH_SHORT).show()
