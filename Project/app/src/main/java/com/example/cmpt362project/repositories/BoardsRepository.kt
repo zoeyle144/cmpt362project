@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.database.User
 import com.example.cmpt362project.models.Board
+import com.example.cmpt362project.models.BoardUpdateData
 import com.example.cmpt362project.models.ChangeNotification
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -68,6 +69,19 @@ class BoardsRepository {
                 val changeNotification = ChangeNotification(user,"board delete", boardName)
                 changeNotificationsRef.child(changeNotificationKey).setValue(changeNotification)
             }.addOnFailureListener{
+            }
+    }
+
+    fun update(boardID:String, boardUpdateData:BoardUpdateData){
+        val boardUpdate = hashMapOf<String, Any>(
+            "/boardName" to boardUpdateData.boardName,
+            "/description" to boardUpdateData.description,
+        )
+        boardsRef.child(boardID).updateChildren(boardUpdate)
+            .addOnSuccessListener {
+                println("debug: update board success")
+            }.addOnFailureListener{ err ->
+                println("debug: update board fail Error ${err.message}")
             }
     }
 }

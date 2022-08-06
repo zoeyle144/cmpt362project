@@ -3,6 +3,7 @@ package com.example.cmpt362project.models
 import com.google.firebase.database.IgnoreExtraProperties
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.database.Exclude
 
 @IgnoreExtraProperties
 data class Board(
@@ -41,5 +42,16 @@ data class Board(
         override fun newArray(size: Int): Array<Board?> {
             return arrayOfNulls(size)
         }
+    }
+
+    @Exclude
+    fun toMap(): Map<String, Any?>{
+        return mapOf(
+            "boardID" to boardID,
+            "boardName" to boardName,
+            "description" to description,
+            "createdBy" to createdBy,
+            "boardPic" to boardPic
+        )
     }
 }

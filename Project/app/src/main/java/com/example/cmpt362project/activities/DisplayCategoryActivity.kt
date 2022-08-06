@@ -120,6 +120,10 @@ class DisplayCategoryActivity: AppCompatActivity() {
     }
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == RESULT_OK && result.data != null){
+//            val temp = result.data!!.getSerializableExtra("boardNameField").toString()
+//            getSupportActionBar()?.setTitle("$temp");
+//        } else
         if (result.resultCode == RESULT_OK){
             this.finish()
         }

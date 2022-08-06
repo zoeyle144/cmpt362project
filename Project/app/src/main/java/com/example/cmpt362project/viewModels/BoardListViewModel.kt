@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cmpt362project.models.Board
+import com.example.cmpt362project.models.BoardUpdateData
 import com.example.cmpt362project.repositories.BoardsRepository
 
 class BoardListViewModel: ViewModel(){
@@ -25,6 +26,10 @@ class BoardListViewModel: ViewModel(){
 
     fun delete(boardID:String, boardName:String){
         repository.delete(boardID, boardName)
+    }
+
+    fun update(boardID: String, boardUpdateData: BoardUpdateData){
+        repository.update(boardID, boardUpdateData)
     }
 
     fun getImage() : Bitmap? {

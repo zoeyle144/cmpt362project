@@ -21,10 +21,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
-import com.example.cmpt362project.ui.settings.UserProfileActivity
+import com.example.cmpt362project.models.BoardUpdateData
 import com.example.cmpt362project.ui.settings.UserProfileViewModel
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
@@ -37,6 +38,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 class DisplayBoardInfoActivity: AppCompatActivity() {
@@ -56,6 +58,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         const val SHARED_PREF = "SHARED_PREF"
 
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
+        const val CAMERA_SAVED_FILE_NAME = "temp_bp.jpg"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +66,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         setContentView(R.layout.activity_display_board_info)
 
         val boardParcel = intent.getParcelableExtra<Board>("board")
+        val boardID = boardParcel?.boardID.toString()
         val boardName = boardParcel?.boardName.toString()
         val boardDescription = boardParcel?.boardName.toString()
         var boardPicString = boardParcel?.boardPic.toString()
@@ -77,10 +81,18 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         boardNameField.setText(boardName)
         boardDescriptionField.setText(boardDescription)
 
-        val saveButton = findViewById<Button>(R.id.close_board_info_button)
-        val closeButton = findViewById<Button>(R.id.save_board_info_button)
+        val saveButton = findViewById<Button>(R.id.save_board_info_button)
+        val closeButton = findViewById<Button>(R.id.close_board_info_button)
 
         saveButton.setOnClickListener{
+            val boardUpdateData = BoardUpdateData(boardNameField.text.toString(), boardDescriptionField.text.toString())
+            boardListViewModel = ViewModelProvider(this)[boardListViewModel::class.java]
+            boardListViewModel.update(boardID, boardUpdateData)
+            val intentData = Intent()
+//            intentData.putExtra("boardNameField", boardNameField.text.toString())
+//            setResult(RESULT_OK, intentData)
+            setResult(RESULT_OK, null)
+            uploadImage(boardID)
             finish()
         }
 
@@ -102,7 +114,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                 val resultIntent = it.data
                 val resultUri = resultIntent?.data
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
-                println("Image found. Calling userProfileViewModel.setImage")
+                println("Image found. Calling boardListViewModel.setImage")
                 boardListViewModel.setImage(image)
             }
         }
@@ -124,14 +136,14 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
             val builder = androidx.appcompat.app.AlertDialog.Builder(this)
             val dialogOptions = arrayOf("Open camera", "Select from gallery")
 
-            builder.setTitle("Upload profile picture")
+            builder.setTitle("Upload board picture")
             builder.setItems(dialogOptions) {
                     _: DialogInterface, i: Int ->
                 if (dialogOptions[i] == "Open camera") {
                     println("Camera!")
                     if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(arrayOf(Manifest.permission.CAMERA),
-                            UserProfileActivity.REQUEST_CAMERA_PERMISSION_CODE
+                            DisplayBoardInfoActivity.REQUEST_CAMERA_PERMISSION_CODE
                         )
                     } else {launchCamera()}
                 }
@@ -149,6 +161,8 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     }
 
     private fun launchCamera() {
+        val imageFile = File(getExternalFilesDir(null), CAMERA_SAVED_FILE_NAME)
+        cameraImageUri = FileProvider.getUriForFile(this, "com.example.cmpt362project", imageFile)
         cameraActivityResult.launch(cameraImageUri)
     }
 
@@ -158,7 +172,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == UserProfileActivity.REQUEST_CAMERA_PERMISSION_CODE) {
+        if (requestCode == DisplayBoardInfoActivity.REQUEST_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 println("Camera permission granted")
                 launchCamera()
@@ -166,8 +180,8 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         }
     }
 
-    private fun uploadImage() {
-        val printIdentifier = "UserProfileActivity uploadImage"
+    private fun uploadImage(boardID:String) {
+        val printIdentifier = "DisplayBoardInfoActivity uploadImage"
         val storage = Firebase.storage.reference
         val image = boardListViewModel.getImage() ?: return
 
@@ -178,8 +192,8 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         stream.close()
 
         // Get the old profile picture path so we can delete the image later (if upload success)
-        val userReference = database.child("users").child(user.uid).child("boardPic")
-        userReference.get().addOnSuccessListener { oldImgPath ->
+        val boardReference = database.child("boards").child(boardID).child("boardPic")
+        boardReference.get().addOnSuccessListener { oldImgPath ->
 
             // Write the new profile picture to Storage
             val randomUUID = UUID.randomUUID().toString().replace("-", "")
@@ -187,7 +201,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
             storage.child(newImgPath).putBytes(byteArray).addOnSuccessListener {
 
                 // Write the new profile picture path to the user's info
-                userReference.setValue(newImgPath).addOnSuccessListener {
+                boardReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $newImgPath to database")
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
