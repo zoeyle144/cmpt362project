@@ -138,7 +138,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                     println("Camera!")
                     if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(arrayOf(Manifest.permission.CAMERA),
-                            DisplayBoardInfoActivity.REQUEST_CAMERA_PERMISSION_CODE
+                            REQUEST_CAMERA_PERMISSION_CODE
                         )
                     } else {launchCamera()}
                 }
@@ -167,7 +167,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == DisplayBoardInfoActivity.REQUEST_CAMERA_PERMISSION_CODE) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 println("Camera permission granted")
                 launchCamera()
@@ -202,8 +202,8 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
                     val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != getString(R.string.default_bp_path)) {
-                        val oldImgRef = storage.child(oldImgPath.value as String)
+                    if (pathToDelete != getString(R.string.default_bp_path) && pathToDelete!="") {
+                        val oldImgRef = storage.child(pathToDelete)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")
                         }
