@@ -1,0 +1,38 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Session">
+        <Preference
+            app:title="Logout"
+            app:summary="Sign out of current session"
+            app:icon="@drawable/settings_sym_account_logout"
+            android:key="logout">
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Credentials">
+        <Preference
+            app:title="Change e-mail"
+            app:summary="Change your e-mail to a new one"
+            app:icon="@drawable/settings_sym_account_email"
+            android:key="email"
+            />
+        <Preference
+            app:title="Change password"
+            app:summary="Change your password to a new one"
+            app:icon="@drawable/settings_sym_account_password"
+            android:key="password"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Advanced">
+        <Preference
+            app:title="Delete your account"
+            app:summary="Delete your account forever"
+            app:icon="@drawable/settings_sym_account_delete"
+            android:key="delete_account"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>
