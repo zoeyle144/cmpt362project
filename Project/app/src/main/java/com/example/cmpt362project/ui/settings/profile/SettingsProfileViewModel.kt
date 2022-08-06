@@ -79,7 +79,11 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
         database.child("users").child(user.uid).child("name").setValue(name).addOnSuccessListener {
             database.child("users").child(user.uid).child("aboutMe").setValue(aboutMe).addOnSuccessListener {
                 uploadImage()
+            }.addOnFailureListener {
+                _toastMessage.value = SingleLiveEvent("Failed to update about me (and profile pic)")
             }
+        }.addOnFailureListener {
+            _toastMessage.value = SingleLiveEvent("Failed to update name (and about me and profile pic)")
         }
     }
 
@@ -106,7 +110,7 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
                 // Write the new profile picture path to the user's info
                 userReference.setValue(newImgPath).addOnSuccessListener {
                     println("$printIdentifier: Uploaded $newImgPath to database")
-                    _toastMessage.value = SingleLiveEvent("Successfully updated your name, about me, and profile pic")
+                    _toastMessage.value = SingleLiveEvent("Successfully updated name, about me, and profile pic")
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
@@ -120,6 +124,8 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
                     } else {
                         updateProfilePicSharedPref()
                     }
+                }.addOnFailureListener {
+                    _toastMessage.value = SingleLiveEvent("Failed to update profile pic. ${it.message}")
                 }
             }
         }

@@ -113,12 +113,9 @@ class SettingsProfileActivity : AppCompatActivity() {
 
         viewModel.toastMessage.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
-                println("getContentIfNotHandled")
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
                 finish()
             }
-            println("Content changed")
-
         }
     }
 
