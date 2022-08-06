@@ -39,6 +39,7 @@ class CategoriesRepository {
         categoriesRef
             .child(boardID)
             .child("categories")
+            .child(category.categoryID)
             .orderByChild("title")
             .equalTo(category.title)
             .addValueEventListener(object: ValueEventListener{

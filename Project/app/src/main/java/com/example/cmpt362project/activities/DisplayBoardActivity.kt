@@ -102,7 +102,7 @@ class DisplayBoardActivity: AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
-        if (itemId == R.id.delete_board_btn){
+        if (itemId == R.id.board_info_button){
             val selectedGroup = intent.getParcelableExtra<Group>("group")
 
             val groupID = selectedGroup?.groupID.toString()
