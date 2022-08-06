@@ -50,6 +50,7 @@ class InvitationListAdaptor(val context: Context, private var invitationList: Li
             if (it.value != null) {
                 val groupData = it.value as Map<*, *>
                 groupName = groupData["groupName"].toString()
+                println(groupName)
                 invitationGroupName.text = groupName
             }
 
