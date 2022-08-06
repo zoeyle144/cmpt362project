@@ -22,4 +22,8 @@ class SettingsProfileViewModel : ViewModel() {
         profilePicture.value = bitmap
         imageSet = true
     }
+
+    fun isImageSet() : Boolean {
+        return imageSet
+    }
 }

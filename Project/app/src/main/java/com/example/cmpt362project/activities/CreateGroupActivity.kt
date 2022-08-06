@@ -67,7 +67,7 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
 
             val permission = Permission(permissionID,role,userName,groupID, userName)
             groupListViewModel.insert(group)
-            permissionViewModel.insert(permission, permissionID)
+//            permissionViewModel.insert(permission, permissionID)
             
             finish()
 

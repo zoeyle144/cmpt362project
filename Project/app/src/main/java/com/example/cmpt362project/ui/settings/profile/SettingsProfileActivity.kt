@@ -79,7 +79,7 @@ class SettingsProfileActivity : AppCompatActivity() {
         user = auth.currentUser!!
 
         pictureView = findViewById(R.id.profile_picture)
-        userProfileViewModel = ViewModelProvider(this).get(SettingsProfileViewModel::class.java)
+        userProfileViewModel = ViewModelProvider(this)[SettingsProfileViewModel::class.java]
         userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
         usernameView = findViewById(R.id.profile_username_field)
@@ -98,7 +98,9 @@ class SettingsProfileActivity : AppCompatActivity() {
                     emailView.editText?.setText(userData["email"] as String)
                     nameView.editText?.setText(userData["name"] as String)
                     aboutMeView.editText?.setText(userData["aboutMe"] as String)
-                    ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
+                    if (!userProfileViewModel.isImageSet()) {
+                        ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
+                    }
                 }
             }
 
