@@ -41,7 +41,6 @@ class MessageRepository {
         mapMsg["senderUsername"] = msg.senderUsername
         mapMsg["message"] = msg.message
         mapMsg["timestamp"] = ServerValue.TIMESTAMP
-        println(mapMsg)
         msgRef.child(msg.chatId).push().setValue(mapMsg).addOnCompleteListener{
             chatRef.child(msg.chatId).child("lastUpdateTimestamp").setValue(ServerValue.TIMESTAMP)
             println("debug: add message success")
