@@ -43,7 +43,6 @@ class SettingsProfileActivity : AppCompatActivity() {
     private lateinit var viewModel: SettingsProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
-    private lateinit var cameraImageUri: Uri
 
     companion object {
         const val KEY_PROFILE_PIC_RECENTLY_CHANGED = "KEY_PROFILE_PIC_RECENTLY_CHANGED"
@@ -102,8 +101,9 @@ class SettingsProfileActivity : AppCompatActivity() {
 
         cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
-                if (cameraImageUri != Uri.EMPTY) {
-                    val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
+                if (viewModel.cameraImageUri != Uri.EMPTY) {
+                    val image = BitmapFactory.decodeStream(
+                        this.contentResolver.openInputStream(viewModel.cameraImageUri))
                     viewModel.setImage(image)
                 }
             } else {
@@ -139,8 +139,8 @@ class SettingsProfileActivity : AppCompatActivity() {
     private fun launchCamera() {
         // Store image in app's storage
         val imageFile = File(getExternalFilesDir(null), CAMERA_SAVED_FILE_NAME)
-        cameraImageUri = FileProvider.getUriForFile(this, "com.example.cmpt362project", imageFile)
-        cameraActivityResult.launch(cameraImageUri)
+        viewModel.cameraImageUri = FileProvider.getUriForFile(this, "com.example.cmpt362project", imageFile)
+        cameraActivityResult.launch(viewModel.cameraImageUri)
     }
 
     override fun onRequestPermissionsResult(

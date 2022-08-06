@@ -1,6 +1,7 @@
 package com.example.cmpt362project.ui.settings.profile
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,9 +19,12 @@ class SettingsProfileViewModel : ViewModel() {
     val auth: FirebaseAuth = Firebase.auth
     val user: FirebaseUser = auth.currentUser!!
 
+
     val profilePicture = MutableLiveData<Bitmap>()
     var imageSet = false
         private set
+    var cameraImageUri = Uri.EMPTY
+
 
     private val _usernameViewText = MutableLiveData<String>()
     val usernameViewText: LiveData<String> get() = _usernameViewText
