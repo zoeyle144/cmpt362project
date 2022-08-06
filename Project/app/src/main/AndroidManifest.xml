@@ -22,11 +22,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
         <activity
+            android:name=".ui.settings.notification.SettingsNotificationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.notification.SettingsNotificationActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.settings.AboutAppActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            android:exported="false">
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.cmpt362project.ui.settings.AboutAppActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -18,6 +18,15 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Notifications">
+        <Preference
+            app:title="Edit which notifications you get"
+            app:icon="@drawable/settings_sym_notifications"
+            app:summary="Board and invite notifications">
+            <intent android:action="com.example.cmpt362project.ui.settings.notification.SettingsNotificationActivity" />
+        </Preference>
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="Support">
         <Preference
             app:title="About Horizon"
