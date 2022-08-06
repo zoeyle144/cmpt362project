@@ -1,0 +1,38 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Your account">
+        <Preference
+            app:title="Edit your profile"
+            app:icon="@drawable/settings_sym_profile"
+            app:summary="Profile picture, name, about me">
+            <intent android:action="com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity" />
+        </Preference>
+
+        <Preference
+            app:title="Edit your account"
+            app:icon="@drawable/settings_sym_account"
+            app:summary="Log out, e-mail, password">
+            <intent android:action="com.example.cmpt362project.ui.settings.account.SettingsAccountActivity" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Support">
+        <Preference
+            app:title="About Horizon"
+            app:icon="@drawable/settings_sym_about"
+            app:summary="Version number, credits">
+            <intent android:action="com.example.cmpt362project.ui.settings.AboutAppActivity" />
+        </Preference>
+        <Preference
+            app:title="Our website"
+            app:icon="@drawable/settings_sym_website"
+            app:summary="Visit our website"
+            >
+            <intent android:action="android.intent.action.VIEW" android:data="https://sfu.ca">
+            </intent>
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

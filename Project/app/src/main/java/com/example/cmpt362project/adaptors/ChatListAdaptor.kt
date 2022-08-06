@@ -45,9 +45,11 @@ class ChatListAdaptor(val context: Context, private var chatList: List<Chat>): B
         var username = ""
         var otherUsername = ""
         database.getReference("users").child(otherUserUid).get().addOnSuccessListener {
-            var chatListEntry = it.value as Map<*, *>
-            otherUsername = chatListEntry["username"].toString()
-            chatEntry.text = otherUsername
+            if (it.value != null) {
+                var chatListEntry = it.value as Map<*, *>
+                otherUsername = chatListEntry["username"].toString()
+                chatEntry.text = otherUsername
+            }
         }.addOnFailureListener() {
             chatEntry.text = "ERROR"
         }

@@ -55,7 +55,7 @@
         <item>Medium Priority</item>
         <item>Low Priority</item>
     </string-array>
-    
+
     <string name="profile_picture_content_desc">Your profile picture</string>
     <string name="profile_picture_username_label">Username</string>
     <string name="profile_picture_email_label">E-mail</string>
@@ -70,4 +70,23 @@
     <string name="default_pfp_path">defaults/default_pfp.png</string>
     <string name="default_bp_path">defaults/default_bp.png</string>
     <string name="profile_toolbar_discard">Discard changes</string>
+
+    <string name="settings_account_toolbar_title">Account settings</string>
+    <string name="settings_account_nav_icon_content_desc">Back</string>
+
+    <string name="account_settings_current_email_label">Current e-mail</string>
+    <string name="account_settings_new_email_label">Enter new e-mail</string>
+    <string name="account_settings_password_label">Enter current password</string>
+    <string name="profile_toolbar_cancel">Cancel</string>
+    <string name="account_settings_current_password_label">Enter current password</string>
+    <string name="account_settings_new_password_label">Enter new password</string>
+    <string name="account_settings_reenter_new_password_label">Re-enter new password</string>
+    <string name="account_settings_password_change_note">Note: you will get logged out of the app upon a successful password change</string>
+    <string name="account_settings_delete_note">Note: your account will be deleted forever! You cannot reverse this action!</string>
+    <string name="account_settings_enter_current_email_label">Enter current e-mail</string>
+    <string name="account_settings_toolbar_confirm">Confirm</string>
+    <string name="account_settings_enter_confirm_label">Type CONFIRM to confirm your account deletion</string>
+
+    <string name="menu_invitations">Group Invitations</string>
+
 </resources>

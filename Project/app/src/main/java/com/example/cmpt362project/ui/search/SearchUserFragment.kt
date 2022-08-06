@@ -71,7 +71,7 @@ class SearchUserFragment : Fragment() {
             else -> GridLayoutManager(context, columnCount)
         }
 
-        recyclerViewAdapter = SearchUserAdapter(requireActivity(), listOfUsers)
+        recyclerViewAdapter = SearchUserAdapter(requireActivity(), listOfUsers, 0)
         recyclerView.adapter = recyclerViewAdapter
         initRecyclerViewAdapter = true
 

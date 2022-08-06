@@ -15,5 +15,13 @@ class GroupListViewModel: ViewModel(){
     fun getGroups(){
         repository.getGroups(_groupsLiveData)
     }
+
+    fun insert(group: Group){
+        repository.insert(group)
+    }
+
+    fun delete(groupID:String){
+        repository.delete(groupID)
+    }
 }
 

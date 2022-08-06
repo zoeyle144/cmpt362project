@@ -35,7 +35,7 @@ class SearchUserResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_profile)
+        setContentView(R.layout.activity_settings_profile)
 
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
@@ -72,7 +72,7 @@ class SearchUserResultActivity : AppCompatActivity() {
         ImageUtility.setImageViewToProfilePic(profilePic, pictureView)
         aboutMeView.editText?.setText(aboutMe)
 
-        // Disable functionality of the R.layout.activity_user_profile layout
+        // Disable functionality of the R.layout.activity_settings_profile layout
         usernameView.isEnabled = false
         emailView.isEnabled = false
         nameView.isEnabled = false

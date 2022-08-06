@@ -22,7 +22,7 @@ import com.example.cmpt362project.utility.ImageUtility
  * [RecyclerView.Adapter] that can display a [User].
  * TODO: Replace the implementation with code for your data type.
  */
-class SearchUserAdapter(private val context: Context, private var list: ArrayList<User>)
+class SearchUserAdapter(private val context: Context, private var list: ArrayList<User>, private var type: Int)
     : RecyclerView.Adapter<SearchUserAdapter.ViewHolder>(), Filterable {
 
     private var originalList = list
@@ -45,13 +45,19 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
         ImageUtility.setImageViewToProfilePic(item.profilePic, holder.pictureView)
         println("onBindViewHolder called")
         holder.entryView.setOnClickListener {
-            val intent = Intent(context, SearchUserResultActivity::class.java)
-            intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
-            intent.putExtra(KEY_SEARCH_USER_RESULT_EMAIL, item.email)
-            intent.putExtra(KEY_SEARCH_USER_RESULT_NAME, item.name)
-            intent.putExtra(KEY_SEARCH_USER_RESULT_PROFILE_PIC, item.profilePic)
-            intent.putExtra(KEY_SEARCH_USER_RESULT_ABOUT_ME, item.aboutMe)
-            context.startActivity(intent)
+            if(type == 0) {
+                val intent = Intent(context, SearchUserResultActivity::class.java)
+                intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
+                intent.putExtra(KEY_SEARCH_USER_RESULT_EMAIL, item.email)
+                intent.putExtra(KEY_SEARCH_USER_RESULT_NAME, item.name)
+                intent.putExtra(KEY_SEARCH_USER_RESULT_PROFILE_PIC, item.profilePic)
+                intent.putExtra(KEY_SEARCH_USER_RESULT_ABOUT_ME, item.aboutMe)
+                context.startActivity(intent)
+            }
+            else if (type == 1) {
+
+            }
+
         }
     }
 

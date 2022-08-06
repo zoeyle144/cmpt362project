@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <SearchView
+        android:id="@+id/search_user_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_user_hint" />
+
+    <androidx.recyclerview.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/search_member"
+        android:name="com.example.cmpt362project.ui.search.ItemFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_search_user_entry" />
+
+    <TextView
+        android:id="@+id/member_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/textview4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Assign Role" />
+
+    <Spinner
+        android:id="@+id/role_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:entries="@array/permission"
+        android:focusable="false"></Spinner>
+
+</LinearLayout>

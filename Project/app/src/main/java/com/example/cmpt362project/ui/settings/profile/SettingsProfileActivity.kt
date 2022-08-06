@@ -1,4 +1,4 @@
-package com.example.cmpt362project.ui.settings
+package com.example.cmpt362project.ui.settings.profile
 
 import android.Manifest
 import android.app.Activity
@@ -10,11 +10,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -22,10 +22,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.appcompat.widget.TooltipCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
-import com.example.cmpt362project.database.User
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -36,9 +35,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
-class UserProfileActivity : AppCompatActivity() {
+class SettingsProfileActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
@@ -50,7 +50,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
-    private lateinit var userProfileViewModel: UserProfileViewModel
+    private lateinit var userProfileViewModel: SettingsProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
     private lateinit var cameraImageUri: Uri
@@ -60,11 +60,12 @@ class UserProfileActivity : AppCompatActivity() {
         const val SHARED_PREF = "SHARED_PREF"
 
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
+        const val CAMERA_SAVED_FILE_NAME = "temp_pfp.jpg"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_profile)
+        setContentView(R.layout.activity_settings_profile)
 
         val toolbar = findViewById<Toolbar>(R.id.profile_toolbar)
         setSupportActionBar(toolbar)
@@ -78,7 +79,7 @@ class UserProfileActivity : AppCompatActivity() {
         user = auth.currentUser!!
 
         pictureView = findViewById(R.id.profile_picture)
-        userProfileViewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
+        userProfileViewModel = ViewModelProvider(this).get(SettingsProfileViewModel::class.java)
         userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
         usernameView = findViewById(R.id.profile_username_field)
@@ -114,15 +115,14 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        cameraImageUri = Uri.EMPTY
         cameraActivityResult = registerForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
-                println("Camera success")
                 if (cameraImageUri != Uri.EMPTY) {
-                    println("URI not empty")
+                    val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
+                    userProfileViewModel.setImage(image)
                 }
             } else {
-                println("Camera failure")
+                Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -136,13 +136,11 @@ class UserProfileActivity : AppCompatActivity() {
         builder.setItems(dialogOptions) {
                 _: DialogInterface, i: Int ->
             if (dialogOptions[i] == "Open camera") {
-                println("Camera!")
                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION_CODE)
                 } else launchCamera()
             }
             else {
-                println("Gallery!")
                 val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 galleryActivityResult.launch(galleryIntent)
             }
@@ -154,8 +152,9 @@ class UserProfileActivity : AppCompatActivity() {
 
 
     private fun launchCamera() {
-//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        cameraActivityResult.launch(cameraIntent)
+        // Store image in app's storage
+        val imageFile = File(getExternalFilesDir(null), CAMERA_SAVED_FILE_NAME)
+        cameraImageUri = FileProvider.getUriForFile(this, "com.example.cmpt362project", imageFile)
         cameraActivityResult.launch(cameraImageUri)
     }
 
@@ -169,7 +168,9 @@ class UserProfileActivity : AppCompatActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 println("Camera permission granted")
                 launchCamera()
-            } else println("Camera permission denied!")
+            } else {
+                Toast.makeText(this, "Camera permission denied!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -182,13 +183,13 @@ class UserProfileActivity : AppCompatActivity() {
         database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
         uploadImage()
 
-        Toast.makeText(this@UserProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
 
         finish()
     }
 
     private fun uploadImage() {
-        val printIdentifier = "UserProfileActivity uploadImage"
+        val printIdentifier = "SettingsProfileActivity uploadImage"
         val storage = Firebase.storage.reference
         val image = userProfileViewModel.getImage() ?: return
 
