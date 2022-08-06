@@ -12,7 +12,7 @@ class TaskChecklistViewModel(): ViewModel() {
     private val _taskChecklistItemsLiveData = MutableLiveData<List<TaskChecklistItem>>()
     val taskChecklistItemsLiveData: LiveData<List<TaskChecklistItem>> = _taskChecklistItemsLiveData
 
-    fun fetchTasks(boardID: String, taskID: String){
+    fun fetchChecklistItems(boardID: String, taskID: String){
         repository.fetchTasks(_taskChecklistItemsLiveData, boardID, taskID)
     }
 
@@ -22,5 +22,9 @@ class TaskChecklistViewModel(): ViewModel() {
 
     fun delete(boardID:String, taskID: String, itemID: String){
         repository.delete(boardID, taskID, itemID)
+    }
+
+    fun updateCompleteField(boardID:String, taskID: String, itemID: String, isChecked:Boolean){
+        repository.updateCompleteField(boardID, taskID, itemID, isChecked)
     }
 }

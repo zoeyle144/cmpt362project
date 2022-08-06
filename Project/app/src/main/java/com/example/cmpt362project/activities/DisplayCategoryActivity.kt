@@ -1,49 +1,33 @@
 package com.example.cmpt362project.activities
 
-import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.ClipDescription
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.ListView
-import android.widget.ScrollView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.adaptors.CategoryListAdaptor
-//import com.example.cmpt362project.adaptors.DragManageAdapter
-import com.example.cmpt362project.adaptors.TaskListAdaptor
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
-import com.example.cmpt362project.models.Task
-import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.example.cmpt362project.viewModels.CategoryListViewModel
-import com.example.cmpt362project.viewModels.TaskListViewModel
 
 class DisplayCategoryActivity: AppCompatActivity() {
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>? = null
     private lateinit var categoryList: List<Category>
-    private lateinit var boardListViewModel: BoardListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_category)
 
-        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
-        val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
+        val boardParcel = intent.getParcelableExtra<Board>("board")
+        val boardTitle  = boardParcel?.boardName.toString()
+        val boardID = boardParcel?.boardID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
@@ -98,29 +82,34 @@ class DisplayCategoryActivity: AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.custom_category_menu,menu)
+        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
+        menuInflater.inflate(R.menu.custom_board_menu,menu)
+        getSupportActionBar()?.setTitle("$boardTitle");
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
-        if (itemId == R.id.delete_category_button){
-            val confirmationBuilder = AlertDialog.Builder(this)
-            val selectedBoard = intent.getParcelableExtra<Board>("board")
-            confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { dialog, id ->
-                    val boardID = selectedBoard?.boardID.toString()
-                    boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                    boardListViewModel.delete(boardID)
-                    finish()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    dialog.dismiss()
-                }
-            val alert = confirmationBuilder.create()
-            alert.show()
+        if (itemId == R.id.board_info_button){
+            openDisplayBoardInfoActivityForResult()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == RESULT_OK && result.data != null){
+//            val temp = result.data!!.getSerializableExtra("boardNameField").toString()
+//            getSupportActionBar()?.setTitle("$temp");
+//        } else
+        if (result.resultCode == RESULT_OK){
+            this.finish()
+        }
+    }
+
+    private fun openDisplayBoardInfoActivityForResult(){
+        val infoIntent = Intent(this, DisplayBoardInfoActivity::class.java)
+        val boardParcel = intent.getParcelableExtra<Board>("board")
+        infoIntent.putExtra("board", boardParcel)
+        resultLauncher.launch(infoIntent)
     }
 }

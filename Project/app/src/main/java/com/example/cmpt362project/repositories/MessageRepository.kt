@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.ServerValue
 
 class MessageRepository {
     val database = Firebase.database
@@ -34,8 +35,14 @@ class MessageRepository {
             })
     }
     fun insert(msg: Message){
-        msgRef.child(msg.chatId).push().setValue(msg).addOnCompleteListener{
-            chatRef.child(msg.chatId).child("lastUpdateTimestamp").setValue(System.currentTimeMillis())
+        var mapMsg = mutableMapOf<String, Any>()
+        mapMsg["chatId"] = msg.chatId
+        mapMsg["sender"] = msg.sender
+        mapMsg["senderUsername"] = msg.senderUsername
+        mapMsg["message"] = msg.message
+        mapMsg["timestamp"] = ServerValue.TIMESTAMP
+        msgRef.child(msg.chatId).push().setValue(mapMsg).addOnCompleteListener{
+            chatRef.child(msg.chatId).child("lastUpdateTimestamp").setValue(ServerValue.TIMESTAMP)
             println("debug: add message success")
         }.addOnFailureListener { err ->
             println("debug: add message fail Error ${err.message}")

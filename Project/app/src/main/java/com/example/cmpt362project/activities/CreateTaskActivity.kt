@@ -41,7 +41,7 @@ class CreateTaskActivity: AppCompatActivity() {
 
         ArrayAdapter.createFromResource(
             this,
-            R.array.prioLvs,
+            R.array.difficultyLv,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

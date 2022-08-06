@@ -3,6 +3,7 @@ package com.example.cmpt362project.models
 import com.google.firebase.database.IgnoreExtraProperties
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.database.Exclude
 
 @IgnoreExtraProperties
 data class Board(
@@ -10,7 +11,7 @@ data class Board(
     val boardName: String = "",
     val description: String = "",
     val createdBy: String = "",
-//    val categories: List<Category> = ArrayList()
+    val boardPic: String = ""
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -18,16 +19,15 @@ data class Board(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-//        arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
-    ) {
-    }
+        parcel.readString()!!,
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(boardID)
         parcel.writeString(boardName)
         parcel.writeString(description)
         parcel.writeString(createdBy)
-//        parcel.writeTypedList(categories)
+        parcel.writeString(boardPic)
     }
 
     override fun describeContents(): Int {
@@ -42,5 +42,16 @@ data class Board(
         override fun newArray(size: Int): Array<Board?> {
             return arrayOfNulls(size)
         }
+    }
+
+    @Exclude
+    fun toMap(): Map<String, Any?>{
+        return mapOf(
+            "boardID" to boardID,
+            "boardName" to boardName,
+            "description" to description,
+            "createdBy" to createdBy,
+            "boardPic" to boardPic
+        )
     }
 }

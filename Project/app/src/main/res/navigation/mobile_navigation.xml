@@ -26,6 +26,12 @@
         tools:layout="@layout/fragment_groups" />
 
     <fragment
+        android:id="@+id/nav_invitations"
+        android:name="com.example.cmpt362project.ui.invitation.InvitationListFragment"
+        android:label="@string/menu_invitations"
+        tools:layout="@layout/fragment_invitations"/>
+
+    <fragment
         android:id="@+id/nav_chats"
         android:name="com.example.cmpt362project.ui.chat.ChatListFragment"
         android:label="@string/menu_chats"

@@ -20,6 +20,12 @@
             android:title="@string/menu_groups" />
 
         <item
+            android:id="@+id/nav_invitations"
+            android:icon="@drawable/ic_baseline_groups_24"
+            android:title="@string/menu_invitations" />
+
+
+        <item
             android:id="@+id/nav_chats"
             android:icon="@drawable/ic_baseline_chat_24"
             android:title="@string/menu_chats" />

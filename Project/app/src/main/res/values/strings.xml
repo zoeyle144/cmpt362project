@@ -50,10 +50,10 @@
     <string name="menu_search">Search</string>
     <string name="search_user_hint">Search for users</string>
 
-    <string-array name="prioLvs">
-        <item>High Priority</item>
-        <item>Medium Priority</item>
-        <item>Low Priority</item>
+    <string-array name="difficultyLv">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
     </string-array>
 
     <string name="profile_picture_content_desc">Your profile picture</string>
@@ -68,7 +68,9 @@
     <string name="menu_chats">Private Chats</string>
     <string name="send">SEND</string>
     <string name="default_pfp_path">defaults/default_pfp.png</string>
+    <string name="default_bp_path">defaults/default_bp.png</string>
     <string name="profile_toolbar_discard">Discard changes</string>
+
     <string name="settings_account_toolbar_title">Account settings</string>
     <string name="settings_account_nav_icon_content_desc">Back</string>
 
@@ -84,4 +86,7 @@
     <string name="account_settings_enter_current_email_label">Enter current e-mail</string>
     <string name="account_settings_toolbar_confirm">Confirm</string>
     <string name="account_settings_enter_confirm_label">Type CONFIRM to confirm your account deletion</string>
+
+    <string name="menu_invitations">Group Invitations</string>
+
 </resources>
