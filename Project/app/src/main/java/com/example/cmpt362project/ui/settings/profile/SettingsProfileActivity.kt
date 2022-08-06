@@ -77,12 +77,14 @@ class SettingsProfileActivity : AppCompatActivity() {
 
         // Set text fields
         viewModel.setValuesFromDatabase()
-        usernameView.editText?.setText(viewModel.usernameViewText)
-        emailView.editText?.setText(viewModel.emailViewText)
-        nameView.editText?.setText(viewModel.nameViewText)
-        aboutMeView.editText?.setText(viewModel.aboutMeViewText)
+        viewModel.usernameViewText.observe(this) {usernameView.editText?.setText(it)}
+        viewModel.emailViewText.observe(this) {emailView.editText?.setText(it)}
+        viewModel.nameViewText.observe(this) {nameView.editText?.setText(it)}
+        viewModel.aboutMeViewText.observe(this) {aboutMeView.editText?.setText(it)}
         if (!viewModel.imageSet) {
-            ImageUtility.setImageViewToProfilePic(viewModel.profilePicPath, pictureView)
+            viewModel.profilePicPath.observe(this) {
+                ImageUtility.setImageViewToProfilePic(it, pictureView)
+            }
         }
 
         // Initialize the gallery activity

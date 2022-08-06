@@ -22,16 +22,21 @@ class SettingsProfileViewModel : ViewModel() {
     var imageSet = false
         private set
 
-    var usernameViewText = ""
-        private set
-    var emailViewText = ""
-        private set
-    var nameViewText = ""
-        private set
-    var aboutMeViewText = ""
-        private set
-    var profilePicPath = ""
-        private set
+    private val _usernameViewText = MutableLiveData<String>()
+    val usernameViewText: LiveData<String> get() = _usernameViewText
+
+    private val _emailViewText = MutableLiveData<String>()
+    val emailViewText: LiveData<String> get() = _emailViewText
+
+    private val _nameViewText = MutableLiveData<String>()
+    val nameViewText: LiveData<String> get() = _nameViewText
+
+    private val _aboutMeViewText = MutableLiveData<String>()
+    val aboutMeViewText: LiveData<String> get() = _aboutMeViewText
+
+    private val _profilePicPath = MutableLiveData<String>()
+    val profilePicPath: LiveData<String> get() = _profilePicPath
+
 
     private val _toastMessage = MutableLiveData<SingleLiveEvent<String>>()
     val toastMessage : LiveData<SingleLiveEvent<String>>
@@ -51,11 +56,11 @@ class SettingsProfileViewModel : ViewModel() {
         database.child("users").child(user.uid).get().addOnSuccessListener {
             if (it != null) {
                 val userData = it.value as Map<*, *>
-                usernameViewText = userData["username"] as String
-                emailViewText = userData["email"] as String
-                nameViewText = userData["name"] as String
-                aboutMeViewText = userData["aboutMe"] as String
-                profilePicPath = userData["profilePic"] as String
+                _usernameViewText.value = userData["username"] as String
+                _emailViewText.value = userData["email"] as String
+                _nameViewText.value = userData["name"] as String
+                _aboutMeViewText.value = userData["aboutMe"] as String
+                _profilePicPath.value = userData["profilePic"] as String
             }
         }
     }
