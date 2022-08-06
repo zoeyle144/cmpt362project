@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -27,11 +26,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -40,17 +34,13 @@ import java.util.*
 
 class SettingsProfileActivity : AppCompatActivity() {
 
-    private lateinit var database: DatabaseReference
-    private lateinit var auth: FirebaseAuth
-    private lateinit var user: FirebaseUser
-
     private lateinit var usernameView: TextInputLayout
     private lateinit var emailView: TextInputLayout
     private lateinit var nameView: TextInputLayout
     private lateinit var aboutMeView: TextInputLayout
 
     private lateinit var pictureView: ImageView
-    private lateinit var userProfileViewModel: SettingsProfileViewModel
+    private lateinit var viewModel: SettingsProfileViewModel
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
     private lateinit var cameraImageUri: Uri
@@ -74,13 +64,9 @@ class SettingsProfileActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_baseline_close_24, theme))
         supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_discard))
 
-        database = Firebase.database.reference
-        auth = Firebase.auth
-        user = auth.currentUser!!
-
+        viewModel = ViewModelProvider(this)[SettingsProfileViewModel::class.java]
         pictureView = findViewById(R.id.profile_picture)
-        userProfileViewModel = ViewModelProvider(this)[SettingsProfileViewModel::class.java]
-        userProfileViewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
+        viewModel.profilePicture.observe(this) { pictureView.setImageBitmap(it) }
 
         usernameView = findViewById(R.id.profile_username_field)
         emailView = findViewById(R.id.profile_email_field)
@@ -89,7 +75,7 @@ class SettingsProfileActivity : AppCompatActivity() {
         usernameView.isEnabled = false
         emailView.isEnabled = false
 
-        database.child("users").child(user.uid).get()
+        viewModel.database.child("users").child(viewModel.user.uid).get()
             .addOnSuccessListener {
                 if (it != null) {
                     val userData = it.value as Map<*, *>
@@ -98,7 +84,7 @@ class SettingsProfileActivity : AppCompatActivity() {
                     emailView.editText?.setText(userData["email"] as String)
                     nameView.editText?.setText(userData["name"] as String)
                     aboutMeView.editText?.setText(userData["aboutMe"] as String)
-                    if (!userProfileViewModel.isImageSet()) {
+                    if (!viewModel.isImageSet()) {
                         ImageUtility.setImageViewToProfilePic(userData["profilePic"] as String, pictureView)
                     }
                 }
@@ -113,7 +99,7 @@ class SettingsProfileActivity : AppCompatActivity() {
                 val resultUri = resultIntent?.data
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
                 println("Image found. Calling userProfileViewModel.setImage")
-                userProfileViewModel.setImage(image)
+                viewModel.setImage(image)
             }
         }
 
@@ -121,7 +107,7 @@ class SettingsProfileActivity : AppCompatActivity() {
             if (it) {
                 if (cameraImageUri != Uri.EMPTY) {
                     val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
-                    userProfileViewModel.setImage(image)
+                    viewModel.setImage(image)
                 }
             } else {
                 Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
@@ -177,12 +163,11 @@ class SettingsProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfile() {
-        val user = auth.currentUser
         val nameToAdd = nameView.editText?.text.toString()
         val aboutMeToAdd = aboutMeView.editText?.text.toString()
 
-        database.child("users").child(user!!.uid).child("name").setValue(nameToAdd)
-        database.child("users").child(user.uid).child("aboutMe").setValue(aboutMeToAdd)
+        viewModel.database.child("users").child(viewModel.user.uid).child("name").setValue(nameToAdd)
+        viewModel.database.child("users").child(viewModel.user.uid).child("aboutMe").setValue(aboutMeToAdd)
         uploadImage()
 
         Toast.makeText(this@SettingsProfileActivity, "Saved", Toast.LENGTH_SHORT).show()
@@ -193,7 +178,7 @@ class SettingsProfileActivity : AppCompatActivity() {
     private fun uploadImage() {
         val printIdentifier = "SettingsProfileActivity uploadImage"
         val storage = Firebase.storage.reference
-        val image = userProfileViewModel.getImage() ?: return
+        val image = viewModel.getImage() ?: return
 
         val imageScaled = Bitmap.createScaledBitmap(image, 240, 240, true)
         val stream = ByteArrayOutputStream()
@@ -202,7 +187,7 @@ class SettingsProfileActivity : AppCompatActivity() {
         stream.close()
 
         // Get the old profile picture path so we can delete the image later (if upload success)
-        val userReference = database.child("users").child(user.uid).child("profilePic")
+        val userReference = viewModel.database.child("users").child(viewModel.user.uid).child("profilePic")
         userReference.get().addOnSuccessListener { oldImgPath ->
 
             // Write the new profile picture to Storage
