@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -26,11 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.utility.ImageUtility
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.*
 
 class SettingsProfileActivity : AppCompatActivity() {
 
@@ -66,7 +61,6 @@ class SettingsProfileActivity : AppCompatActivity() {
         supportActionBar?.setHomeActionContentDescription(getString(R.string.profile_toolbar_discard))
 
         viewModelFactory = SettingsProfileViewModelFactory(
-            getString(R.string.default_pfp_path),
             this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE))
         viewModel = ViewModelProvider(this, viewModelFactory)[SettingsProfileViewModel::class.java]
         pictureView = findViewById(R.id.profile_picture)
