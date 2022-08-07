@@ -17,7 +17,7 @@
         android:id= "@+id/task_checklist_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+        android:layout_gravity="center|center_horizontal"
         android:textStyle="bold" />
 
     <TextView
@@ -37,5 +37,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
+
+    <CheckBox
+        android:id="@+id/checlist_item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_horizontal"/>
+
+    <ImageView
+        android:id="@+id/checlist_item_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_baseline_delete_outline_24"
+        android:contentDescription="delete icon" />
 
 </androidx.cardview.widget.CardView>

@@ -41,7 +41,7 @@ class InvitationRepository {
                 val invitationList = it.value as Map<*, *>
                 for ((key, value) in invitationList) {
                     var invitationListEntry = value as Map<*, *>
-                    if (invitationListEntry["sender"] == invitation.sender && invitationListEntry["receiver"] == invitation.receiver) {
+                    if (invitationListEntry["sender"] == invitation.sender && invitationListEntry["receiver"] == invitation.receiver && invitationListEntry["groupID"] == invitation.groupId) {
                         exists = true
                         break
                     }

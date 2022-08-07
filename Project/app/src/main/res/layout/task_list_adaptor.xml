@@ -20,6 +20,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:textStyle="bold"
+        android:textSize="18dp"
+        android:textColor="@color/white"
+        android:shadowColor="#000000"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="5"
         android:padding="10dp" />
 
     <TextView

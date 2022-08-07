@@ -26,12 +26,15 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.icu.util.Calendar
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 
 class DisplayTaskActivity : AppCompatActivity() {
     private lateinit var taskListViewModel: TaskListViewModel
     private lateinit var taskChecklistViewModel: TaskChecklistViewModel
     private var months = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
     private var days = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    private var difficulties = arrayOf("Easy", "Medium", "Hard")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +45,24 @@ class DisplayTaskActivity : AppCompatActivity() {
         val t = intent.getParcelableExtra<Task>("task")
         val taskName = findViewById<EditText>(R.id.task_name)
         val taskSummary = findViewById<EditText>(R.id.task_summary)
-        val taskType = findViewById<EditText>(R.id.task_type)
+        val taskType = findViewById<Spinner>(R.id.task_type)
         val taskStartDate = findViewById<EditText>(R.id.task_start_date)
         val taskEndDate = findViewById<EditText>(R.id.task_end_date)
+
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.difficultyLv,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            taskType.adapter = adapter
+            taskType.setSelection(difficulties.indexOf(t?.type))
+        }
+
         var startTimeInMillis = t?.startDate
         var endTimeInMillis = t?.endDate
-        var startDateString:String = ""
-        var endDateString:String = ""
+        var startDateString = ""
+        var endDateString = ""
 
         if (startTimeInMillis != null && startTimeInMillis != 0L){
             val startDateInstance = Calendar.getInstance()
@@ -89,7 +103,6 @@ class DisplayTaskActivity : AppCompatActivity() {
 
         taskName.setText(t?.name)
         taskSummary.setText(t?.summary)
-        taskType.setText(t?.type)
         taskStartDate.setText(startDateString)
         taskEndDate.setText(endDateString)
 
@@ -108,7 +121,7 @@ class DisplayTaskActivity : AppCompatActivity() {
             )
         )
         taskChecklistViewModel = ViewModelProvider(this)[TaskChecklistViewModel::class.java]
-        taskChecklistViewModel.fetchTasks(boardID, taskID)
+        taskChecklistViewModel.fetchChecklistItems(boardID, taskID)
         taskChecklistViewModel.taskChecklistItemsLiveData.observe(this){
             (adapter as TaskChecklistAdaptor).updateList(it)
             (adapter as TaskChecklistAdaptor).notifyDataSetChanged()
@@ -222,7 +235,7 @@ class DisplayTaskActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             val taskNameForUpdate = taskName.text.toString()
             val taskSummaryForUpdate = taskSummary.text.toString()
-            val taskTypeForUpdate = taskType.text.toString()
+            val taskTypeForUpdate = taskType.selectedItem.toString()
             val taskStartDateForUpdate = startTimeInMillis
             val taskEndDateForUpdate = endTimeInMillis
             val taskForUpdate = TaskUpdateData(taskID, taskNameForUpdate, taskSummaryForUpdate, taskTypeForUpdate,

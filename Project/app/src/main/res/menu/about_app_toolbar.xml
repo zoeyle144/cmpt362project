@@ -2,8 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/delete_category_button"
-        android:title="Delete"
+        android:id="@+id/toolbar_attribution"
+        android:title="Image attribution"
+        android:icon="@drawable/toolbar_attribution_white"
         app:showAsAction="always"
         />
 </menu>

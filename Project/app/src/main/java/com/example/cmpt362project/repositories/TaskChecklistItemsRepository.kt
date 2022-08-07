@@ -21,6 +21,7 @@ class TaskChecklistItemsRepository {
             .child("tasks")
             .child(taskID)
             .child("checklist")
+            .orderByKey()
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val tasks: List<TaskChecklistItem> = snapshot.children.map { dataSnapshot ->
@@ -50,6 +51,20 @@ class TaskChecklistItemsRepository {
                 println("debug: delete checklist item success")
             }.addOnFailureListener{ err ->
                 println("debug: delete checklist item fail Error ${err.message}")
+            }
+    }
+
+    fun updateCompleteField(boardID: String, taskID:String, itemID:String, isChecked:Boolean){
+        boardsRef.child(boardID).child("tasks")
+            .child(taskID)
+            .child("checklist")
+            .child(itemID)
+            .child("complete")
+            .setValue(isChecked)
+            .addOnSuccessListener {
+                println("debug: update checklist item complete field success")
+            }.addOnFailureListener{ err ->
+                println("debug: update checklist item complete field fail Error ${err.message}")
             }
     }
 

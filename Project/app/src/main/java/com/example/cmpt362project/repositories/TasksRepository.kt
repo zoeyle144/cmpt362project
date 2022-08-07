@@ -2,6 +2,7 @@ package com.example.cmpt362project.repositories
 
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Category
+import com.example.cmpt362project.models.ChangeNotification
 import com.example.cmpt362project.models.Task
 import com.example.cmpt362project.models.TaskUpdateData
 import com.google.firebase.auth.ktx.auth

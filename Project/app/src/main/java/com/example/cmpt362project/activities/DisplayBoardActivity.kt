@@ -123,6 +123,11 @@ class DisplayBoardActivity: AppCompatActivity() {
 //        })
 
 
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        val itemId = item.itemId
+//        if (itemId == R.id.board_info_button){
+//            val selectedGroup = intent.getParcelableExtra<Group>("group")
+
 
 
 ////        permissionViewModel.canDelete("-N8nxMBOuplwJJx6iNFn","zoey")
