@@ -37,7 +37,7 @@ class InviteMemberDialogFragment: DialogFragment(), DialogInterface.OnClickListe
     private lateinit var database: DatabaseReference
     private lateinit var userName: String
     private lateinit var role: String
-    private lateinit var role_spinner: Spinner
+ //   private lateinit var role_spinner: Spinner
 
     private lateinit var member: TextView
     private lateinit var dialogListener: DialogListener
@@ -53,7 +53,7 @@ class InviteMemberDialogFragment: DialogFragment(), DialogInterface.OnClickListe
         val dialogId = bundle?.getInt(DIALOG_KEY)
         val view: View = requireActivity().layoutInflater.inflate(R.layout.fragment_invite_member_dialog, null)
 
-        role_spinner = view.findViewById(R.id.role_spinner)
+ //       role_spinner = view.findViewById(R.id.role_spinner)
 
         member = view.findViewById(R.id.member_user_name)
         userName = ""
@@ -130,15 +130,15 @@ class InviteMemberDialogFragment: DialogFragment(), DialogInterface.OnClickListe
     }
     override fun onClick(dialog: DialogInterface, item: Int) {
         if (item == DialogInterface.BUTTON_POSITIVE) {
-            val item = role_spinner.selectedItemPosition
-            if(item == 0) {
-                role = "admin"
-            } else if (item == 1) {
-                role = "author"
-            } else if (item == 2) {
-                role = "reader"
-            }
-            dialogListener.sendTexts(userName, role)
+//            val item = role_spinner.selectedItemPosition
+//            if(item == 0) {
+//                role = "admin"
+//            } else if (item == 1) {
+//                role = "author"
+//            } else if (item == 2) {
+//                role = "reader"
+//            }
+//            dialogListener.sendTexts(userName, role)
 
             Toast.makeText(activity, "Member invited", Toast.LENGTH_LONG).show()
         } else if (item == DialogInterface.BUTTON_NEGATIVE) {

@@ -11,7 +11,8 @@ data class Group(
     val groupName: String = "",
     val description: String = "",
     val createdBy: String = "",
-    val assignedTo: ArrayList<String> = ArrayList(),
+    val chatID: String = "",
+//    val assignedTo: ArrayList<String> = ArrayList(),
     val roles: List<Permission> = ArrayList()
 ): Parcelable {
 
@@ -20,7 +21,9 @@ data class Group(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.createStringArrayList()!!,
+        parcel.readString()!!,
+
+//        parcel.createStringArrayList()!!,
         arrayListOf<Permission>().also { parcel.readTypedList(it,Permission.CREATOR) },
     //    arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
     ) {
@@ -31,7 +34,7 @@ data class Group(
         parcel.writeString(groupName)
         parcel.writeString(description)
         parcel.writeString(createdBy)
-        parcel.writeStringList(assignedTo)
+        parcel.writeString(chatID)
         parcel.writeTypedList(roles)
     //    parcel.writeTypedList(categories)
     }

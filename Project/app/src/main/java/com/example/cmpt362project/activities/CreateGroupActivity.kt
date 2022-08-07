@@ -30,25 +30,33 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
     private lateinit var memberList: ArrayList<String>
     private lateinit var userName: String
     private lateinit var role: String
+    private val database = Firebase.database
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
-
+        auth = Firebase.auth
         val createGroupButton = findViewById<Button>(R.id.create_group_button)
         val createGroupName = findViewById<EditText>(R.id.create_group_name_input)
         val createGroupDescription = findViewById<EditText>(R.id.create_group_description_input)
         val inviteMemberButton = findViewById<Button>(R.id.invite_member_btn)
         val groupName = intent.getSerializableExtra("groupTitle").toString()
 
-
+        val uID = auth.currentUser?.uid
+        val userRole = "admin"
+        var userName = ""
+        database.getReference("users").child(uID!!).get().addOnSuccessListener {
+            if (it.value != null) {
+                val userData = it.value as Map<*, *>
+                userName = userData["username"].toString()
+            }
+        }
         memberListView = findViewById<TextView>(R.id.memberList)
 
         createGroupButton.setOnClickListener{
 
             val groupListViewModel: GroupListViewModel = ViewModelProvider(this)[GroupListViewModel::class.java]
-            val database = Firebase.database
             val groupsRef = database.getReference("groups")
             val groupID = groupsRef.push().key!!
             val groupName = createGroupName.text
@@ -60,14 +68,17 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
             val permissionID = permRef.push().key!!
             val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
 
+            val chatID = ""
 
-            println("Debug: Assign role $memberList")
 
-            val group = Group(groupID, groupName.toString(), groupDescription.toString(), createdBy.toString(),memberList, ArrayList())
-
-            val permission = Permission(permissionID,role,userName,groupID, userName)
+            val group = Group(groupID, groupName.toString(), groupDescription.toString(), createdBy.toString(), chatID, ArrayList())
             groupListViewModel.insert(group)
+
+            val groupID_uID = "$groupID _ $uID"
+            val permission = Permission(permissionID,userRole,uID!!,groupID, userName, groupID_uID)
+
             permissionViewModel.insert(permission)
+            permissionViewModel.insertInGroup(permission,groupID)
             
             finish()
 
@@ -94,10 +105,6 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
         memberList.add(userName)
 
 
-
-    }
-
-    fun getMember(userName: String) {
 
     }
 
