@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -82,16 +83,12 @@ class SignUpPageActivity : AppCompatActivity() {
             emailView.error = "E-mail field cannot be empty."
             checkFields = false
         }
-        if (username.isEmpty()) {
-            usernameView.error = "Username field cannot be empty."
-            checkFields = false
-        }
         if (password.isEmpty()) {
             passwordView.error = "Password field cannot be empty."
             checkFields = false
         }
         if (username.length <= 3) {
-            emailView.error = "Username must be longer than 3 characters."
+            usernameView.error = "Username must be longer than 3 characters."
             checkFields = false
         }
         if (password != confirmPassword) {
@@ -103,7 +100,7 @@ class SignUpPageActivity : AppCompatActivity() {
         // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
         database.child("usernames").child(username).get().addOnSuccessListener {
             if (it.value != null) {
-                usernameView.error = "Username already exists"
+                usernameView.error = "This username is already taken."
             } else {
                 // add login data to auth
                 auth.createUserWithEmailAndPassword(email, password)
@@ -130,7 +127,7 @@ class SignUpPageActivity : AppCompatActivity() {
                             is FirebaseAuthWeakPasswordException ->
                                 passwordView.error = e.reason + "."
                             else ->
-                                emailView.error = e.message + "."
+                                emailView.error = e.message
                         }
                     }
             }
