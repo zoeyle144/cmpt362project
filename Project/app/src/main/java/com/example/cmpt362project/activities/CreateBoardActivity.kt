@@ -37,11 +37,9 @@ class CreateBoardActivity: AppCompatActivity() {
 
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
-            val board = Board(boardID,boardName.toString(), boardDescription.toString(), createdBy.toString())
+            val board = Board(boardID,boardName.toString(), boardDescription.toString(), createdBy.toString(), "","-N8nxMBOuplwJJx6iNFn")
             boardListViewModel.insert(board)
-            
             finish()
-
         }
     }
 }

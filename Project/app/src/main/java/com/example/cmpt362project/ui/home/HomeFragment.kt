@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
         adapter = BoardListAdaptor(boardList)
         boardListView.adapter = adapter
 
-        boardListViewModel.fetchBoards()
+        boardListViewModel.fetchBoards("-N8nxMBOuplwJJx6iNFn")
         boardListViewModel.boardsLiveData.observe(requireActivity()){
             (adapter as BoardListAdaptor).updateList(it)
             (adapter as BoardListAdaptor).notifyDataSetChanged()

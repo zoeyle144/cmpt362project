@@ -16,16 +16,16 @@ class BoardListViewModel: ViewModel(){
     private val _boardsLiveData = MutableLiveData<List<Board>>()
     val boardsLiveData: LiveData<List<Board>> = _boardsLiveData
 
-    fun fetchBoards(){
-        repository.fetchBoards(_boardsLiveData)
+    fun fetchBoards(groupID:String){
+        repository.fetchBoards(_boardsLiveData, groupID)
     }
 
     fun insert(board: Board){
         repository.insert(board)
     }
 
-    fun delete(boardID:String, boardName:String){
-        repository.delete(boardID, boardName)
+    fun delete(boardID:String, boardName:String, groupID: String){
+        repository.delete(boardID, boardName, groupID)
     }
 
     fun update(boardID: String, boardUpdateData: BoardUpdateData){

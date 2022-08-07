@@ -271,7 +271,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                     .setCancelable(false)
                     .setPositiveButton("Yes") { _, _ ->
                         val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString())
+                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString(), "-N8nxMBOuplwJJx6iNFn")
                         setResult(RESULT_OK, null)
                         finish()
                     }

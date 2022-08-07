@@ -9,18 +9,21 @@ data class ChangeNotification(
     val changedBy: String = "",
     val changeType: String = "",
     val changedItemName: String = "",
+    val groupID:String = "",
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(changedBy)
         parcel.writeString(changeType)
         parcel.writeString(changedItemName)
+        parcel.writeString(groupID)
     }
 
     override fun describeContents(): Int {

@@ -54,7 +54,7 @@ class NotificationService : LifecycleService() {
         if (isServiceRunning) return
         isServiceRunning = true
 
-        changeNotificationListViewModel.fetchChangeNotifications()
+        changeNotificationListViewModel.fetchChangeNotifications("-N8nxMBOuplwJJx6iNFn")
         var pastFirst = false
         changeNotificationListViewModel.changeNotificationsLiveData.observe(this){
             if (pastFirst){

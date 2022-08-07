@@ -63,7 +63,7 @@ class DisplayBoardActivity: AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-        boardListViewModel.fetchBoards()
+        boardListViewModel.fetchBoards("-N8nxMBOuplwJJx6iNFn")
         boardListViewModel.boardsLiveData.observe(this){
             (adapter as BoardListAdaptor).updateList(it)
             (adapter as BoardListAdaptor).notifyDataSetChanged()
@@ -88,7 +88,7 @@ class DisplayBoardActivity: AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-        boardListViewModel.fetchBoards()
+        boardListViewModel.fetchBoards("-N8nxMBOuplwJJx6iNFn")
         boardListViewModel.boardsLiveData.observe(this){
             (adapter as BoardListAdaptor).updateList(it)
             (adapter as BoardListAdaptor).notifyDataSetChanged()

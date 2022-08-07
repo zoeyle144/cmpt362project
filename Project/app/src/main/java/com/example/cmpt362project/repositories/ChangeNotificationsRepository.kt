@@ -14,8 +14,9 @@ class ChangeNotificationsRepository {
     val auth = Firebase.auth
     private val changeNotificationsRef = database.getReference("changeNotifications")
 
-    fun fetchChangeNotifications(liveData: MutableLiveData<List<ChangeNotification>>){
+    fun fetchChangeNotifications(liveData: MutableLiveData<List<ChangeNotification>>, groupID:String){
         changeNotificationsRef
+            .orderByChild("groupID").equalTo(groupID)
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val tasks: List<ChangeNotification> = snapshot.children.map { dataSnapshot ->

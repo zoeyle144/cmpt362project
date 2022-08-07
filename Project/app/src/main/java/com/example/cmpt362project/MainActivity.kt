@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var viewModel: MainActivityViewModel
 
     companion object {
-        var role = "writer"
+        var role = "admin"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
