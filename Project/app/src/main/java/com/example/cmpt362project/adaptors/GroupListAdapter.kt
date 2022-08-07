@@ -42,7 +42,7 @@ class GroupListAdapter(private val context: Context, private var groupList: List
     override fun onBindViewHolder(holder: GroupListAdapter.ViewHolder, position: Int) {
 
 
-        val groupEntry = holder.itemView.findViewById<Button>(R.id.group_entry)
+        val groupEntry = holder.itemView.findViewById<Button>(R.id.group_chat_entry)
 
         groupEntry.text = groupList[position].groupName
 
