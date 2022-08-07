@@ -33,7 +33,8 @@
     <string name="login">Log in</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="email">Email</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="email">E-mail</string>
     <string name="sign_up_ask">Create Account</string>
     <string name="sign_up">Sign up</string>
 

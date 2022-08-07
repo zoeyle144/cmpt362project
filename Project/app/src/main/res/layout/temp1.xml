@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/settings_account_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/toolbar_settings_dialog_close"
+        app:title="Create an account"
+        app:navigationContentDescription="@string/profile_toolbar_cancel"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- E-mail -->
+    <TextView
+        android:text="@string/email"
+        style="@style/fields_layout_label_style"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_email"
+        style="@style/fields_layout_TIL_style"
+        app:endIconMode="custom"
+        app:errorEnabled="true"
+        android:layout_marginBottom="12dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/fields_layout_TIET_style"
+            android:inputType="textEmailAddress"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- E-mail -->
+
+
+    <!-- Username -->
+    <TextView
+        android:text="@string/username"
+        style="@style/fields_layout_label_style"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/account_settings_new_email_field"
+        style="@style/fields_layout_TIL_style"
+        app:endIconMode="custom"
+        app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:counterMaxLength="30"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/fields_layout_TIET_style"
+            android:maxLength="30"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Username -->
+
+
+    <!-- Password -->
+    <TextView
+        android:text="@string/password"
+        style="@style/fields_layout_label_style"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_password"
+        style="@style/fields_layout_TIL_style"
+        app:passwordToggleEnabled="true"
+        app:errorEnabled="true"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/fields_layout_TIET_style"
+            android:inputType="textPassword"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Password -->
+
+
+    <!-- Confirm password -->
+    <TextView
+        android:text="@string/confirm_password"
+        style="@style/fields_layout_label_style"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_confirm_password"
+        style="@style/fields_layout_TIL_style"
+        app:passwordToggleEnabled="true"
+        app:errorEnabled="true"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/fields_layout_TIET_style"
+            android:inputType="textPassword"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Confirm password -->
+
+    <Button
+        android:layout_marginTop="12dp"
+        android:id="@+id/sign_up_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+
+        style="@style/start_page_button"
+        android:text="@string/sign_up"
+        app:icon="@drawable/ic_baseline_person_add_24"
+        />
+
+</LinearLayout>
