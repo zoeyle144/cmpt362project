@@ -21,7 +21,7 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="96dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
 
@@ -68,7 +68,7 @@
             android:id="@+id/login_redirect_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="96dp"
 
             style="@style/start_page_button"
             android:text="@string/login"
