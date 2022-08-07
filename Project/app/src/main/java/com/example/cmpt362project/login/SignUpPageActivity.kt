@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
+import com.example.cmpt362project.utility.FieldsLayoutUtility
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -48,20 +49,8 @@ class SignUpPageActivity : AppCompatActivity() {
         passwordView = findViewById(R.id.sign_up_password)
         confirmPasswordView = findViewById(R.id.sign_up_confirm_password)
 
-//        val l = listOf(emailView, usernameView, passwordView, confirmPasswordView)
-//        for (i in l) {
-//            i.editText!!.addTextChangedListener { i.error = null }
-//            i.editText!!.setOnClickListener { i.error = null }
-//        }
-
-        emailView.editText!!.addTextChangedListener { emailView.error = null }
-        usernameView.editText!!.addTextChangedListener { usernameView.error = null }
-        passwordView.editText!!.addTextChangedListener { passwordView.error = null }
-        confirmPasswordView.editText!!.addTextChangedListener { confirmPasswordView.error = null }
-        emailView.editText!!.setOnClickListener { emailView.error = null }
-        usernameView.editText!!.setOnClickListener { usernameView.error = null }
-        passwordView.editText!!.setOnClickListener { passwordView.error = null }
-        confirmPasswordView.editText!!.setOnClickListener { confirmPasswordView.error = null }
+        FieldsLayoutUtility.setListenersForTextInputLayout(
+            listOf(emailView, usernameView, passwordView, confirmPasswordView))
 
         val toolbar = findViewById<Toolbar>(R.id.sign_up_toolbar)
         setSupportActionBar(toolbar)
