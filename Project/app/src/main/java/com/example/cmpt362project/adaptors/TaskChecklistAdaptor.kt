@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.TaskChecklistItem
 import com.example.cmpt362project.viewModels.TaskChecklistViewModel
@@ -28,6 +29,10 @@ class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklist
         }else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_task_checklist_item_button, parent, false)
             val addTaskChecklistItemButton= view.findViewById<Button>(R.id.add_task_checklist_item_button)
+
+            if (MainActivity.role == "reader"){
+                addTaskChecklistItemButton.isEnabled = false
+            }
 
             addTaskChecklistItemButton.setOnClickListener{
                 val builder = AlertDialog.Builder(parent.context)

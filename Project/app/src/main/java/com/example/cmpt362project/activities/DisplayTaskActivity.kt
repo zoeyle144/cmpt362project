@@ -23,6 +23,7 @@ import kotlin.collections.ArrayList
 import android.icu.util.Calendar
 import android.view.View
 import android.widget.*
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.models.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -51,6 +52,20 @@ class DisplayTaskActivity : AppCompatActivity() {
         val assignedUserIDHidden = findViewById<TextView>(R.id.assigned_user_id)
         val taskStartDate = findViewById<EditText>(R.id.task_start_date)
         val taskEndDate = findViewById<EditText>(R.id.task_end_date)
+        val saveButton = findViewById<Button>(R.id.save_display_task)
+        val closeButton = findViewById<Button>(R.id.close_display_task)
+
+        if (MainActivity.role == "reader"){
+            taskName.isEnabled = false
+            taskSummary.isEnabled = false
+            taskType.isEnabled = false
+            assignedUser.isEnabled = false
+            assignedUserIDHidden.isEnabled = false
+            taskName.isEnabled = false
+            taskStartDate.isEnabled = false
+            taskEndDate.isEnabled = false
+            saveButton.isEnabled = false
+        }
 
         val database = Firebase.database
         val permissionRef = database.getReference("permission")
@@ -263,10 +278,6 @@ class DisplayTaskActivity : AppCompatActivity() {
             res.show()
         }
 
-
-        val saveButton = findViewById<Button>(R.id.save_display_task)
-        val closeButton = findViewById<Button>(R.id.close_display_task)
-
         saveButton.setOnClickListener {
             val taskNameForUpdate = taskName.text.toString()
             val taskSummaryForUpdate = taskSummary.text.toString()
@@ -300,22 +311,28 @@ class DisplayTaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_task_btn){
-            val confirmationBuilder = AlertDialog.Builder(this)
-            val selectedTask = intent.getParcelableExtra<Task>("task")
-            confirmationBuilder.setMessage("Are you sure you want to Delete Task <${selectedTask?.name}>?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { dialog, id ->
-                    val taskID = selectedTask?.taskID.toString()
-                    val boardID = intent.getSerializableExtra("boardID").toString()
-                    taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
-                    taskListViewModel.delete(boardID, taskID)
-                    finish()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    dialog.dismiss()
-                }
-            val alert = confirmationBuilder.create()
-            alert.show()
+            if (MainActivity.role == "reader"){
+                Toast.makeText(this,
+                    "You do not have permission to delete task",
+                    Toast.LENGTH_SHORT).show()
+            }else{
+                val confirmationBuilder = AlertDialog.Builder(this)
+                val selectedTask = intent.getParcelableExtra<Task>("task")
+                confirmationBuilder.setMessage("Are you sure you want to Delete Task <${selectedTask?.name}>?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes") { dialog, id ->
+                        val taskID = selectedTask?.taskID.toString()
+                        val boardID = intent.getSerializableExtra("boardID").toString()
+                        taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
+                        taskListViewModel.delete(boardID, taskID)
+                        finish()
+                    }
+                    .setNegativeButton("No") { dialog, id ->
+                        dialog.dismiss()
+                    }
+                val alert = confirmationBuilder.create()
+                alert.show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

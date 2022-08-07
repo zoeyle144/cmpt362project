@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.BoardUpdateData
@@ -81,12 +82,21 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         pictureView = findViewById(R.id.board_picture)
         val boardNameField = findViewById<EditText>(R.id.board_info_name_input)
         val boardDescriptionField = findViewById<EditText>(R.id.board_info_description_input)
+        val saveButton = findViewById<Button>(R.id.save_board_info_button)
+        val closeButton = findViewById<Button>(R.id.close_board_info_button)
+        val changeBoardPicButton = findViewById<MaterialButton>(R.id.board_picture_change_picture_button)
+
+        if (MainActivity.role != "admin"){
+            boardNameField.isEnabled = false
+            boardDescriptionField.isEnabled = false
+            saveButton.isEnabled = false
+            changeBoardPicButton.isEnabled = false
+        }
 
         boardNameField.setText(boardName)
         boardDescriptionField.setText(boardDescription)
 
-        val saveButton = findViewById<Button>(R.id.save_board_info_button)
-        val closeButton = findViewById<Button>(R.id.close_board_info_button)
+
 
         saveButton.setOnClickListener{
             val boardUpdateData = BoardUpdateData(boardNameField.text.toString(), boardDescriptionField.text.toString())
@@ -147,7 +157,6 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
             }
         }
 
-        val changeBoardPicButton = findViewById<MaterialButton>(R.id.board_picture_change_picture_button)
         changeBoardPicButton.setOnClickListener{
             val builder = androidx.appcompat.app.AlertDialog.Builder(this)
             val dialogOptions = arrayOf("Open camera", "Select from gallery")
@@ -255,21 +264,27 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_board_button){
-            val confirmationBuilder = AlertDialog.Builder(this)
-            val selectedBoard = intent.getParcelableExtra<Board>("board")
-            confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { _, _ ->
-                    val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                    boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString())
-                    setResult(RESULT_OK, null)
-                    finish()
-                }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            val alert = confirmationBuilder.create()
-            alert.show()
+            if (MainActivity.role == "admin"){
+                val confirmationBuilder = AlertDialog.Builder(this)
+                val selectedBoard = intent.getParcelableExtra<Board>("board")
+                confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes") { _, _ ->
+                        val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString())
+                        setResult(RESULT_OK, null)
+                        finish()
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = confirmationBuilder.create()
+                alert.show()
+            }else{
+                Toast.makeText(this,
+                    "You do not have permission to delete board",
+                    Toast.LENGTH_SHORT).show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

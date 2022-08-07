@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.DisplayTaskActivity
 import com.example.cmpt362project.models.Task
@@ -60,13 +62,22 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
         }
 
         taskEntry.setOnLongClickListener{
-            val clipText = "This is taskEntry"
-            val item = ClipData.Item(clipText)
-            val dragData = ClipData(clipText, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item)
-            val myshadow = View.DragShadowBuilder(it)
-            it.startDragAndDrop(dragData, myshadow, it, 0)
-            it.visibility = View.INVISIBLE
-            true
+            if (MainActivity.role == "reader"){
+                Toast.makeText(holder.itemView.context,
+                    "You do not have permission to drag and drop tasks",
+                    Toast.LENGTH_SHORT).show()
+                false
+            }else{
+                val clipText = "This is taskEntry"
+                val item = ClipData.Item(clipText)
+                val dragData = ClipData(clipText, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item)
+                val myshadow = View.DragShadowBuilder(it)
+                it.startDragAndDrop(dragData, myshadow, it, 0)
+                it.visibility = View.INVISIBLE
+                true
+            }
+
+
         }
     }
 

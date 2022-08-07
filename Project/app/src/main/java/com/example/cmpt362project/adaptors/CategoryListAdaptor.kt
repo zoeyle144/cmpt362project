@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
@@ -13,6 +14,7 @@ import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateCategoryActivity
 import com.example.cmpt362project.activities.CreateTaskActivity
@@ -33,6 +35,10 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
         }else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_category_button, parent, false)
             val addCategoryButton = view.findViewById<Button>(R.id.add_category_button)
+
+            if(MainActivity.role == "reader" || MainActivity.role == "writer"){
+                addCategoryButton.isEnabled = false
+            }
 
             addCategoryButton.setOnClickListener {
                 val intent = Intent(view.context, CreateCategoryActivity::class.java)
@@ -74,6 +80,9 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             }
 
             val deleteCategoryButton = holder.itemView.findViewById<Button>(R.id.delete_category_button)
+            if (MainActivity.role == "reader" || MainActivity.role == "writer"){
+                deleteCategoryButton.isEnabled = false
+            }
             deleteCategoryButton.setOnClickListener {
                 val confirmationBuilder = AlertDialog.Builder(holder.itemView.context)
                 confirmationBuilder.setMessage("Are you sure you want to Delete Category <$categoryTitle>?")
@@ -95,6 +104,9 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             }
 
             val addTaskButton = holder.itemView.findViewById<Button>(R.id.add_task_button)
+            if (MainActivity.role == "reader"){
+                addTaskButton.isEnabled = false
+            }
             addTaskButton.setOnClickListener {
                 val intent = Intent(holder.itemView.context, CreateTaskActivity::class.java)
                 intent.putExtra("category_title", categoryTitle)

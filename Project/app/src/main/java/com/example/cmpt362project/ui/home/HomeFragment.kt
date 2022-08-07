@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
@@ -21,12 +22,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateBoardActivity
 import com.example.cmpt362project.adaptors.*
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 
 
 class HomeFragment : Fragment() {
@@ -67,8 +71,13 @@ class HomeFragment : Fragment() {
         helper.attachToRecyclerView(boardListView)
 
         floatActionButton.setOnClickListener{
-            val intent = Intent(view.context, CreateBoardActivity::class.java)
-            view.context.startActivity(intent)
+            if (MainActivity.role == "admin"){
+                val intent = Intent(view.context, CreateBoardActivity::class.java)
+                view.context.startActivity(intent)
+            }else{
+                Toast.makeText(requireActivity(), "You do not have permission to create a board", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
 //        showNotification(requireActivity(),"This is the title", "This is the body", Intent());
