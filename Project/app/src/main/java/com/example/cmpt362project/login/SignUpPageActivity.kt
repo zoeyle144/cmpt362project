@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
@@ -22,7 +24,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
+class SignUpPageActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -49,8 +51,12 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
         passwordView.editText!!.setOnClickListener { passwordView.error = null }
         confirmPasswordView.editText!!.setOnClickListener { confirmPasswordView.error = null }
 
+        val toolbar = findViewById<Toolbar>(R.id.sign_up_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val confirmBtn = findViewById<Button>(R.id.sign_up_button)
-        confirmBtn.setOnClickListener(this)
+        confirmBtn.setOnClickListener { signUp() }
     }
 
     // display error message;  if view is not null, set text color to error color
@@ -62,7 +68,7 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(p0: View?) {
+    private fun signUp() {
         val username = findViewById<EditText>(R.id.sign_up_username)
         val password = findViewById<EditText>(R.id.sign_up_password)
         val email = findViewById<EditText>(R.id.sign_up_email)
@@ -130,6 +136,13 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
         }.addOnFailureListener{
             showError("System Error: Firebase Error getting data", null)
 
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId) {
+        else -> {
+            finish()
+            true
         }
     }
 }

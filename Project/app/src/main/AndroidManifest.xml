@@ -70,10 +70,14 @@
             android:theme="@style/Theme.CMPT362Project.NoActionBar" />
         <activity
             android:name=".login.LoginPageActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        />
         <activity
             android:name=".login.SignUpPageActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        />
         <activity
             android:name=".activities.CreateChatActivity"
             android:exported="false" />
