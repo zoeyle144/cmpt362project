@@ -88,5 +88,6 @@
     <string name="account_settings_enter_confirm_label">Type CONFIRM to confirm your account deletion</string>
 
     <string name="menu_invitations">Group Invitations</string>
+    <string name="menu_group_chats">Group Chats</string>
 
 </resources>
