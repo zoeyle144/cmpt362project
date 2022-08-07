@@ -3,6 +3,7 @@ package com.example.cmpt362project.activities
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -25,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.BoardUpdateData
+import com.example.cmpt362project.ui.settings.profile.SettingsProfileActivity
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.button.MaterialButton
@@ -50,8 +52,12 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     private lateinit var cameraActivityResult: ActivityResultLauncher<Uri>
     private lateinit var cameraImageUri: Uri
     private lateinit var boardListViewModel: BoardListViewModel
+    private var hasNewImage: Boolean = false
 
     companion object {
+        const val BOARD_PIC_RECENTLY_CHANGED = "BOARD_PIC_RECENTLY_CHANGED"
+        const val SHARED_PREF = "SHARED_PREF"
+
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
         const val CAMERA_SAVED_FILE_NAME = "temp_bp.jpg"
     }
@@ -102,7 +108,9 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
         boardListViewModel.boardPic.observe(this) { pictureView.setImageBitmap(it) }
 
-        ImageUtility.setImageViewToProfilePic(boardPicString, pictureView)
+        if (!hasNewImage){
+            ImageUtility.setImageViewToProfilePic(boardPicString, pictureView)
+        }
 
         galleryActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -111,6 +119,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
                 println("Image found. Calling boardListViewModel.setImage")
                 boardListViewModel.setImage(image)
+                hasNewImage = true
             }
         }
 
@@ -120,6 +129,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                 if (cameraImageUri != Uri.EMPTY) {
                     val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
                     boardListViewModel.setImage(image)
+                    hasNewImage = true
                 }
             } else {
                 Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
@@ -206,7 +216,10 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                         val oldImgRef = storage.child(pathToDelete)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                            updateProfilePicSharedPref()
                         }
+                    }else{
+                        updateProfilePicSharedPref()
                     }
                 }
             }
@@ -218,6 +231,14 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         menuInflater.inflate(R.menu.custom_board_info_menu,menu)
         getSupportActionBar()?.setTitle("$boardTitle");
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun updateProfilePicSharedPref() {
+        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(BOARD_PIC_RECENTLY_CHANGED, true)
+            apply()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
