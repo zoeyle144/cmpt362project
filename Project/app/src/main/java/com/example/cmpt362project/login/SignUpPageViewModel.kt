@@ -63,13 +63,8 @@ class SignUpPageViewModel : ViewModel() {
             }
 
             if (!checkFields) {
-                println("In (!checkFields")
-                println("checkFields Errors are ${errorList.value}")
-                println("checkFields _Errors are ${_errorList.value}")
                 success.postValue(SignUpPageVMState.FAILURE)
             } else {
-                println("In viewModelScope.launch")
-
                 // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
                 database.child("usernames").child(username).get().addOnSuccessListener {
                     if (it.value != null) {
