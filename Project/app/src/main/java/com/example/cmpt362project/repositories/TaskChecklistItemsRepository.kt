@@ -15,7 +15,7 @@ class TaskChecklistItemsRepository {
     val auth = Firebase.auth
     val boardsRef = database.getReference("boards")
 
-    fun fetchTasks(liveData: MutableLiveData<List<TaskChecklistItem>>, boardID: String, taskID: String){
+    fun fetchChecklistItems(liveData: MutableLiveData<List<TaskChecklistItem>>, boardID: String, taskID: String){
         boardsRef
             .child(boardID)
             .child("tasks")
@@ -24,10 +24,10 @@ class TaskChecklistItemsRepository {
             .orderByKey()
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val tasks: List<TaskChecklistItem> = snapshot.children.map { dataSnapshot ->
+                    val tasksChecklistItems: List<TaskChecklistItem> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(TaskChecklistItem::class.java)!!
                     }
-                    liveData.postValue(tasks)
+                    liveData.postValue(tasksChecklistItems)
                 }
 
                 override fun onCancelled(error: DatabaseError) {

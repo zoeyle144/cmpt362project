@@ -5,6 +5,8 @@ data class TaskUpdateData(
     val name: String = "",
     val summary: String = "",
     val type: String = "",
+    val assignedUser: String = "",
+    val assignedUserID: String = "",
     val startDate: Long = 0,
     val endDate: Long = 0
 )

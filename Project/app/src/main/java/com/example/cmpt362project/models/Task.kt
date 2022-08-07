@@ -14,10 +14,15 @@ data class Task(
     val type: String = "",
     val createdBy: String = "",
     val category: String = "",
+    val assignedUser: String ="",
+    val assignedUserID: String = "",
     val startDate: Long = 0,
-    val endDate: Long = 0
+    val endDate: Long = 0,
+
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -35,6 +40,8 @@ data class Task(
         parcel.writeString(type)
         parcel.writeString(createdBy)
         parcel.writeString(category)
+        parcel.writeString(assignedUser)
+        parcel.writeString(assignedUserID)
         parcel.writeLong(startDate)
         parcel.writeLong(endDate)
     }
@@ -62,6 +69,8 @@ data class Task(
             "type" to type,
             "createdBy" to createdBy,
             "category" to category,
+            "assignedUser" to assignedUser,
+            "assignedUserID" to assignedUserID,
             "startDate" to startDate,
             "endDate" to endDate
         )

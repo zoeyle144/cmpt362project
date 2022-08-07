@@ -70,6 +70,7 @@ class NotificationService : LifecycleService() {
                             .bigText("Last change is:\n${it[lastIt].changeType} - ${it[lastIt].changedItemName}\nby ${it[lastIt].changedBy}"))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
+                    .setContentIntent(PendingIntent.getActivity(this, 0, Intent(), PendingIntent.FLAG_MUTABLE))
                     .setAutoCancel(true)
                 startForeground(NOTIFICATION_ID, builder.build())
             }

@@ -13,7 +13,7 @@ class TaskChecklistViewModel(): ViewModel() {
     val taskChecklistItemsLiveData: LiveData<List<TaskChecklistItem>> = _taskChecklistItemsLiveData
 
     fun fetchChecklistItems(boardID: String, taskID: String){
-        repository.fetchTasks(_taskChecklistItemsLiveData, boardID, taskID)
+        repository.fetchChecklistItems(_taskChecklistItemsLiveData, boardID, taskID)
     }
 
     fun insert(boardID:String, taskID: String, taskCheckListItem: TaskChecklistItem){

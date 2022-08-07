@@ -3,11 +3,10 @@ package com.example.cmpt362project.activities
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,24 +16,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.adaptors.TaskChecklistAdaptor
 import com.example.cmpt362project.adaptors.TaskChecklistDragManageAdaptor
-import com.example.cmpt362project.models.Task
-import com.example.cmpt362project.models.TaskChecklistItem
-import com.example.cmpt362project.models.TaskUpdateData
 import com.example.cmpt362project.viewModels.TaskChecklistViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 import android.icu.util.Calendar
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.*
+import com.example.cmpt362project.models.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class DisplayTaskActivity : AppCompatActivity() {
     private lateinit var taskListViewModel: TaskListViewModel
     private lateinit var taskChecklistViewModel: TaskChecklistViewModel
+    private lateinit var groupUserUserNames: ArrayList<String>
+    private lateinit var groupUserID: ArrayList<String>
     private var months = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
     private var days = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     private var difficulties = arrayOf("Easy", "Medium", "Hard")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +47,41 @@ class DisplayTaskActivity : AppCompatActivity() {
         val taskName = findViewById<EditText>(R.id.task_name)
         val taskSummary = findViewById<EditText>(R.id.task_summary)
         val taskType = findViewById<Spinner>(R.id.task_type)
+        val assignedUser = findViewById<Spinner>(R.id.assigned_user)
+        val assignedUserIDHidden = findViewById<TextView>(R.id.assigned_user_id)
         val taskStartDate = findViewById<EditText>(R.id.task_start_date)
         val taskEndDate = findViewById<EditText>(R.id.task_end_date)
+
+        val database = Firebase.database
+        val permissionRef = database.getReference("permission")
+        var groupUsers: List<Permission>
+        permissionRef
+            .orderByChild("groupID")
+            .equalTo("-N8nxMBOuplwJJx6iNFn")
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    groupUsers = it.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Permission::class.java)!!
+                    }
+                    println("debug: GroupUsers: $groupUsers")
+                    val iterator = groupUsers.listIterator()
+                    groupUserUserNames = ArrayList()
+                    groupUserID = ArrayList()
+                    for (i in iterator) {
+                        groupUserUserNames.add(i.userName)
+                        groupUserID.add(i.uID)
+                    }
+                    val tempAdaptor = ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,groupUserUserNames);
+                    assignedUser.adapter = tempAdaptor
+                    assignedUser.setSelection(groupUserUserNames.indexOf(t?.assignedUser))
+                    assignedUserIDHidden.text = groupUserID[groupUserUserNames.indexOf(t?.assignedUser)]
+                    println("debug: groupUserID: $groupUserID")
+                    println("debug: assignedUserIDHidden: ${groupUserID[groupUserUserNames.indexOf(t?.assignedUser)]}")
+                }
+            }.addOnFailureListener { err ->
+                println("debug: get groupUsers fail Error ${err.message}")
+            }
 
         ArrayAdapter.createFromResource(
             this,
@@ -103,6 +137,7 @@ class DisplayTaskActivity : AppCompatActivity() {
 
         taskName.setText(t?.name)
         taskSummary.setText(t?.summary)
+        assignedUserIDHidden.text = t?.assignedUserID
         taskStartDate.setText(startDateString)
         taskEndDate.setText(endDateString)
 
@@ -236,9 +271,14 @@ class DisplayTaskActivity : AppCompatActivity() {
             val taskNameForUpdate = taskName.text.toString()
             val taskSummaryForUpdate = taskSummary.text.toString()
             val taskTypeForUpdate = taskType.selectedItem.toString()
+            val assignedUserForUpdate = assignedUser.selectedItem.toString()
+            val assignedUserIDForUpdate = assignedUserIDHidden.text.toString()
             val taskStartDateForUpdate = startTimeInMillis
             val taskEndDateForUpdate = endTimeInMillis
-            val taskForUpdate = TaskUpdateData(taskID, taskNameForUpdate, taskSummaryForUpdate, taskTypeForUpdate,
+            val taskForUpdate = TaskUpdateData(taskID,
+                taskNameForUpdate, taskSummaryForUpdate,
+                taskTypeForUpdate, assignedUserForUpdate,
+                assignedUserIDForUpdate,
                 taskStartDateForUpdate!!,
                 taskEndDateForUpdate!!
             )
