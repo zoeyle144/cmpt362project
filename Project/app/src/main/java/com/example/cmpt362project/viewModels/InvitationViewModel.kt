@@ -24,4 +24,5 @@ class InvitationViewModel: ViewModel(){
     fun delete(invitation_id: String) {
         repository.delete(invitation_id)
     }
+
 }

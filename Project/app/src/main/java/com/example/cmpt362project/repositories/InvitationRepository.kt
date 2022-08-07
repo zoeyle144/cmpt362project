@@ -15,6 +15,7 @@ class InvitationRepository {
     val database = Firebase.database
     val auth = Firebase.auth
     private val invitationsRef= database.getReference("invitations")
+    private val permissionRef= database.getReference("permission")
 
     fun fetchInvitations(liveData: MutableLiveData<List<Invitation>>){
         invitationsRef
@@ -63,5 +64,4 @@ class InvitationRepository {
             println("delete Success")
         }
     }
-
 }

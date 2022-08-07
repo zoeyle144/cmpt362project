@@ -98,12 +98,18 @@
         <activity android:name=".activities.CreateGroupActivity" />
         <activity android:name=".activities.DisplayCategoryActivity" />
         <activity android:name=".activities.DisplayTaskActivity" />
-        <activity android:name=".activities.DisplayBoardActivity" />
-        <activity android:name=".activities.DisplayBoardInfoActivity" />
-        <activity android:name=".ui.search.SearchUserResultActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            />
 
+        <activity android:name=".activities.DisplayBoardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+        <activity
+            android:name=".ui.search.SearchUserResultActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+
+
+        <activity android:name=".ui.invitation.addToGroupActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
         <service
             android:name=".services.NotificationService"
             android:enabled="true" />

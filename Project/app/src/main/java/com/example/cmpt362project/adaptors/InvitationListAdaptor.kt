@@ -1,23 +1,23 @@
 package com.example.cmpt362project.adaptors
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
-import com.example.cmpt362project.activities.DisplayCategoryActivity
-import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Invitation
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.viewModels.InvitationViewModel
+import com.example.cmpt362project.viewModels.PermissionViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+
 
 class InvitationListAdaptor(val context: Context, private var invitationList: List<Invitation>, private var viewModel: InvitationViewModel): BaseAdapter() {
     val database = Firebase.database
@@ -57,12 +57,35 @@ class InvitationListAdaptor(val context: Context, private var invitationList: Li
             println(it.value)
         }
 
+        val uID = auth.currentUser?.uid
+        var userName = ""
+        database.getReference("users").child(uID!!).get().addOnSuccessListener {
+            if (it.value != null) {
+                val userData = it.value as Map<*, *>
+                userName = userData["username"].toString()
+            }
+        }
+
         invitationDeclineBtn.setOnClickListener{
             viewModel.delete(invitationList[p0].invitationId)
             Toast.makeText(context, "Declined invitation for group: ${groupName}." ,Toast.LENGTH_SHORT).show()
         }
 
         invitationAcceptBtn.setOnClickListener{
+            //add permission
+            val permissionViewModel: PermissionViewModel = ViewModelProvider((context as FragmentActivity)!!)[PermissionViewModel::class.java]
+            val permRef = database.getReference("permission")
+            val permissionID = permRef.push().key!!
+            val role = "reader"
+            val groupID_uID = "${invitationList[p0].groupId} _ $uID"
+
+            val permission = Permission(permissionID,role,uID!!,invitationList[p0].groupId, userName, groupID_uID)
+
+            println("Debug: permission!!! $permission")
+            permissionViewModel.insert(permission)
+
+
+
             Toast.makeText(context, "Accepted invitation for group: ${groupName}" ,Toast.LENGTH_SHORT).show()
         }
         return view
