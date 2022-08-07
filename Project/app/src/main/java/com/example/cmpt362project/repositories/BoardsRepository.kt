@@ -37,6 +37,22 @@ class BoardsRepository {
         })
     }
 
+    fun fetchBoardsByUser(liveData: MutableLiveData<List<Board>>){
+        boardsRef
+            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
+            .addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val boards: List<Board> = snapshot.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Board::class.java)!!
+                    }
+                    liveData.postValue(boards)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
     fun insert(board: Board){
         boardsRef.child(board.boardID).setValue(board)
             .addOnCompleteListener{

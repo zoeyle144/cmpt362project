@@ -20,6 +20,10 @@ class BoardListViewModel: ViewModel(){
         repository.fetchBoards(_boardsLiveData, groupID)
     }
 
+    fun fetchBoardsByUser(){
+        repository.fetchBoardsByUser(_boardsLiveData)
+    }
+
     fun insert(board: Board){
         repository.insert(board)
     }

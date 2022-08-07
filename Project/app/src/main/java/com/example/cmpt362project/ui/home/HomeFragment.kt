@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateBoardActivity
+import com.example.cmpt362project.activities.CreateBoardActvitiyFromHome
 import com.example.cmpt362project.adaptors.*
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.viewModels.BoardListViewModel
@@ -55,32 +56,38 @@ class HomeFragment : Fragment() {
         adapter = BoardListAdaptor(boardList)
         boardListView.adapter = adapter
 
-        boardListViewModel.fetchBoards("-N8nxMBOuplwJJx6iNFn")
-        boardListViewModel.boardsLiveData.observe(requireActivity()){
-            (adapter as BoardListAdaptor).updateList(it)
+        boardListViewModel.fetchBoardsByUser()
+        boardListViewModel.boardsLiveData.observe(requireActivity()){ listB ->
+            val tempList = listB.groupBy({it.groupID}, {it}).toMap()
+            val finalList: MutableList<Board> = ArrayList()
+            val tempIter = tempList.iterator()
+            var prevGroup = ""
+            for (i in tempIter) {
+                val tempIter2 = i.value.iterator()
+                for (j in tempIter2){
+                    val currentGroup = j.groupID
+                    if (currentGroup != prevGroup){
+                        val groupLabel = Board("", "Group1","","","",currentGroup)
+                        finalList.add(groupLabel)
+                        prevGroup = currentGroup
+                    }
+                    finalList.add(j)
+                }
+            }
+            println("debug: grouped boardlist: ${finalList}")
+            (adapter as BoardListAdaptor).updateList(finalList)
             (adapter as BoardListAdaptor).notifyDataSetChanged()
         }
 
-        val dividerItemDecoration = DividerItemDecoration(requireActivity(), (layoutManager as LinearLayoutManager).orientation)
-        boardListView.addItemDecoration(dividerItemDecoration)
-        // Setup ItemTouchHelper
-        val callback = BoardDragManageAdaptor(
-            adapter as BoardListAdaptor, requireActivity(),
-            ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT))
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(boardListView)
-
         floatActionButton.setOnClickListener{
             if (MainActivity.role == "admin"){
-                val intent = Intent(view.context, CreateBoardActivity::class.java)
+                val intent = Intent(view.context, CreateBoardActvitiyFromHome::class.java)
                 view.context.startActivity(intent)
             }else{
                 Toast.makeText(requireActivity(), "You do not have permission to create a board", Toast.LENGTH_SHORT).show()
             }
 
         }
-
-//        showNotification(requireActivity(),"This is the title", "This is the body", Intent());
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
         val prefSignature = prefs.getString("signature", "")

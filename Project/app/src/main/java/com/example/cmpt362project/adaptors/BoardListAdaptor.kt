@@ -30,6 +30,10 @@ class BoardListAdaptor(private var boardList: List<Board>) : RecyclerView.Adapte
         }
         val boardEntry = holder.itemView.findViewById<Button>(R.id.board_entry)
         val pictureView = holder.itemView.findViewById<ImageView>(R.id.board_picture)
+        if (boardList[position].boardID == ""){
+            boardEntry.isEnabled = false
+            pictureView.visibility = View.GONE
+        }
         val boardListViewModel = ViewModelProvider(holder.itemView.context as ViewModelStoreOwner)[BoardListViewModel::class.java]
         boardEntry.text = boardList[position].boardName
         boardListViewModel.boardPic.observe(holder.itemView.context as LifecycleOwner) { pictureView.setImageBitmap(it) }

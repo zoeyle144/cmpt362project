@@ -78,6 +78,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.CreateBoardActivity" />
+        <activity android:name=".activities.CreateBoardActvitiyFromHome" />
         <activity android:name=".activities.CreateTaskActivity" />
         <activity android:name=".activities.CreateCategoryActivity" />
         <activity android:name=".activities.CreateGroupActivity" />
