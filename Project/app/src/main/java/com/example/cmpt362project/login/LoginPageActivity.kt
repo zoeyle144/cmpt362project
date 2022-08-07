@@ -3,17 +3,18 @@ package com.example.cmpt362project.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
-import com.example.cmpt362project.database.User
+import com.example.cmpt362project.utility.FieldsLayoutUtility
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -24,36 +25,24 @@ class LoginPageActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var emailView: TextInputLayout
+    private lateinit var passwordView: TextInputLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_page)
-        title="Horizon Login"
 
-        val loginBtn = findViewById<Button>(R.id.login_submit_btn)
-        loginBtn.setOnClickListener(this)
+        emailView = findViewById(R.id.login_email)
+        passwordView = findViewById(R.id.login_password)
 
-        val email = findViewById<EditText>(R.id.login_email)
-        val password = findViewById<EditText>(R.id.login_password)
-        var error = findViewById<TextView>(R.id.error_message)
+        FieldsLayoutUtility.setListenersForTextInputLayout(listOf(emailView, passwordView))
 
+        val toolbar = findViewById<Toolbar>(R.id.login_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        email.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                email.setTextColor(resources.getColor(R.color.black))
-            }
-        })
-
-        password.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                password.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        val loginButton = findViewById<Button>(R.id.login_submit_btn)
+        loginButton.setOnClickListener(this)
     }
 
 
@@ -119,5 +108,12 @@ class LoginPageActivity : AppCompatActivity(), View.OnClickListener {
                     showError("Error: Username or password is incorrect.", null)
                 }
             }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId) {
+        else -> {
+            finish()
+            true
+        }
     }
 }
