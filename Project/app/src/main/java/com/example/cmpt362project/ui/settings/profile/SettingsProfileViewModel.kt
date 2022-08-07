@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cmpt362project.R
 import com.example.cmpt362project.ui.settings.SingleLiveEvent
+import com.example.cmpt362project.utility.GlobalStrings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -20,8 +21,8 @@ import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class SettingsProfileViewModel(private val defaultPFPPath: String,
-                               private val sharedPref: SharedPreferences) : ViewModel() {
+class SettingsProfileViewModel(
+    private val sharedPref: SharedPreferences) : ViewModel() {
 
     val database: DatabaseReference = Firebase.database.reference
     val auth: FirebaseAuth = Firebase.auth
@@ -115,7 +116,7 @@ class SettingsProfileViewModel(private val defaultPFPPath: String,
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
                     val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != defaultPFPPath) {
+                    if (pathToDelete != GlobalStrings.DEFAULT_PFP_PATH) {
                         val oldImgRef = storage.child(oldImgPath.value as String)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")

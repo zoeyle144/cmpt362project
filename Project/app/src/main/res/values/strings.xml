@@ -33,7 +33,8 @@
     <string name="login">Log in</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="email">Email</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="email">E-mail</string>
     <string name="sign_up_ask">Create Account</string>
     <string name="sign_up">Sign up</string>
 
@@ -88,6 +89,7 @@
     <string name="account_settings_enter_confirm_label">Type CONFIRM to confirm your account deletion</string>
 
     <string name="menu_invitations">Group Invitations</string>
+    <string name="sunrise_content_desc">Vancouver Sunrise</string>
     <string name="menu_group_chats">Group Chats</string>
 
 </resources>

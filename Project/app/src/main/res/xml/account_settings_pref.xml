@@ -26,13 +26,4 @@
             />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Advanced">
-        <Preference
-            app:title="Delete your account"
-            app:summary="Delete your account forever"
-            app:icon="@drawable/settings_sym_account_delete"
-            android:key="delete_account"
-            />
-    </PreferenceCategory>
-
 </PreferenceScreen>
