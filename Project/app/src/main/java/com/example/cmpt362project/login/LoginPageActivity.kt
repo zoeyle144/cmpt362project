@@ -2,7 +2,6 @@ package com.example.cmpt362project.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
@@ -43,11 +42,11 @@ class LoginPageActivity : AppCompatActivity() {
             val email = emailView.editText!!.text.toString()
             val password = passwordView.editText!!.text.toString()
 
-            logIn(email, password)
+            login(email, password)
         }
     }
 
-    private fun logIn(email: String, password: String) {
+    private fun login(email: String, password: String) {
         var checkFields = true
         if (email.isEmpty()) {
             emailView.error = "E-mail field cannot be empty."
