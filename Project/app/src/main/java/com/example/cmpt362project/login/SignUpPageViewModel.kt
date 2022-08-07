@@ -31,7 +31,7 @@ class SignUpPageViewModel : ViewModel() {
     val database: DatabaseReference = Firebase.database.reference
     val auth: FirebaseAuth = Firebase.auth
 
-    private val _errorList = MutableLiveData<ArrayList<SignUpPageErrors>>()
+    private val _errorList = MutableLiveData<ArrayList<SignUpPageErrors>>(arrayListOf())
     val errorList: LiveData<ArrayList<SignUpPageErrors>> get() = _errorList
 
     fun clearErrorList() {
@@ -61,48 +61,54 @@ class SignUpPageViewModel : ViewModel() {
                 _errorList.value?.add(SignUpPageErrors.PASSWORD_DIFFERENT)
                 checkFields = false
             }
+
             if (!checkFields) {
+                println("In (!checkFields")
+                println("checkFields Errors are ${errorList.value}")
+                println("checkFields _Errors are ${_errorList.value}")
                 success.postValue(SignUpPageVMState.FAILURE)
-            }
+            } else {
+                println("In viewModelScope.launch")
 
-            // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
-            database.child("usernames").child(username).get().addOnSuccessListener {
-                if (it.value != null) {
-                    _errorList.value?.add(SignUpPageErrors.USERNAME_TAKEN)
-                    success.postValue(SignUpPageVMState.FAILURE)
-                } else {
-                    // add login data to auth
-                    auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-                        // Sign up success
-                        val user = auth.currentUser
-                        val userData = User(username, email, "", DEFAULT_PFP_PATH, "")
+                // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
+                database.child("usernames").child(username).get().addOnSuccessListener {
+                    if (it.value != null) {
+                        _errorList.value?.add(SignUpPageErrors.USERNAME_TAKEN)
+                        success.postValue(SignUpPageVMState.FAILURE)
+                    } else {
+                        // add login data to auth
+                        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+                            // Sign up success
+                            val user = auth.currentUser
+                            val userData = User(username, email, "", DEFAULT_PFP_PATH, "")
 
-                        database.child("users").child(user!!.uid).setValue(userData)
+                            database.child("users").child(user!!.uid).setValue(userData)
 
-                        // add unique username into database
-                        database.child("usernames").child(username).setValue(user.uid)
+                            // add unique username into database
+                            database.child("usernames").child(username).setValue(user.uid)
 
-                        success.postValue(SignUpPageVMState.SUCCESS)
-                    }.addOnFailureListener { e ->
-                        when(e) {
-                            is FirebaseAuthWeakPasswordException -> {
-                                _errorList.value?.add(SignUpPageErrors.PASSWORD_WEAK)
-                                success.postValue(SignUpPageVMState.FAILURE)
-                            }
-                            is FirebaseAuthInvalidCredentialsException -> {
-                                _errorList.value?.add(SignUpPageErrors.EMAIL_MALFORMED)
-                                success.postValue(SignUpPageVMState.FAILURE)
-                            }
-                            is FirebaseAuthUserCollisionException -> {
-                                _errorList.value?.add(SignUpPageErrors.EMAIL_TAKEN)
-                                success.postValue(SignUpPageVMState.FAILURE)
+                            success.postValue(SignUpPageVMState.SUCCESS)
+                        }.addOnFailureListener { e ->
+                            when(e) {
+                                is FirebaseAuthWeakPasswordException -> {
+                                    _errorList.value?.add(SignUpPageErrors.PASSWORD_WEAK)
+                                    success.postValue(SignUpPageVMState.FAILURE)
+                                }
+                                is FirebaseAuthInvalidCredentialsException -> {
+                                    _errorList.value?.add(SignUpPageErrors.EMAIL_MALFORMED)
+                                    success.postValue(SignUpPageVMState.FAILURE)
+                                }
+                                is FirebaseAuthUserCollisionException -> {
+                                    _errorList.value?.add(SignUpPageErrors.EMAIL_TAKEN)
+                                    success.postValue(SignUpPageVMState.FAILURE)
+                                }
                             }
                         }
                     }
+                }.addOnFailureListener{
+                    _errorList.value?.add(SignUpPageErrors.UNKNOWN_ERROR)
+                    success.postValue(SignUpPageVMState.FAILURE)
                 }
-            }.addOnFailureListener{
-                _errorList.value?.add(SignUpPageErrors.UNKNOWN_ERROR)
-                success.postValue(SignUpPageVMState.FAILURE)
             }
         }
 
