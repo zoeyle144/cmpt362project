@@ -12,8 +12,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -24,44 +26,30 @@ class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var emailView: TextInputLayout
+    private lateinit var usernameView: TextInputLayout
+    private lateinit var passwordView: TextInputLayout
+    private lateinit var confirmPasswordView: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up_page)
-        title="Horizon Sign Up"
+        setContentView(R.layout.temp1)
 
-        val username = findViewById<EditText>(R.id.sign_up_username)
-        val password = findViewById<EditText>(R.id.sign_up_password)
-        val email = findViewById<EditText>(R.id.sign_up_email)
-        var error: TextView = findViewById<TextView>(R.id.error_message)
-        username.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                username.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        emailView = findViewById(R.id.sign_up_email)
+        usernameView = findViewById(R.id.sign_up_username)
+        passwordView = findViewById(R.id.sign_up_password)
+        confirmPasswordView = findViewById(R.id.sign_up_confirm_password)
 
-        password.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                password.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        emailView.editText!!.addTextChangedListener { emailView.error = null }
+        usernameView.editText!!.addTextChangedListener { usernameView.error = null }
+        passwordView.editText!!.addTextChangedListener { passwordView.error = null }
+        confirmPasswordView.editText!!.addTextChangedListener { confirmPasswordView.error = null }
+        emailView.editText!!.setOnClickListener { emailView.error = null }
+        usernameView.editText!!.setOnClickListener { usernameView.error = null }
+        passwordView.editText!!.setOnClickListener { passwordView.error = null }
+        confirmPasswordView.editText!!.setOnClickListener { confirmPasswordView.error = null }
 
-        email.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                email.setTextColor(resources.getColor(R.color.black))
-            }
-        })
-
-        val confirmBtn = findViewById<Button>(R.id.sign_up_confirm)
+        val confirmBtn = findViewById<Button>(R.id.sign_up_button)
         confirmBtn.setOnClickListener(this)
     }
 

@@ -47,7 +47,7 @@
         style="@style/fields_layout_label_style"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/account_settings_new_email_field"
+        android:id="@+id/sign_up_username"
         style="@style/fields_layout_TIL_style"
         app:endIconMode="custom"
         app:errorEnabled="true"
@@ -101,7 +101,7 @@
 
     <Button
         android:layout_marginTop="12dp"
-        android:id="@+id/sign_up_confirm"
+        android:id="@+id/sign_up_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
