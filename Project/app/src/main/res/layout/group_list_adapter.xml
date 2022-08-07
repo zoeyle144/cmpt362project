@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/group_entry"
+        android:id="@+id/group_chat_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="13sp"

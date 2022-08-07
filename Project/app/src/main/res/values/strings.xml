@@ -90,5 +90,6 @@
 
     <string name="menu_invitations">Group Invitations</string>
     <string name="sunrise_content_desc">Vancouver Sunrise</string>
+    <string name="menu_group_chats">Group Chats</string>
 
 </resources>
