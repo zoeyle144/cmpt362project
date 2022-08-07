@@ -11,19 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.login.LoginPageViewModel.LoginPageErrors.*
-import com.example.cmpt362project.login.LoginPageViewModel.LoginPageVMState.*
+import com.example.cmpt362project.login.LoginPageViewModel.LoginPageVMState.FAILURE
+import com.example.cmpt362project.login.LoginPageViewModel.LoginPageVMState.SUCCESS
 import com.example.cmpt362project.utility.FieldsLayoutUtility
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class LoginPageActivity : AppCompatActivity() {
-//    private var database: DatabaseReference = Firebase.database.reference
-//    private var auth: FirebaseAuth = Firebase.auth
-
     private lateinit var emailView: TextInputLayout
     private lateinit var passwordView: TextInputLayout
 
@@ -49,11 +42,11 @@ class LoginPageActivity : AppCompatActivity() {
             val email = emailView.editText!!.text.toString()
             val password = passwordView.editText!!.text.toString()
 
-            login2(email, password)
+            login(email, password)
         }
     }
 
-    private fun login2(email: String, password: String) {
+    private fun login(email: String, password: String) {
         viewModel.login(email, password).observe(this) {
             when (it) {
                 SUCCESS -> startMainActivity()
@@ -62,46 +55,6 @@ class LoginPageActivity : AppCompatActivity() {
             }
         }
     }
-
-//    private fun login(email: String, password: String) {
-//        var checkFields = true
-//        if (email.isEmpty()) {
-//            emailView.error = "E-mail field cannot be empty."
-//            checkFields = false
-//        }
-//        if (password.isEmpty()) {
-//            passwordView.error = "Password field cannot be empty."
-//            checkFields = false
-//        }
-//        if (!checkFields) {
-//            return
-//        } else {
-//            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-//
-//                val user = auth.currentUser
-//                database.child("users").child(user!!.uid).get().addOnSuccessListener {
-//                    if (it.value == null) {
-//                        Toast.makeText(baseContext, "Error: user doesn't have ID in the Realtime Database", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        val userData = it.value as Map<*, *>
-//
-//                        Toast.makeText(this, "Logged in as: ${userData["username"]}", Toast.LENGTH_SHORT).show()
-//
-//                        // move on to new activity
-//                        val bundle = Bundle()
-//                        bundle.putString("username", userData["username"].toString())
-//                        bundle.putString("email", userData["email"].toString())
-//                        val intent = Intent(this, MainActivity::class.java)
-//                        intent.putExtras(bundle)
-//                        startActivity(intent)
-//                    }
-//                }
-//            }.addOnFailureListener {
-//                emailView.error = "E-mail may be incorrect."
-//                passwordView.error = "Password may be incorrect."
-//            }
-//        }
-//    }
 
     private fun startMainActivity() {
         val bundle = Bundle()
@@ -119,11 +72,13 @@ class LoginPageActivity : AppCompatActivity() {
         val errors = viewModel.errorList.value
         if (errors != null) {
             for (e in errors) {
-                when(e) {
+                when (e) {
                     EMAIL_EMPTY -> emailView.error = "E-mail field cannot be empty."
                     PASSWORD_EMPTY -> passwordView.error = "Password field cannot be empty."
-                    NO_USER_ID -> Toast.makeText(baseContext,
-                        "Error: user doesn't have ID in the Realtime Database", Toast.LENGTH_SHORT).show()
+                    NO_USER_ID -> Toast.makeText(
+                        baseContext,
+                        "Error: user doesn't have ID in the Realtime Database", Toast.LENGTH_SHORT
+                    ).show()
                     WRONG_CREDENTIALS -> {
                         emailView.error = "E-mail may be incorrect."
                         passwordView.error = "Password may be incorrect."
