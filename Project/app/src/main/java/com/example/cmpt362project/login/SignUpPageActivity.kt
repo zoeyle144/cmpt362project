@@ -19,6 +19,8 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -37,10 +39,19 @@ class SignUpPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.temp1)
 
+        database = Firebase.database.reference
+        auth = Firebase.auth
+
         emailView = findViewById(R.id.sign_up_email)
         usernameView = findViewById(R.id.sign_up_username)
         passwordView = findViewById(R.id.sign_up_password)
         confirmPasswordView = findViewById(R.id.sign_up_confirm_password)
+
+//        val l = listOf(emailView, usernameView, passwordView, confirmPasswordView)
+//        for (i in l) {
+//            i.editText!!.addTextChangedListener { i.error = null }
+//            i.editText!!.setOnClickListener { i.error = null }
+//        }
 
         emailView.editText!!.addTextChangedListener { emailView.error = null }
         usernameView.editText!!.addTextChangedListener { usernameView.error = null }
@@ -56,86 +67,75 @@ class SignUpPageActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val confirmBtn = findViewById<Button>(R.id.sign_up_button)
-        confirmBtn.setOnClickListener { signUp() }
-    }
-
-    // display error message;  if view is not null, set text color to error color
-    fun showError(errorMsg: String, view: EditText?) {
-        var er: TextView = findViewById<TextView>(R.id.error_message)
-        er.text = errorMsg
-        if (view != null) {
-            view.setTextColor(resources.getColor(R.color.error))
+        confirmBtn.setOnClickListener {
+            val email = emailView.editText!!.text.toString()
+            val username = usernameView.editText!!.text.toString()
+            val password = passwordView.editText!!.text.toString()
+            val confirmPassword = confirmPasswordView.editText!!.text.toString()
+            signUp(email, username, password, confirmPassword)
         }
     }
 
-    private fun signUp() {
-        val username = findViewById<EditText>(R.id.sign_up_username)
-        val password = findViewById<EditText>(R.id.sign_up_password)
-        val email = findViewById<EditText>(R.id.sign_up_email)
-
-        val usernameTxt = username.text.toString().toLowerCase()
-        val passwordTxt = password.text.toString()
-        val emailTxt = email.text.toString()
-
-        // front-end input validation
-        if (usernameTxt.isEmpty()) {
-            showError("Error: Username is Empty", username)
-            return
-        } else if (passwordTxt.isEmpty()) {
-            showError("Error: Password is Empty", password)
-            return
-        } else if (emailTxt.isEmpty()) {
-            showError("Error: Email is Empty", email)
-            return
-        } else if (usernameTxt.length <= 3) {
-            showError("Error: Username must be longer than 3 characters.", username)
-            return
-        } else if (passwordTxt.length < 6) {
-            showError("Error: Password must be longer than 5 characters.", password)
-            return
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches()) {
-            showError("Error: Invalid Email", email)
-            return
+    private fun signUp(email: String, username: String, password: String, confirmPassword: String) {
+        var checkFields = true
+        if (email.isEmpty()) {
+            emailView.error = "E-mail field cannot be empty."
+            checkFields = false
         }
-
-        // back-end input validation
-        database = Firebase.database.reference
-        auth = Firebase.auth
+        if (username.isEmpty()) {
+            usernameView.error = "Username field cannot be empty."
+            checkFields = false
+        }
+        if (password.isEmpty()) {
+            passwordView.error = "Password field cannot be empty."
+            checkFields = false
+        }
+        if (username.length <= 3) {
+            emailView.error = "Username must be longer than 3 characters."
+            checkFields = false
+        }
+        if (password != confirmPassword) {
+            confirmPasswordView.error = "Does not match the password field."
+            checkFields = false
+        }
+        if (!checkFields) return
 
         // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
-        database.child("usernames").child(usernameTxt).get().addOnSuccessListener {
+        database.child("usernames").child(username).get().addOnSuccessListener {
             if (it.value != null) {
-                showError("Error: Username Already Exists", username)
+                usernameView.error = "Username already exists"
             } else {
                 // add login data to auth
-                auth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
-                    .addOnSuccessListener(this) { task ->
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(this) {
                         // Sign up success
                         val user = auth.currentUser
-                        val userData = User(usernameTxt, emailTxt, "", getString(R.string.default_pfp_path), "")
+                        val userData = User(username, email, "", getString(R.string.default_pfp_path), "")
 
                         database.child("users").child(user!!.uid).setValue(userData)
 
                         // add unique username into database
-                        database.child("usernames").child(usernameTxt).setValue(user.uid)
+                        database.child("usernames").child(username).setValue(user.uid)
                         
                         // inform the user of success
-                        Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
+                        Toast.makeText(this, "Account successfully created with username: $username",
                             Toast.LENGTH_SHORT).show()
 
                         // go to login page
                         val intent = Intent(this, LoginPageActivity::class.java)
                         startActivity(intent)
                     }
-                    .addOnFailureListener {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(baseContext, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show()
+                    .addOnFailureListener { e ->
+                        when(e) {
+                            is FirebaseAuthWeakPasswordException ->
+                                passwordView.error = e.reason + "."
+                            else ->
+                                emailView.error = e.message + "."
+                        }
                     }
             }
         }.addOnFailureListener{
-            showError("System Error: Firebase Error getting data", null)
-
+            Toast.makeText(baseContext, "System Error: Firebase Error getting data", Toast.LENGTH_SHORT).show()
         }
     }
 
