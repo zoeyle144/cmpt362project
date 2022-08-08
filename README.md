@@ -44,7 +44,7 @@ All members took part in creating show and tell recordings and presentation slid
 *   _Feature:_ **Category management**
 *   _Feature:_ **Task management**
 *   _Feature:_ **Notification management**
-*   _Misc_:_ **Drew thread diagram**
+*   _Misc_: **Drew thread diagram**
 
 ### Jarome Reyes ()
 
