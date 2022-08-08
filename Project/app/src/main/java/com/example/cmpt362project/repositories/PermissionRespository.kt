@@ -2,6 +2,8 @@ package com.example.cmpt362project.repositories
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.cmpt362project.models.Board
+import com.example.cmpt362project.models.Group
 import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.ui.groups.FirebaseSuccessListener
 import com.google.firebase.auth.ktx.auth
@@ -94,6 +96,18 @@ class PermissionRespository {
                 permRef.child(permission.permissionID).removeValue()
             }
         }
+
+        // refresh groups
+        val groupsRef = database.getReference("groups")
+        val refresherName = "refresher"
+        val description = "used to refresh groupList if permissions change"
+        groupsRef.child(refresherName).setValue(Group(refresherName, System.currentTimeMillis().toString(), description))
+
+        // refresh boards
+        val boardsRef = database.getReference("boards")
+        val refresherNameBoard = "refresher"
+        val descriptionBoard = "used to refresh boardList if permissions change"
+        boardsRef.child(refresherNameBoard).setValue(Board(refresherNameBoard, System.currentTimeMillis().toString(), "", "", descriptionBoard, ""))
 
     }
 }

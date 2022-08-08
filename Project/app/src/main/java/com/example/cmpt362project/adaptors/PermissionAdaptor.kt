@@ -65,11 +65,11 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
                 .setCancelable(false)
                 .setPositiveButton("Yes") { dialog, id ->
                     vm.delete(permList[p0], auth.currentUser!!.uid)
-                }
-                .setNegativeButton("No") { dialog, id ->
                     if (leaving) {
                         (context as Activity).finish()
                     }
+                }
+                .setNegativeButton("No") { dialog, id ->
                     dialog.dismiss()
                 }
             val alert = confirmationBuilder.create()
