@@ -146,7 +146,7 @@ class SearchUserResultActivity : AppCompatActivity() {
             true
         }
         R.id.profile_search_toolbar_invite -> {
-            println("Click invite")
+            
             true
         }
         else -> {

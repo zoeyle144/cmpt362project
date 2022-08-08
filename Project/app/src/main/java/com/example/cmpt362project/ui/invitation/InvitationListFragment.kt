@@ -44,7 +44,7 @@ class InvitationListFragment : Fragment(), AdapterView.OnItemClickListener {
         val floatActionButton = view.findViewById<FloatingActionButton>(R.id.add_board_button)
         floatActionButton.setOnClickListener{
             invitationListViewModel.insert(
-                Invitation("temp", "SaPrBhTbfWPtxkNs5zGq3H4JXo62", "newman", "elWLQPeyKGXEBQbpcVZv3Pdv7Pk2", "-N8iqOCHhm0MRjzlXADH")
+                Invitation("temp", "elWLQPeyKGXEBQbpcVZv3Pdv7Pk2", "kz1234", "SaPrBhTbfWPtxkNs5zGq3H4JXo62", "-N8ulgyHkdVRmP4yfNp6")
             )
 
         }

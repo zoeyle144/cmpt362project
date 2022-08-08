@@ -61,31 +61,53 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
             val groupListViewModel: GroupListViewModel = ViewModelProvider(this)[GroupListViewModel::class.java]
             val groupsRef = database.getReference("groups")
             val groupID = groupsRef.push().key!!
-            val groupName = createGroupName.text
+            val groupName = createGroupName.text.toString()
             val groupDescription = createGroupDescription.text
             auth = Firebase.auth
 
-            val permRef = database.getReference("permission")
-            val permissionID = permRef.push().key!!
-            val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
+            groupsRef.get().addOnSuccessListener {
+                if (it.value != null) {
+                    var exists = false
+                    val groupsList = it.value as Map<*, *>
+                    for ((key, value) in groupsList) {
+
+                        var entry = value as Map<*, *>
+                        println(entry)
+                        if (entry["groupName"] == groupName) {
+                            exists = true
+                            break
+                        }
+                    }
+                    if (exists) {
+                        Toast.makeText(this, "Group name ${groupName} already taken.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val permRef = database.getReference("permission")
+                        val permissionID = permRef.push().key!!
+                        val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
 
 
-            // push group
-            val group = Group(groupID, groupName.toString(), groupDescription.toString())
-            groupListViewModel.insert(group)
+                        // push group
+                        val group = Group(groupID, groupName.toString(), groupDescription.toString())
+                        groupListViewModel.insert(group)
 
-            // push creator as admin
-            val permission = Permission(permissionID,userRole,uID,groupID, userName)
-            permissionViewModel.insert(permission)
+                        // push creator as admin
+                        val permission = Permission(permissionID,userRole,uID,groupID, userName)
+                        permissionViewModel.insert(permission)
 
-            // push group chat
-            val groupChatsRef = database.getReference("group_chats")
-            val groupChatViewModel = ViewModelProvider(this)[GroupChatListViewModel::class.java]
-            val groupChatID = groupChatsRef.push().key!!
-            val groupChat = GroupChat(groupChatID, groupID, System.currentTimeMillis())
-            groupChatViewModel.insert(groupChat)
-            
-            finish()
+                        // push group chat
+                        val groupChatsRef = database.getReference("group_chats")
+                        val groupChatViewModel = ViewModelProvider(this)[GroupChatListViewModel::class.java]
+                        val groupChatID = groupChatsRef.push().key!!
+                        val groupChat = GroupChat(groupChatID, groupID, System.currentTimeMillis())
+                        groupChatViewModel.insert(groupChat)
+                        Toast.makeText(this, "Group ${groupName} created.", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+
+            }
+
+
 
         }
 

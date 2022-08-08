@@ -42,6 +42,7 @@
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="false"
             />
     </com.google.android.material.textfield.TextInputLayout>
     <!-- Username -->
@@ -64,18 +65,20 @@
         android:layout_height="wrap_content"
         android:minHeight="4dp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"/>
+        android:paddingEnd="16dp"
+        />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/group_desc_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:startIconDrawable="@drawable/ic_outline_email_24"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="false"
+            android:id="@+id/group_desc_field_edit"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,6 +94,7 @@
         android:text="save name and description"
         android:layout_gravity="center"
         android:id="@+id/save_group_changes"
+        android:visibility="gone"
         />
 
 
@@ -105,6 +109,7 @@
         android:text="invite members"
         android:layout_gravity="center"
         android:id="@+id/invite_member_btn"
+        android:visibility="gone"
         />
 
     <Space
