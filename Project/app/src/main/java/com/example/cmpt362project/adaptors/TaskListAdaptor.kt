@@ -29,7 +29,7 @@ import com.example.cmpt362project.viewModels.TaskChecklistViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 
 
-class TaskListAdaptor(private var taskList: List<Task>, private var boardID:String) : RecyclerView.Adapter<TaskListAdaptor.ViewHolder>(){
+class TaskListAdaptor(private var taskList: List<Task>, private var boardID:String, private var groupID:String) : RecyclerView.Adapter<TaskListAdaptor.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListAdaptor.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.task_list_adaptor, parent, false)
@@ -58,6 +58,7 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
             val intent = Intent(holder.itemView.context, DisplayTaskActivity::class.java)
             intent.putExtra("task", taskList[position])
             intent.putExtra("boardID", boardID)
+            intent.putExtra("groupID", groupID)
             holder.itemView.context.startActivity(intent)
         }
 
@@ -76,8 +77,6 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
                 it.visibility = View.INVISIBLE
                 true
             }
-
-
         }
     }
 

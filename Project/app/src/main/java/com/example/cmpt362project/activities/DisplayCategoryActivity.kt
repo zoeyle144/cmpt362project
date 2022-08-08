@@ -30,13 +30,14 @@ class DisplayCategoryActivity: AppCompatActivity() {
         val boardParcel = intent.getParcelableExtra<Board>("board")
         val boardTitle  = boardParcel?.boardName.toString()
         val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID)
+        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID, groupID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -57,15 +58,17 @@ class DisplayCategoryActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
-        val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
+        val boardParcel = intent.getParcelableExtra<Board>("board")
+        val boardTitle  = boardParcel?.boardName.toString()
+        val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID)
+        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID, groupID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(

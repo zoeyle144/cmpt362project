@@ -15,6 +15,11 @@ import com.example.cmpt362project.activities.DisplayCategoryActivity
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 
 class BoardListAdaptor(private var boardList: List<Board>) : RecyclerView.Adapter<BoardListAdaptor.ViewHolder>(){
 
@@ -33,6 +38,16 @@ class BoardListAdaptor(private var boardList: List<Board>) : RecyclerView.Adapte
         if (boardList[position].boardID == ""){
             boardEntry.isEnabled = false
             pictureView.visibility = View.GONE
+            val database = Firebase.database
+            val groupRef = database.getReference("groups")
+            groupRef.child(boardList[position].groupID).child("groupName").get()
+                .addOnSuccessListener {
+                    boardEntry.text = it.value.toString()
+                }.addOnFailureListener{
+                }
+        }else{
+            boardEntry.isEnabled = true
+            pictureView.visibility = View.VISIBLE
         }
         val boardListViewModel = ViewModelProvider(holder.itemView.context as ViewModelStoreOwner)[BoardListViewModel::class.java]
         boardEntry.text = boardList[position].boardName

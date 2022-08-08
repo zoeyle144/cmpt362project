@@ -19,14 +19,25 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateCategoryActivity
 import com.example.cmpt362project.activities.CreateTaskActivity
 import com.example.cmpt362project.models.Category
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.models.Task
 import com.example.cmpt362project.viewModels.CategoryListViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 
-class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
+class CategoryListAdaptor(private var categoryList: List<Category>, private var boardTitle:String, private var boardID:String, private var groupID:String) : RecyclerView.Adapter<CategoryListAdaptor.ViewHolder>(){
     private lateinit var vmsForDrag: ViewModelStoreOwner
     private lateinit var  categoryListViewModel: CategoryListViewModel
+    private lateinit var database: FirebaseDatabase
+    private lateinit var auth: FirebaseAuth
+    private lateinit var permissionEntries: List<Permission>
+    private lateinit var groupIDs: ArrayList<String>
+    private lateinit var roles: ArrayList<String>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryListAdaptor.ViewHolder {
         if(viewType == 0){
@@ -36,9 +47,33 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_category_button, parent, false)
             val addCategoryButton = view.findViewById<Button>(R.id.add_category_button)
 
-            if(MainActivity.role == "reader" || MainActivity.role == "writer"){
-                addCategoryButton.isEnabled = false
-            }
+            database = Firebase.database
+            auth = Firebase.auth
+            val permissionRef = database.getReference("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "reader" || roles[groupIDs.indexOf(groupID)] == "writer"){
+                                addCategoryButton.isEnabled = false
+                            }
+                        }
+                    }
+                }.addOnFailureListener{
+                }
 
             addCategoryButton.setOnClickListener {
                 val intent = Intent(view.context, CreateCategoryActivity::class.java)
@@ -60,7 +95,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(holder.itemView.context, LinearLayoutManager.VERTICAL, false)
             taskListView.layoutManager = layoutManager
             val taskList: List<Task> = ArrayList()
-            val adapter: RecyclerView.Adapter<TaskListAdaptor.ViewHolder> = TaskListAdaptor(taskList, boardID)
+            val adapter: RecyclerView.Adapter<TaskListAdaptor.ViewHolder> = TaskListAdaptor(taskList, boardID, groupID)
             taskListView.adapter = adapter
             taskListView.setOnDragListener(dragListener)
             taskListView.addItemDecoration(
@@ -80,9 +115,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             }
 
             val deleteCategoryButton = holder.itemView.findViewById<Button>(R.id.delete_category_button)
-            if (MainActivity.role == "reader" || MainActivity.role == "writer"){
-                deleteCategoryButton.isEnabled = false
-            }
+
             deleteCategoryButton.setOnClickListener {
                 val confirmationBuilder = AlertDialog.Builder(holder.itemView.context)
                 confirmationBuilder.setMessage("Are you sure you want to Delete Category <$categoryTitle>?")
@@ -104,15 +137,43 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
             }
 
             val addTaskButton = holder.itemView.findViewById<Button>(R.id.add_task_button)
-            if (MainActivity.role == "reader"){
-                addTaskButton.isEnabled = false
-            }
             addTaskButton.setOnClickListener {
                 val intent = Intent(holder.itemView.context, CreateTaskActivity::class.java)
                 intent.putExtra("category_title", categoryTitle)
                 intent.putExtra("boardID", boardID)
                 holder.itemView.context.startActivity(intent)
             }
+
+            database = Firebase.database
+            auth = Firebase.auth
+            val permissionRef = database.getReference("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "reader" || roles[groupIDs.indexOf(groupID)] == "writer"){
+                                deleteCategoryButton.isEnabled = false
+                                if(roles[groupIDs.indexOf(groupID)] == "reader"){
+                                    addTaskButton.isEnabled = false
+                                }
+                            }
+                        }
+                    }
+                }.addOnFailureListener{
+                }
 
         }
     }

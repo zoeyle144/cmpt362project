@@ -32,6 +32,10 @@ import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.*
 
 
 class HomeFragment : Fragment() {
@@ -39,6 +43,7 @@ class HomeFragment : Fragment() {
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<BoardListAdaptor.ViewHolder>? = null
     private lateinit var boardList: List<Board>
+    private lateinit var database: FirebaseDatabase
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -67,7 +72,7 @@ class HomeFragment : Fragment() {
                 for (j in tempIter2){
                     val currentGroup = j.groupID
                     if (currentGroup != prevGroup){
-                        val groupLabel = Board("", "Group1","","","",currentGroup)
+                        val groupLabel = Board("","","","","",currentGroup)
                         finalList.add(groupLabel)
                         prevGroup = currentGroup
                     }
@@ -100,5 +105,4 @@ class HomeFragment : Fragment() {
 
         return view
     }
-
 }

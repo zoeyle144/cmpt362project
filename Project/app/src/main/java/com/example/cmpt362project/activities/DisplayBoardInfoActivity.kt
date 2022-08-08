@@ -27,6 +27,7 @@ import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.BoardUpdateData
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.button.MaterialButton
@@ -47,6 +48,9 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
+    private lateinit var permissionEntries: List<Permission>
+    private lateinit var groupIDs: ArrayList<String>
+    private lateinit var roles: ArrayList<String>
 
     private lateinit var pictureView: ImageView
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
@@ -72,6 +76,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
 
         val boardParcel = intent.getParcelableExtra<Board>("board")
         val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
         val boardName = boardParcel?.boardName.toString()
         val boardDescription = boardParcel?.boardName.toString()
         var boardPicString = boardParcel?.boardPic.toString()
@@ -86,12 +91,37 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         val closeButton = findViewById<Button>(R.id.close_board_info_button)
         val changeBoardPicButton = findViewById<MaterialButton>(R.id.board_picture_change_picture_button)
 
-        if (MainActivity.role != "admin"){
-            boardNameField.isEnabled = false
-            boardDescriptionField.isEnabled = false
-            saveButton.isEnabled = false
-            changeBoardPicButton.isEnabled = false
-        }
+
+        database = Firebase.database.reference
+        auth = Firebase.auth
+        val permissionRef = database.child("permission")
+        permissionRef
+            .orderByChild("uid")
+            .equalTo(auth.currentUser?.uid.toString())
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    permissionEntries = it.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Permission::class.java)!!
+                    }
+                    val iterator = permissionEntries.listIterator()
+                    groupIDs = ArrayList()
+                    roles = ArrayList()
+                    for (i in iterator) {
+                        groupIDs.add(i.groupID)
+                        roles.add(i.role)
+                    }
+                    if (groupIDs.indexOf(groupID) >= 0){
+                        if (roles[groupIDs.indexOf(groupID)] != "admin"){
+                            boardNameField.isEnabled = false
+                            boardDescriptionField.isEnabled = false
+                            saveButton.isEnabled = false
+                            changeBoardPicButton.isEnabled = false
+                        }
+                    }
+                }
+            }.addOnFailureListener{
+            }
 
         boardNameField.setText(boardName)
         boardDescriptionField.setText(boardDescription)
@@ -264,27 +294,53 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_board_button){
-            if (MainActivity.role == "admin"){
-                val confirmationBuilder = AlertDialog.Builder(this)
-                val selectedBoard = intent.getParcelableExtra<Board>("board")
-                confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes") { _, _ ->
-                        val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString(), "-N8nxMBOuplwJJx6iNFn")
-                        setResult(RESULT_OK, null)
-                        finish()
+            val boardParcel = intent.getParcelableExtra<Board>("board")
+            val groupID = boardParcel?.groupID.toString()
+            database = Firebase.database.reference
+            auth = Firebase.auth
+            val permissionRef = database.child("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "admin"){
+                                val confirmationBuilder = AlertDialog.Builder(this)
+                                val selectedBoard = intent.getParcelableExtra<Board>("board")
+                                confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Yes") { _, _ ->
+                                        val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+                                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString(), "-N8nxMBOuplwJJx6iNFn")
+                                        setResult(RESULT_OK, null)
+                                        finish()
+                                    }
+                                    .setNegativeButton("No") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                val alert = confirmationBuilder.create()
+                                alert.show()
+                            }else{
+                                Toast.makeText(this,
+                                    "You do not have permission to delete board",
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                    .setNegativeButton("No") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val alert = confirmationBuilder.create()
-                alert.show()
-            }else{
-                Toast.makeText(this,
-                    "You do not have permission to delete board",
-                    Toast.LENGTH_SHORT).show()
-            }
+                }.addOnFailureListener{
+                }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -39,6 +39,12 @@
         android:ems="10"
         android:inputType="text" />
 
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Group" />
+
     <Spinner
         android:id="@+id/chosen_group"
         android:layout_width="match_parent"
@@ -50,6 +56,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/create_board_button"
+        />
+
+    <Button
+        android:id="@+id/cancel_create_board_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
         />
 
 </LinearLayout>
