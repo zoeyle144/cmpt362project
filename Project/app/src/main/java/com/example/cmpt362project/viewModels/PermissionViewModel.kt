@@ -21,8 +21,8 @@ class PermissionViewModel: ViewModel() {
         repository.insert(permission)
     }
 
-    fun edit(permission: Permission) {
-        repository.edit(permission)
+    fun replace(permissionId: String, role: String) {
+        repository.replace(permissionId, role)
     }
 
     fun delete(permission:Permission, uid:String){

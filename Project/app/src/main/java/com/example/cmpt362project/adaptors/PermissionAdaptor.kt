@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.get
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Message
 import com.example.cmpt362project.models.Permission
@@ -51,7 +52,22 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
 
         spinner.adapter = adapter
         spinner.setSelection(spinnerItemsDatabase.indexOf(permList[p0].role))
-        spinner.onItemSelectedListener = this
+        spinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    Log.w("DEBUG", spinnerItemsDatabase[position])
+                    vm.replace(permList[p0].permissionID, spinnerItemsDatabase[position])
+                }
+                override fun onNothingSelected(parent: AdapterView<*>) {
+
+                }
+            }
+
 
         deleteBtn.setOnClickListener{
             val confirmationBuilder = AlertDialog.Builder(context)
@@ -100,7 +116,6 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-        Log.w("DEBUG", spinnerItemsDatabase[position])
 
     }
 

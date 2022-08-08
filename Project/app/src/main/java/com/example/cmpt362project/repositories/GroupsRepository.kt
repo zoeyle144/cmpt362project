@@ -28,19 +28,22 @@ class GroupsRepository {
                     var userGroups = mutableListOf<Group>()
 
                     permRef.get().addOnSuccessListener {
-                        val permList = it.value as Map<*, *>
-                        for ((key, value) in permList) {
-                            var permListEntry = value as Map<*, *>
-                            if (permListEntry["uid"].toString() == uid) {
-                                userGroupsIds.add(permListEntry["groupID"].toString())
+                        if (it.value != null) {
+                            val permList = it.value as Map<*, *>
+                            for ((key, value) in permList) {
+                                var permListEntry = value as Map<*, *>
+                                if (permListEntry["uid"].toString() == uid) {
+                                    userGroupsIds.add(permListEntry["groupID"].toString())
+                                }
                             }
-                        }
-                        for (group in groups) {
-                            if (userGroupsIds.contains(group.groupID)) {
-                                userGroups.add(group)
+                            for (group in groups) {
+                                if (userGroupsIds.contains(group.groupID)) {
+                                    userGroups.add(group)
+                                }
                             }
+                            liveData.postValue(userGroups)
                         }
-                        liveData.postValue(userGroups)
+
                     }
 
                 }

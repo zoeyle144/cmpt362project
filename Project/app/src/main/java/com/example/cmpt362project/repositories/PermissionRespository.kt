@@ -25,16 +25,15 @@ class PermissionRespository {
                     val permission: List<Permission> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(Permission::class.java)!!
                     }
-
+                    Log.w("DEBUGHERE", permission.toString())
                     var filteredPermissions = mutableListOf<Permission>()
                     for (perm in permission) {
                         if (perm.groupID == groupId) {
                             filteredPermissions.add(perm)
+                            Log.w("DEBUGHERE", perm.toString())
                         }
                     }
                     liveData.postValue(filteredPermissions)
-                    //Log.w("DEBUGHERE", permission.toString())
-                    //liveData.postValue(permission)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -46,30 +45,42 @@ class PermissionRespository {
     fun insert(permission: Permission) {
         permRef.get().addOnSuccessListener {
             var exists = false
-            val permList = it.value as Map<*, *>
-            for ((key, value) in permList) {
-                var permListEntry = value as Map<*, *>
-                Log.w("DEBUG", permListEntry.toString())
-                if (permListEntry["uid"] == permission.uid &&
-                    permListEntry["groupID"] == permission.groupID
-                ) {
-                    exists = true
-                    break
-                }
-            }
-            if (!exists) {
+            if (it.value == null) {
                 permRef.child(permission.permissionID).setValue(permission)
                     .addOnCompleteListener {
-                        println("debug: add permission success")
+
                     }.addOnFailureListener { err ->
                         println("debug: add permission fail Error ${err.message}")
                     }
+
             }
+            else {
+                val permList = it.value as Map<*, *>
+                for ((key, value) in permList) {
+                    var permListEntry = value as Map<*, *>
+                    Log.w("DEBUG", permListEntry.toString())
+                    if (permListEntry["uid"] == permission.uid &&
+                        permListEntry["groupID"] == permission.groupID
+                    ) {
+                        exists = true
+                        break
+                    }
+                }
+                if (!exists) {
+                    permRef.child(permission.permissionID).setValue(permission)
+                        .addOnCompleteListener {
+                            println("debug: add permission success")
+                        }.addOnFailureListener { err ->
+                            println("debug: add permission fail Error ${err.message}")
+                        }
+                }
+            }
+
         }
     }
 
-    fun edit(permission: Permission) {
-        permRef.child(permission.permissionID).setValue(permission)
+    fun replace(permissionId: String, role: String) {
+        permRef.child(permissionId).child("role").setValue(role)
     }
 
     fun delete(permission: Permission, uid: String){

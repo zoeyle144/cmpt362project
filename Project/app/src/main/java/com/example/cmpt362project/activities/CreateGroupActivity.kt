@@ -82,11 +82,6 @@ class CreateGroupActivity: AppCompatActivity() {
                         val permissionID = permRef.push().key!!
                         val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
 
-
-                        // push group
-                        val group = Group(groupID, groupName.toString(), groupDescription.toString())
-                        groupListViewModel.insert(group)
-
                         // push creator as admin
                         val permission = Permission(permissionID,userRole,uID,groupID, userName)
                         permissionViewModel.insert(permission)
@@ -98,6 +93,10 @@ class CreateGroupActivity: AppCompatActivity() {
                         val groupChat = GroupChat(groupChatID, groupID, System.currentTimeMillis())
                         groupChatViewModel.insert(groupChat)
                         Toast.makeText(this, "Group ${groupName} created.", Toast.LENGTH_SHORT).show()
+
+                        // push group
+                        val group = Group(groupID, groupName.toString(), groupDescription.toString())
+                        groupListViewModel.insert(group)
                         finish()
                     }
                 }
