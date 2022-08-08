@@ -2,7 +2,8 @@ package com.example.cmpt362project.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +15,7 @@ import com.example.cmpt362project.adaptors.CategoryListAdaptor
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Category
 import com.example.cmpt362project.viewModels.CategoryListViewModel
+
 
 class DisplayCategoryActivity: AppCompatActivity() {
 
@@ -28,13 +30,14 @@ class DisplayCategoryActivity: AppCompatActivity() {
         val boardParcel = intent.getParcelableExtra<Board>("board")
         val boardTitle  = boardParcel?.boardName.toString()
         val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID)
+        adapter = CategoryListAdaptor(categoryList, boardTitle, boardID, groupID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -55,15 +58,17 @@ class DisplayCategoryActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val boardTitle  = intent.getParcelableExtra<Board>("board")?.boardName.toString()
-        val boardID = intent.getParcelableExtra<Board>("board")?.boardID.toString()
+        val boardParcel = intent.getParcelableExtra<Board>("board")
+        val boardTitle  = boardParcel?.boardName.toString()
+        val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
         layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
         categoryList = ArrayList()
-        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID)
+        adapter = CategoryListAdaptor(categoryList, boardTitle , boardID, groupID)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -109,6 +114,10 @@ class DisplayCategoryActivity: AppCompatActivity() {
     private fun openDisplayBoardInfoActivityForResult(){
         val infoIntent = Intent(this, DisplayBoardInfoActivity::class.java)
         val boardParcel = intent.getParcelableExtra<Board>("board")
+        val sp = getSharedPreferences("SharedPrefForBoardImage", MODE_PRIVATE)
+        val spEditor = sp.edit()
+        spEditor.putBoolean("imageSet", false)
+        spEditor.apply()
         infoIntent.putExtra("board", boardParcel)
         resultLauncher.launch(infoIntent)
     }

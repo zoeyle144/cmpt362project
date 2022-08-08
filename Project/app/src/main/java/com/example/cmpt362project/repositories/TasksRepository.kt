@@ -68,6 +68,8 @@ class TasksRepository {
             "/name" to task.name,
             "/summary" to task.summary,
             "/type" to task.type,
+            "/assignedUser" to task.assignedUser,
+            "/assignedUserID" to task.assignedUserID,
             "/startDate" to task.startDate,
             "/endDate" to task.endDate
         )

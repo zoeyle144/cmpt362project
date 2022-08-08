@@ -10,15 +10,24 @@ import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.models.TaskChecklistItem
 import com.example.cmpt362project.viewModels.TaskChecklistViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklistItem>, private var boardID:String, private var taskID:String) : RecyclerView.Adapter<TaskChecklistAdaptor.ViewHolder>(){
+class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklistItem>, private var boardID:String, private var taskID:String, private var groupID:String) : RecyclerView.Adapter<TaskChecklistAdaptor.ViewHolder>(){
     private lateinit var  taskChecklistViewModel: TaskChecklistViewModel
+    private lateinit var database: FirebaseDatabase
+    private lateinit var auth: FirebaseAuth
+    private lateinit var permissionEntries: List<Permission>
+    private lateinit var groupIDs: ArrayList<String>
+    private lateinit var roles: ArrayList<String>
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskChecklistAdaptor.ViewHolder {
@@ -28,6 +37,34 @@ class TaskChecklistAdaptor(private var taskChecklistItemList: List<TaskChecklist
         }else{
             val view = LayoutInflater.from(parent.context).inflate(R.layout.add_task_checklist_item_button, parent, false)
             val addTaskChecklistItemButton= view.findViewById<Button>(R.id.add_task_checklist_item_button)
+
+            database = Firebase.database
+            auth = Firebase.auth
+            val permissionRef = database.getReference("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "reader"){
+                                addTaskChecklistItemButton.isEnabled = false
+                            }
+                        }
+                    }
+                }.addOnFailureListener{
+                }
 
             addTaskChecklistItemButton.setOnClickListener{
                 val builder = AlertDialog.Builder(parent.context)

@@ -3,6 +3,7 @@ package com.example.cmpt362project.activities
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,9 +23,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.BoardUpdateData
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.button.MaterialButton
@@ -39,11 +42,15 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
+
 class DisplayBoardInfoActivity: AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
+    private lateinit var permissionEntries: List<Permission>
+    private lateinit var groupIDs: ArrayList<String>
+    private lateinit var roles: ArrayList<String>
 
     private lateinit var pictureView: ImageView
     private lateinit var galleryActivityResult: ActivityResultLauncher<Intent>
@@ -52,32 +59,74 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
     private lateinit var boardListViewModel: BoardListViewModel
 
     companion object {
+        const val BOARD_PIC_RECENTLY_CHANGED = "BOARD_PIC_RECENTLY_CHANGED"
+        const val SHARED_PREF = "SHARED_PREF"
+
         const val REQUEST_CAMERA_PERMISSION_CODE = 100
         const val CAMERA_SAVED_FILE_NAME = "temp_bp.jpg"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_board_info)
 
+        val sp = getSharedPreferences("SharedPrefForBoardImage", MODE_PRIVATE)
+        var imageSet = sp.getBoolean("imageSet", false)
+
         val boardParcel = intent.getParcelableExtra<Board>("board")
         val boardID = boardParcel?.boardID.toString()
+        val groupID = boardParcel?.groupID.toString()
         val boardName = boardParcel?.boardName.toString()
         val boardDescription = boardParcel?.boardName.toString()
         var boardPicString = boardParcel?.boardPic.toString()
         if (boardPicString == ""){
-           boardPicString = getString(R.string.default_bp_path)
+            boardPicString = getString(R.string.default_bp_path)
         }
 
         pictureView = findViewById(R.id.board_picture)
         val boardNameField = findViewById<EditText>(R.id.board_info_name_input)
         val boardDescriptionField = findViewById<EditText>(R.id.board_info_description_input)
+        val saveButton = findViewById<Button>(R.id.save_board_info_button)
+        val closeButton = findViewById<Button>(R.id.close_board_info_button)
+        val changeBoardPicButton = findViewById<MaterialButton>(R.id.board_picture_change_picture_button)
+
+
+        database = Firebase.database.reference
+        auth = Firebase.auth
+        val permissionRef = database.child("permission")
+        permissionRef
+            .orderByChild("uid")
+            .equalTo(auth.currentUser?.uid.toString())
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    permissionEntries = it.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Permission::class.java)!!
+                    }
+                    val iterator = permissionEntries.listIterator()
+                    groupIDs = ArrayList()
+                    roles = ArrayList()
+                    for (i in iterator) {
+                        groupIDs.add(i.groupID)
+                        roles.add(i.role)
+                    }
+                    if (groupIDs.indexOf(groupID) >= 0){
+                        if (roles[groupIDs.indexOf(groupID)] != "admin"){
+                            boardNameField.isEnabled = false
+                            boardDescriptionField.isEnabled = false
+                            saveButton.isEnabled = false
+                            changeBoardPicButton.isEnabled = false
+                        }
+                    }
+                }
+            }.addOnFailureListener{
+            }
 
         boardNameField.setText(boardName)
         boardDescriptionField.setText(boardDescription)
 
-        val saveButton = findViewById<Button>(R.id.save_board_info_button)
-        val closeButton = findViewById<Button>(R.id.close_board_info_button)
+
 
         saveButton.setOnClickListener{
             val boardUpdateData = BoardUpdateData(boardNameField.text.toString(), boardDescriptionField.text.toString())
@@ -100,9 +149,13 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         user = auth.currentUser!!
 
         boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+        println("debug: imageSet? $imageSet")
+
         boardListViewModel.boardPic.observe(this) { pictureView.setImageBitmap(it) }
 
-        ImageUtility.setImageViewToProfilePic(boardPicString, pictureView)
+        if (!imageSet){
+            ImageUtility.setImageViewToProfilePic(boardPicString, pictureView)
+        }
 
         galleryActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -111,6 +164,10 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                 val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(resultUri!!))
                 println("Image found. Calling boardListViewModel.setImage")
                 boardListViewModel.setImage(image)
+                imageSet = true
+                val spEditor = sp.edit()
+                spEditor.putBoolean("imageSet", true)
+                spEditor.apply()
             }
         }
 
@@ -120,13 +177,16 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                 if (cameraImageUri != Uri.EMPTY) {
                     val image = BitmapFactory.decodeStream(this.contentResolver.openInputStream(cameraImageUri))
                     boardListViewModel.setImage(image)
+                    imageSet = true
+                    val spEditor = sp.edit()
+                    spEditor.putBoolean("imageSet", true)
+                    spEditor.apply()
                 }
             } else {
                 Toast.makeText(this, "Failed to get image from camera", Toast.LENGTH_SHORT).show()
             }
         }
 
-        val changeBoardPicButton = findViewById<MaterialButton>(R.id.board_picture_change_picture_button)
         changeBoardPicButton.setOnClickListener{
             val builder = androidx.appcompat.app.AlertDialog.Builder(this)
             val dialogOptions = arrayOf("Open camera", "Select from gallery")
@@ -206,7 +266,10 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
                         val oldImgRef = storage.child(pathToDelete)
                         oldImgRef.delete().addOnSuccessListener {
                             println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                            updateProfilePicSharedPref()
                         }
+                    }else{
+                        updateProfilePicSharedPref()
                     }
                 }
             }
@@ -220,24 +283,64 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun updateProfilePicSharedPref() {
+        val sharedPref = this.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean(BOARD_PIC_RECENTLY_CHANGED, true)
+            apply()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_board_button){
-            val confirmationBuilder = AlertDialog.Builder(this)
-            val selectedBoard = intent.getParcelableExtra<Board>("board")
-            confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { _, _ ->
-                    val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
-                    boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString())
-                    setResult(RESULT_OK, null)
-                    finish()
+            val boardParcel = intent.getParcelableExtra<Board>("board")
+            val groupID = boardParcel?.groupID.toString()
+            database = Firebase.database.reference
+            auth = Firebase.auth
+            val permissionRef = database.child("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "admin"){
+                                val confirmationBuilder = AlertDialog.Builder(this)
+                                val selectedBoard = intent.getParcelableExtra<Board>("board")
+                                confirmationBuilder.setMessage("Are you sure you want to Delete Board <${selectedBoard?.boardName}>?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Yes") { _, _ ->
+                                        val boardListViewModel = ViewModelProvider(this)[BoardListViewModel::class.java]
+                                        boardListViewModel.delete(selectedBoard?.boardID.toString(), selectedBoard?.boardName.toString(), "-N8nxMBOuplwJJx6iNFn")
+                                        setResult(RESULT_OK, null)
+                                        finish()
+                                    }
+                                    .setNegativeButton("No") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                val alert = confirmationBuilder.create()
+                                alert.show()
+                            }else{
+                                Toast.makeText(this,
+                                    "You do not have permission to delete board",
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }.addOnFailureListener{
                 }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            val alert = confirmationBuilder.create()
-            alert.show()
         }
         return super.onOptionsItemSelected(item)
     }

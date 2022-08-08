@@ -21,9 +21,9 @@ class BoardsRepository {
     var usersRef = database.getReference("users")
     private val changeNotificationsRef = database.getReference("changeNotifications")
 
-    fun fetchBoards(liveData: MutableLiveData<List<Board>>){
+    fun fetchBoards(liveData: MutableLiveData<List<Board>>, groupID:String){
         boardsRef
-            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
+            .orderByChild("groupID").equalTo(groupID)
             .addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val boards: List<Board> = snapshot.children.map { dataSnapshot ->
@@ -37,6 +37,22 @@ class BoardsRepository {
         })
     }
 
+    fun fetchBoardsByUser(liveData: MutableLiveData<List<Board>>){
+        boardsRef
+            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
+            .addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val boards: List<Board> = snapshot.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Board::class.java)!!
+                    }
+                    liveData.postValue(boards)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
     fun insert(board: Board){
         boardsRef.child(board.boardID).setValue(board)
             .addOnCompleteListener{
@@ -48,14 +64,13 @@ class BoardsRepository {
         usersRef.child(auth.currentUser?.uid.toString()).child("username").get()
             .addOnSuccessListener {
                 val user = it.value as String
-                val changeNotification = ChangeNotification(user,"board insert", board.boardName)
+                val changeNotification = ChangeNotification(user,"board insert", board.boardName, board.groupID)
                 changeNotificationsRef.child(changeNotificationKey).setValue(changeNotification)
             }.addOnFailureListener{
             }
-
     }
 
-    fun delete(boardID:String, boardName:String){
+    fun delete(boardID:String, boardName:String, groupID:String){
         boardsRef.child(boardID).removeValue()
             .addOnSuccessListener {
                 println("debug: delete board success")
@@ -66,7 +81,7 @@ class BoardsRepository {
         usersRef.child(auth.currentUser?.uid.toString()).child("username").get()
             .addOnSuccessListener {
                 val user = it.value as String
-                val changeNotification = ChangeNotification(user,"board delete", boardName)
+                val changeNotification = ChangeNotification(user,"board delete", boardName, groupID)
                 changeNotificationsRef.child(changeNotificationKey).setValue(changeNotification)
             }.addOnFailureListener{
             }

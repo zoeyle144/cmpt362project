@@ -69,6 +69,7 @@ class DisplayBoardActivity: AppCompatActivity() {
 
         val lv = findViewById<ListView>(R.id.member_listview)
 
+
         //mData = list of members
         val mData: ArrayList<String> = ArrayList()
         mData.add("admin")

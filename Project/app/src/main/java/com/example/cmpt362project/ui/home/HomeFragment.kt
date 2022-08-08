@@ -5,25 +5,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cmpt362project.MainActivity
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.CreateBoardActivity
-import com.example.cmpt362project.adaptors.BoardDragManageAdaptor
-import com.example.cmpt362project.adaptors.BoardListAdaptor
+import com.example.cmpt362project.activities.CreateBoardActvitiyFromHome
+import com.example.cmpt362project.adaptors.*
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.viewModels.BoardListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.*
 
 class HomeFragment : Fragment() {
 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: RecyclerView.Adapter<BoardListAdaptor.ViewHolder>? = null
     private lateinit var boardList: List<Board>
+    private lateinit var database: FirebaseDatabase
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -41,25 +53,46 @@ class HomeFragment : Fragment() {
         adapter = BoardListAdaptor(boardList)
         boardListView.adapter = adapter
 
-        boardListViewModel.fetchBoards()
-        boardListViewModel.boardsLiveData.observe(requireActivity()){
-            (adapter as BoardListAdaptor).updateList(it)
+        boardListViewModel.fetchBoardsByUser()
+        boardListViewModel.boardsLiveData.observe(requireActivity()){ listB ->
+            val tempList = listB.groupBy({it.groupID}, {it}).toMap()
+            val finalList: MutableList<Board> = ArrayList()
+            val tempIter = tempList.iterator()
+            var prevGroup = ""
+            for (i in tempIter) {
+                val tempIter2 = i.value.iterator()
+                for (j in tempIter2){
+                    val currentGroup = j.groupID
+                    if (currentGroup != prevGroup){
+                        val groupLabel = Board("","","","","",currentGroup)
+                        finalList.add(groupLabel)
+                        prevGroup = currentGroup
+                    }
+                    finalList.add(j)
+                }
+            }
+            println("debug: grouped boardlist: ${finalList}")
+            (adapter as BoardListAdaptor).updateList(finalList)
             (adapter as BoardListAdaptor).notifyDataSetChanged()
         }
 
-        val dividerItemDecoration = DividerItemDecoration(requireActivity(), (layoutManager as LinearLayoutManager).orientation)
-        boardListView.addItemDecoration(dividerItemDecoration)
-        // Setup ItemTouchHelper
-        val callback = BoardDragManageAdaptor(
-            adapter as BoardListAdaptor, requireActivity(),
-            ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT))
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(boardListView)
-
         floatActionButton.setOnClickListener{
-            val intent = Intent(view.context, CreateBoardActivity::class.java)
-            view.context.startActivity(intent)
+            if (MainActivity.role == "admin"){
+                val intent = Intent(view.context, CreateBoardActvitiyFromHome::class.java)
+                view.context.startActivity(intent)
+            }else{
+                Toast.makeText(requireActivity(), "You do not have permission to create a board", Toast.LENGTH_SHORT).show()
+            }
         }
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        val prefSignature = prefs.getString("signature", "")
+        val prefReply = prefs.getString("reply", "")
+        val prefSync = prefs.getBoolean("sync", false)
+        val prefAttachment = prefs.getBoolean("attachment", false)
+
+        println("prefSignature is $prefSignature, prefReply is $prefReply, " +
+                "prefSync is $prefSync, prefAttachment is $prefAttachment")
 
         return view
     }

@@ -3,11 +3,10 @@ package com.example.cmpt362project.activities
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,37 +16,118 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cmpt362project.R
 import com.example.cmpt362project.adaptors.TaskChecklistAdaptor
 import com.example.cmpt362project.adaptors.TaskChecklistDragManageAdaptor
-import com.example.cmpt362project.models.Task
-import com.example.cmpt362project.models.TaskChecklistItem
-import com.example.cmpt362project.models.TaskUpdateData
 import com.example.cmpt362project.viewModels.TaskChecklistViewModel
 import com.example.cmpt362project.viewModels.TaskListViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 import android.icu.util.Calendar
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.*
+import com.example.cmpt362project.MainActivity
+import com.example.cmpt362project.models.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class DisplayTaskActivity : AppCompatActivity() {
     private lateinit var taskListViewModel: TaskListViewModel
     private lateinit var taskChecklistViewModel: TaskChecklistViewModel
+    private lateinit var groupUserUserNames: ArrayList<String>
+    private lateinit var groupUserID: ArrayList<String>
+    private lateinit var database: FirebaseDatabase
+    private lateinit var auth: FirebaseAuth
+    private lateinit var permissionEntries: List<Permission>
+    private lateinit var groupIDs: ArrayList<String>
+    private lateinit var roles: ArrayList<String>
     private var months = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
     private var days = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     private var difficulties = arrayOf("Easy", "Medium", "Hard")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_task)
 
         val boardID = intent.getSerializableExtra("boardID").toString()
+        val groupID = intent.getSerializableExtra("groupID").toString()
 
         val t = intent.getParcelableExtra<Task>("task")
         val taskName = findViewById<EditText>(R.id.task_name)
         val taskSummary = findViewById<EditText>(R.id.task_summary)
         val taskType = findViewById<Spinner>(R.id.task_type)
+        val assignedUser = findViewById<Spinner>(R.id.assigned_user)
+        val assignedUserIDHidden = findViewById<TextView>(R.id.assigned_user_id)
         val taskStartDate = findViewById<EditText>(R.id.task_start_date)
         val taskEndDate = findViewById<EditText>(R.id.task_end_date)
+        val saveButton = findViewById<Button>(R.id.save_display_task)
+        val closeButton = findViewById<Button>(R.id.close_display_task)
+
+        database = Firebase.database
+        auth = Firebase.auth
+        val permissionRef = database.getReference("permission")
+        permissionRef
+            .orderByChild("uid")
+            .equalTo(auth.currentUser?.uid.toString())
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    permissionEntries = it.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Permission::class.java)!!
+                    }
+                    val iterator = permissionEntries.listIterator()
+                    groupIDs = ArrayList()
+                    roles = ArrayList()
+                    for (i in iterator) {
+                        groupIDs.add(i.groupID)
+                        roles.add(i.role)
+                    }
+                    if (groupIDs.indexOf(groupID) >= 0){
+                        if (roles[groupIDs.indexOf(groupID)] == "reader"){
+                            taskName.isEnabled = false
+                            taskSummary.isEnabled = false
+                            taskType.isEnabled = false
+                            assignedUser.isEnabled = false
+                            assignedUserIDHidden.isEnabled = false
+                            taskName.isEnabled = false
+                            taskStartDate.isEnabled = false
+                            taskEndDate.isEnabled = false
+                            saveButton.isEnabled = false
+                        }
+                    }
+                }
+            }.addOnFailureListener{
+            }
+
+        var groupUsers: List<Permission>
+        permissionRef
+            .orderByChild("groupID")
+            .equalTo(groupID)
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()){
+                    groupUsers = it.children.map { dataSnapshot ->
+                        dataSnapshot.getValue(Permission::class.java)!!
+                    }
+                    println("debug: GroupUsers: $groupUsers")
+                    val iterator = groupUsers.listIterator()
+                    groupUserUserNames = ArrayList()
+                    groupUserID = ArrayList()
+                    for (i in iterator) {
+                        groupUserUserNames.add(i.userName)
+                        groupUserID.add(i.uID)
+                    }
+                    val tempAdaptor = ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,groupUserUserNames);
+                    assignedUser.adapter = tempAdaptor
+                    assignedUser.setSelection(groupUserUserNames.indexOf(t?.assignedUser))
+                    if (groupUserUserNames.indexOf(t?.assignedUser)>=0){
+                        assignedUserIDHidden.text = groupUserID[groupUserUserNames.indexOf(t?.assignedUser)]
+                    }
+                }
+            }.addOnFailureListener { err ->
+                println("debug: get groupUsers fail Error ${err.message}")
+            }
 
         ArrayAdapter.createFromResource(
             this,
@@ -103,6 +183,7 @@ class DisplayTaskActivity : AppCompatActivity() {
 
         taskName.setText(t?.name)
         taskSummary.setText(t?.summary)
+        assignedUserIDHidden.text = t?.assignedUserID
         taskStartDate.setText(startDateString)
         taskEndDate.setText(endDateString)
 
@@ -112,7 +193,7 @@ class DisplayTaskActivity : AppCompatActivity() {
         val layoutManager:RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         taskChecklistView.layoutManager = layoutManager
         val taskChecklistItemList: List<TaskChecklistItem> = ArrayList()
-        val adapter: RecyclerView.Adapter<TaskChecklistAdaptor.ViewHolder> = TaskChecklistAdaptor(taskChecklistItemList, boardID, taskID)
+        val adapter: RecyclerView.Adapter<TaskChecklistAdaptor.ViewHolder> = TaskChecklistAdaptor(taskChecklistItemList, boardID, taskID, groupID)
         taskChecklistView.adapter = adapter
         taskChecklistView.addItemDecoration(
             DividerItemDecoration(
@@ -228,17 +309,18 @@ class DisplayTaskActivity : AppCompatActivity() {
             res.show()
         }
 
-
-        val saveButton = findViewById<Button>(R.id.save_display_task)
-        val closeButton = findViewById<Button>(R.id.close_display_task)
-
         saveButton.setOnClickListener {
             val taskNameForUpdate = taskName.text.toString()
             val taskSummaryForUpdate = taskSummary.text.toString()
             val taskTypeForUpdate = taskType.selectedItem.toString()
+            val assignedUserForUpdate = assignedUser.selectedItem.toString()
+            val assignedUserIDForUpdate = assignedUserIDHidden.text.toString()
             val taskStartDateForUpdate = startTimeInMillis
             val taskEndDateForUpdate = endTimeInMillis
-            val taskForUpdate = TaskUpdateData(taskID, taskNameForUpdate, taskSummaryForUpdate, taskTypeForUpdate,
+            val taskForUpdate = TaskUpdateData(taskID,
+                taskNameForUpdate, taskSummaryForUpdate,
+                taskTypeForUpdate, assignedUserForUpdate,
+                assignedUserIDForUpdate,
                 taskStartDateForUpdate!!,
                 taskEndDateForUpdate!!
             )
@@ -260,22 +342,53 @@ class DisplayTaskActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemId = item.itemId
         if (itemId == R.id.delete_task_btn){
-            val confirmationBuilder = AlertDialog.Builder(this)
-            val selectedTask = intent.getParcelableExtra<Task>("task")
-            confirmationBuilder.setMessage("Are you sure you want to Delete Task <${selectedTask?.name}>?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { dialog, id ->
-                    val taskID = selectedTask?.taskID.toString()
-                    val boardID = intent.getSerializableExtra("boardID").toString()
-                    taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
-                    taskListViewModel.delete(boardID, taskID)
-                    finish()
+            val groupID = intent.getSerializableExtra("groupID").toString()
+            database = Firebase.database
+            auth = Firebase.auth
+            val permissionRef = database.getReference("permission")
+            permissionRef
+                .orderByChild("uid")
+                .equalTo(auth.currentUser?.uid.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()){
+                        permissionEntries = it.children.map { dataSnapshot ->
+                            dataSnapshot.getValue(Permission::class.java)!!
+                        }
+                        val iterator = permissionEntries.listIterator()
+                        groupIDs = ArrayList()
+                        roles = ArrayList()
+                        for (i in iterator) {
+                            groupIDs.add(i.groupID)
+                            roles.add(i.role)
+                        }
+                        if (groupIDs.indexOf(groupID) >= 0){
+                            if (roles[groupIDs.indexOf(groupID)] == "reader"){
+                                Toast.makeText(this,
+                                    "You do not have permission to delete task",
+                                    Toast.LENGTH_SHORT).show()
+                            }else{
+                                val confirmationBuilder = AlertDialog.Builder(this)
+                                val selectedTask = intent.getParcelableExtra<Task>("task")
+                                confirmationBuilder.setMessage("Are you sure you want to Delete Task <${selectedTask?.name}>?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Yes") { dialog, id ->
+                                        val taskID = selectedTask?.taskID.toString()
+                                        val boardID = intent.getSerializableExtra("boardID").toString()
+                                        taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
+                                        taskListViewModel.delete(boardID, taskID)
+                                        finish()
+                                    }
+                                    .setNegativeButton("No") { dialog, id ->
+                                        dialog.dismiss()
+                                    }
+                                val alert = confirmationBuilder.create()
+                                alert.show()
+                            }
+                        }
+                    }
+                }.addOnFailureListener{
                 }
-                .setNegativeButton("No") { dialog, id ->
-                    dialog.dismiss()
-                }
-            val alert = confirmationBuilder.create()
-            alert.show()
         }
         return super.onOptionsItemSelected(item)
     }

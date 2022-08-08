@@ -11,7 +11,7 @@ class ChangeNotificationListViewModel {
     private val _changeNotificationsLiveData = MutableLiveData<List<ChangeNotification>>()
     val changeNotificationsLiveData: LiveData<List<ChangeNotification>> = _changeNotificationsLiveData
 
-    fun fetchChangeNotifications(){
-        repository.fetchChangeNotifications(_changeNotificationsLiveData)
+    fun fetchChangeNotifications(groupID: String){
+        repository.fetchChangeNotifications(_changeNotificationsLiveData, groupID)
     }
 }

@@ -40,13 +40,6 @@
             android:layout_height="wrap_content"
             android:text="Type" />
 
-<!--        <EditText-->
-<!--            android:id="@+id/task_type"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:ems="10"-->
-<!--            android:inputType="text" />-->
-
         <Spinner
             android:id="@+id/task_type"
             android:layout_width="match_parent"
@@ -78,6 +71,24 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="text" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Assigned User" />
+
+        <Spinner
+            android:id="@+id/assigned_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" />
+
+        <TextView
+            android:id="@+id/assigned_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/task_checklist"
