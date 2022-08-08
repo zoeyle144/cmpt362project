@@ -77,22 +77,9 @@ class HomeFragment : Fragment() {
         }
 
         floatActionButton.setOnClickListener{
-            if (MainActivity.role == "admin"){
-                val intent = Intent(view.context, CreateBoardActvitiyFromHome::class.java)
-                view.context.startActivity(intent)
-            }else{
-                Toast.makeText(requireActivity(), "You do not have permission to create a board", Toast.LENGTH_SHORT).show()
-            }
+            val intent = Intent(view.context, CreateBoardActvitiyFromHome::class.java)
+            view.context.startActivity(intent)
         }
-
-        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
-        val prefSignature = prefs.getString("signature", "")
-        val prefReply = prefs.getString("reply", "")
-        val prefSync = prefs.getBoolean("sync", false)
-        val prefAttachment = prefs.getBoolean("attachment", false)
-
-        println("prefSignature is $prefSignature, prefReply is $prefReply, " +
-                "prefSync is $prefSync, prefAttachment is $prefAttachment")
 
         return view
     }
