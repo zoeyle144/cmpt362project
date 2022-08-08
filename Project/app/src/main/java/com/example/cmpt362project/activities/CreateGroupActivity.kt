@@ -24,7 +24,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.DialogListener {
+class CreateGroupActivity: AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var memberListView: TextView
@@ -42,8 +42,6 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
         val createGroupButton = findViewById<Button>(R.id.create_group_button)
         val createGroupName = findViewById<EditText>(R.id.create_group_name_input)
         val createGroupDescription = findViewById<EditText>(R.id.create_group_description_input)
-        val inviteMemberButton = findViewById<Button>(R.id.invite_member_btn)
-        val groupName = intent.getSerializableExtra("groupTitle").toString()
 
         val uID = auth.currentUser?.uid
         val userRole = "admin"
@@ -54,7 +52,6 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
                 userName = userData["username"].toString()
             }
         }
-        memberListView = findViewById<TextView>(R.id.memberList)
 
         createGroupButton.setOnClickListener{
 
@@ -111,28 +108,7 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
 
         }
 
-        inviteMemberButton.setOnClickListener {
-//            val myFragment= SearchUserFragment()
-//            getSupportFragmentManager().beginTransaction().replace(R.id.container1,myFragment).addToBackStack(null).commit()
-//
-            val myDialog = InviteMemberDialogFragment()
-            val bundle = Bundle()
-            bundle.putInt(InviteMemberDialogFragment.DIALOG_KEY, InviteMemberDialogFragment.TEST_DIALOG)
-            myDialog.arguments = bundle
-            myDialog.show(supportFragmentManager, "my dialog")
-
-        }
     }
 
-    override fun sendTexts(assignName: String, assignRole: String) {
-        memberListView.text = "$assignName - $assignRole"
-        userName = assignName
-        role = assignRole
-        memberList = ArrayList()
-        memberList.add(userName)
-
-
-
-    }
 
 }

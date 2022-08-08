@@ -42,12 +42,31 @@ class PermissionRespository {
 
 
     fun insert(permission: Permission) {
-        permRef.child(permission.permissionID).setValue(permission)
-            .addOnCompleteListener {
-                println("debug: add permission success")
-            }.addOnFailureListener { err ->
-                println("debug: add permission fail Error ${err.message}")
+        permRef.get().addOnSuccessListener {
+            var exists = false
+            val permList = it.value as Map<*, *>
+            for ((key, value) in permList) {
+                var permListEntry = value as Map<*, *>
+                Log.w("DEBUG", permListEntry.toString())
+                if (permListEntry["uid"] == permission.uid &&
+                    permListEntry["groupID"] == permission.groupID
+                ) {
+                    exists = true
+                    break
+                }
             }
+            if (!exists) {
+                permRef.child(permission.permissionID).setValue(permission)
+                    .addOnCompleteListener {
+                        println("debug: add permission success")
+                    }.addOnFailureListener { err ->
+                        println("debug: add permission fail Error ${err.message}")
+                    }
+            }
+        }
+
+
+
     }
 
     fun edit(permission: Permission) {

@@ -158,8 +158,14 @@ class DisplayGroupActivity : AppCompatActivity(), InviteMemberDialogFragment.Dia
 
     }
 
-    override fun sendTexts(userName: String, role: String) {
-
+    override fun sendTexts(assignName: String, assignRole: String) {
+        /*
+        memberListView.text = "$assignName - $assignRole"
+        userName = assignName
+        role = assignRole
+        memberList = ArrayList()
+        memberList.add(userName)
+        */
     }
-    
+
 }
