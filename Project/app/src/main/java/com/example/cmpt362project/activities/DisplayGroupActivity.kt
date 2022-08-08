@@ -48,19 +48,9 @@ class DisplayGroupActivity : AppCompatActivity() {
 
         val listView = findViewById<ListView>(R.id.group_list)
         val permVM: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
-        val adapter = PermissionAdaptor(this, listOf(), permVM)
-        listView.adapter = adapter
+        var adapter = PermissionAdaptor(this, listOf(), permVM, false)
 
-        if (groupID != null) {
-            permVM.getPermissions(groupID)
-        }
 
-        permVM.permissionsLiveData.observe(this) { it ->
-            adapter.clear()
-            //Log.w("DEBUGR", it.toString())
-            adapter.updateList(it)
-            adapter.notifyDataSetChanged()
-        }
 
 
         val saveNameDescriptionBtn = findViewById<Button>(R.id.save_group_changes)
@@ -72,20 +62,51 @@ class DisplayGroupActivity : AppCompatActivity() {
         permRef.get().addOnSuccessListener {
             if (it.value != null) {
                 val permList = it.value as Map<*, *>
+                var isAdmin = false;
                 for ((key, value) in permList) {
                     var permEntry = value as Map<*, *>
                     if (permEntry["uid"] == auth.currentUser!!.uid &&
                         permEntry["groupID"] == groupID &&
                         permEntry["role"] == "admin") {
 
-                        saveNameDescriptionBtn.visibility = View.VISIBLE
-                        inviteMemberButton.visibility = View.VISIBLE
+                        isAdmin = true
+                        break
+                    }
+                }
+                if (isAdmin) {
+                    saveNameDescriptionBtn.visibility = View.VISIBLE
+                    inviteMemberButton.visibility = View.VISIBLE
 
-                        groupNameView.editText!!.setFocusableInTouchMode(true)
-                        groupNameView.editText!!.focusable = View.FOCUSABLE
-                        groupDescView.editText!!.setFocusableInTouchMode(true)
-                        groupDescView.editText!!.focusable = View.FOCUSABLE
-                        groupHeaderView.text = "Edit Group"
+                    groupNameView.editText!!.setFocusableInTouchMode(true)
+                    groupNameView.editText!!.focusable = View.FOCUSABLE
+                    groupDescView.editText!!.setFocusableInTouchMode(true)
+                    groupDescView.editText!!.focusable = View.FOCUSABLE
+                    groupHeaderView.text = "Edit Group"
+
+
+                    listView.adapter = PermissionAdaptor(this, listOf(), permVM, true)
+                    listView.adapter = adapter
+
+                    permVM.getPermissions(groupID!!)
+                    permVM.permissionsLiveData.observe(this) { it ->
+                        adapter.clear()
+                        //Log.w("DEBUGR", it.toString())
+                        adapter.updateList(it)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+
+                else {
+                    listView.adapter = adapter
+                    if (groupID != null) {
+                        permVM.getPermissions(groupID)
+                    }
+                    permVM.permissionsLiveData.observe(this) { it ->
+                        adapter.clear()
+                        //Log.w("DEBUGR", it.toString())
+                        adapter.updateList(it)
+                        adapter.notifyDataSetChanged()
                     }
                 }
             }

@@ -17,11 +17,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-class PermissionAdaptor(val context: Context, private var permList: List<Permission>, private var vm: PermissionViewModel): BaseAdapter(),
+class PermissionAdaptor(val context: Context, private var permList: List<Permission>, private var vm: PermissionViewModel, editableIn: Boolean): BaseAdapter(),
     AdapterView.OnItemSelectedListener {
 
     val spinnerItems = listOf("Reader", "Writer", "Mod", "Admin")
     val spinnerItemsDatabase = listOf("reader", "writer", "mod", "admin")
+    val editable = editableIn
 
     val auth = Firebase.auth
     override fun getCount(): Int {
@@ -52,13 +53,14 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
         deleteBtn.setOnClickListener{
             vm.delete(permList[p0], auth.currentUser!!.uid)
         }
-        Log.w("DEBUG", auth.currentUser!!.uid )
-        Log.w("DEBUG", permList[p0].uid )
         if (auth.currentUser!!.uid == permList[p0].uid) {
             spinner.isEnabled = false
-            Log.w("DEBUG", "HELLO")
             deleteBtn.visibility = View.INVISIBLE
+        } else if (editable) {
+            spinner.isEnabled = true
+            deleteBtn.visibility = View.VISIBLE
         }
+
 
 
         return view
