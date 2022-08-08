@@ -35,10 +35,11 @@ class CreateCategoryActivity: AppCompatActivity() {
             val categoryName = createCategoryName.text
             val boardTitle = intent.getSerializableExtra("boardTitle").toString()
             val boardID = intent.getSerializableExtra("boardID").toString()
+            val groupID = intent.getSerializableExtra("groupID").toString()
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
             val category = Category(categoryID, categoryName.toString(), createdBy.toString(), boardTitle)
-            categoryListViewModel.insert(category, boardID)
+            categoryListViewModel.insert(category, groupID, boardID)
             finish()
 
         }

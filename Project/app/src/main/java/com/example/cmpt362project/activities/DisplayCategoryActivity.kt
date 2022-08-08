@@ -47,7 +47,7 @@ class DisplayCategoryActivity: AppCompatActivity() {
         )
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
-        categoryListViewModel.fetchCategories(boardID)
+        categoryListViewModel.fetchCategories(groupID,boardID)
         categoryListViewModel.categoriesLiveData.observe(this){
             (adapter as CategoryListAdaptor).updateList(it)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()
@@ -78,7 +78,7 @@ class DisplayCategoryActivity: AppCompatActivity() {
         )
 
         val categoryListViewModel = ViewModelProvider(this)[CategoryListViewModel::class.java]
-        categoryListViewModel.fetchCategories(boardID)
+        categoryListViewModel.fetchCategories(groupID, boardID)
         categoryListViewModel.categoriesLiveData.observe(this){
             (adapter as CategoryListAdaptor).updateList(it)
             (adapter as CategoryListAdaptor).notifyDataSetChanged()

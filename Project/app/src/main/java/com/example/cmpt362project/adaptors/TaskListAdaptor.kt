@@ -63,12 +63,12 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
         }
 
         taskEntry.setOnLongClickListener{
-            if (MainActivity.role == "reader"){
-                Toast.makeText(holder.itemView.context,
-                    "You do not have permission to drag and drop tasks",
-                    Toast.LENGTH_SHORT).show()
-                false
-            }else{
+//            if (MainActivity.role == "reader"){
+//                Toast.makeText(holder.itemView.context,
+//                    "You do not have permission to drag and drop tasks",
+//                    Toast.LENGTH_SHORT).show()
+//                false
+//            }else{
                 val clipText = "This is taskEntry"
                 val item = ClipData.Item(clipText)
                 val dragData = ClipData(clipText, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item)
@@ -76,7 +76,7 @@ class TaskListAdaptor(private var taskList: List<Task>, private var boardID:Stri
                 it.startDragAndDrop(dragData, myshadow, it, 0)
                 it.visibility = View.INVISIBLE
                 true
-            }
+//            }
         }
     }
 

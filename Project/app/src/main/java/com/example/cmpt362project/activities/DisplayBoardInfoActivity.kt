@@ -131,12 +131,12 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         saveButton.setOnClickListener{
             val boardUpdateData = BoardUpdateData(boardNameField.text.toString(), boardDescriptionField.text.toString())
             boardListViewModel = ViewModelProvider(this)[boardListViewModel::class.java]
-            boardListViewModel.update(boardID, boardUpdateData)
+            boardListViewModel.update(groupID,boardID, boardUpdateData)
 //            val intentData = Intent()
 //            intentData.putExtra("boardNameField", boardNameField.text.toString())
 //            setResult(RESULT_OK, intentData)
             setResult(RESULT_OK, null)
-            uploadImage(boardID)
+            uploadImage(groupID,boardID)
             finish()
         }
 
@@ -235,7 +235,7 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         }
     }
 
-    private fun uploadImage(boardID:String) {
+    private fun uploadImage(groupID:String,boardID:String) {
         val printIdentifier = "DisplayBoardInfoActivity uploadImage"
         val storage = Firebase.storage.reference
         val image = boardListViewModel.getImage() ?: return
@@ -247,7 +247,12 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
         stream.close()
 
         // Get the old profile picture path so we can delete the image later (if upload success)
-        val boardReference = database.child("boards").child(boardID).child("boardPic")
+        val boardReference = database
+            .child("groups")
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("boardPic")
         boardReference.get().addOnSuccessListener { oldImgPath ->
 
             // Write the new profile picture to Storage
@@ -261,15 +266,17 @@ class DisplayBoardInfoActivity: AppCompatActivity() {
 
                     // Delete the old profile picture from Storage, tell sidebar to update PFP
                     // Do not delete the old PFP if it's the default one
-                    val pathToDelete = oldImgPath.value as String
-                    if (pathToDelete != getString(R.string.default_bp_path) && pathToDelete!="") {
-                        val oldImgRef = storage.child(pathToDelete)
-                        oldImgRef.delete().addOnSuccessListener {
-                            println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                    if (oldImgPath.value != null){
+                        val pathToDelete = oldImgPath.value as String
+                        if (pathToDelete != getString(R.string.default_bp_path) && pathToDelete!="") {
+                            val oldImgRef = storage.child(pathToDelete)
+                            oldImgRef.delete().addOnSuccessListener {
+                                println("$printIdentifier: Deleted ${oldImgPath.value} from database")
+                                updateProfilePicSharedPref()
+                            }
+                        }else{
                             updateProfilePicSharedPref()
                         }
-                    }else{
-                        updateProfilePicSharedPref()
                     }
                 }
             }

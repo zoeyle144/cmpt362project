@@ -150,10 +150,11 @@ class CreateTaskActivity: AppCompatActivity() {
             val taskSummary = createTaskSummary.text
             val taskType = createTaskType.selectedItem.toString()
             val category = intent.getSerializableExtra("category_title")
+            val groupID = intent.getSerializableExtra("groupID").toString()
             auth = Firebase.auth
             val createdBy = auth.currentUser?.uid
             val task = Task(taskID,taskName.toString(), taskSummary.toString(), taskType, createdBy.toString(), category.toString(), "", "",startTimeInMillis, endTimeInMillis)
-            taskListViewModel.insert(task, boardID)
+            taskListViewModel.insert(task, groupID , boardID)
             finish()
         }
     }

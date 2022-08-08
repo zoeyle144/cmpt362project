@@ -325,7 +325,7 @@ class DisplayTaskActivity : AppCompatActivity() {
                 taskEndDateForUpdate!!
             )
             taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
-            taskListViewModel.updateTask(boardID, taskForUpdate)
+            taskListViewModel.updateTask(groupID, boardID, taskForUpdate)
             finish()
         }
 
@@ -376,7 +376,7 @@ class DisplayTaskActivity : AppCompatActivity() {
                                         val taskID = selectedTask?.taskID.toString()
                                         val boardID = intent.getSerializableExtra("boardID").toString()
                                         taskListViewModel= ViewModelProvider(this)[TaskListViewModel::class.java]
-                                        taskListViewModel.delete(boardID, taskID)
+                                        taskListViewModel.delete(groupID,boardID, taskID)
                                         finish()
                                     }
                                     .setNegativeButton("No") { dialog, id ->

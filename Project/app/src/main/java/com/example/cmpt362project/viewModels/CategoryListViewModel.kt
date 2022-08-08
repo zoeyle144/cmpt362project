@@ -15,19 +15,19 @@ class CategoryListViewModel: ViewModel(){
     private val _categoriesLiveData = MutableLiveData<List<Category>>()
     val categoriesLiveData: LiveData<List<Category>> = _categoriesLiveData
 
-    fun fetchCategories(boardID: String){
-        repository.fetchCategories(_categoriesLiveData, boardID)
+    fun fetchCategories(groupID: String, boardID: String){
+        repository.fetchCategories(_categoriesLiveData,groupID, boardID)
     }
 
-    fun insert(category: Category, boardID:String){
-        repository.insert(category, boardID)
+    fun insert(category: Category, groupID: String, boardID:String){
+        repository.insert(category,groupID, boardID)
     }
 
-    fun delete(boardID: String, categoryID:String, correspondTaskList:MutableList<String>){
+    fun delete(groupID:String, boardID: String, categoryID:String, correspondTaskList:MutableList<String>){
         val iterator = correspondTaskList.listIterator()
         for (i in iterator) {
-            repository2.delete(boardID, i)
+            repository2.delete(groupID,boardID, i)
         }
-        repository.delete(boardID, categoryID)
+        repository.delete(groupID, boardID, categoryID)
     }
 }
