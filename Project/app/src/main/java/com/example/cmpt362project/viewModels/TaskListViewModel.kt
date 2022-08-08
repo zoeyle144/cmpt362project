@@ -14,23 +14,23 @@ class TaskListViewModel(): ViewModel(){
     private val _tasksLiveData = MutableLiveData<List<Task>>()
     val tasksLiveData: LiveData<List<Task>> = _tasksLiveData
 
-    fun fetchTasks(boardID: String){
-        repository.fetchTasks(_tasksLiveData, boardID)
+    fun fetchTasks(groupID:String, boardID: String){
+        repository.fetchTasks(_tasksLiveData,groupID, boardID)
     }
 
-    fun insert(task: Task, boardID:String){
-        repository.insert(task, boardID)
+    fun insert(task: Task,groupID:String, boardID:String){
+        repository.insert(task,groupID, boardID)
     }
 
-    fun delete(boardID:String, id: String){
-        repository.delete(boardID, id)
+    fun delete(groupID:String, boardID:String, id: String){
+        repository.delete(groupID,boardID, id)
     }
 
-    fun updateCategory(boardID: String, taskID:String, category:String){
-        repository.updateCategory(boardID, taskID, category)
+    fun updateCategory(groupID:String, boardID: String, taskID:String, category:String){
+        repository.updateCategory(groupID,boardID, taskID, category)
     }
 
-    fun updateTask(boardID: String, task: TaskUpdateData){
-        repository.updateTask(boardID, task)
+    fun updateTask(groupID:String, boardID: String, task: TaskUpdateData){
+        repository.updateTask(groupID,boardID, task)
     }
 }

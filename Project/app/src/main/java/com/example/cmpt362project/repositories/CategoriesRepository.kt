@@ -16,10 +16,12 @@ class CategoriesRepository {
 
     val database = Firebase.database
     val auth = Firebase.auth
-    val categoriesRef = database.getReference("boards")
+    val groupsRef = database.getReference("groups")
 
-    fun fetchCategories(liveData: MutableLiveData<List<Category>>, boardID: String){
-        categoriesRef
+    fun fetchCategories(liveData: MutableLiveData<List<Category>>, groupID:String, boardID: String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
             .child(boardID)
             .child("categories")
             .addValueEventListener(object: ValueEventListener{
@@ -35,8 +37,10 @@ class CategoriesRepository {
             })
     }
 
-    fun insert(category: Category, boardID:String){
-        categoriesRef
+    fun insert(category: Category, groupID: String, boardID:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
             .child(boardID)
             .child("categories")
             .child(category.categoryID)
@@ -45,7 +49,13 @@ class CategoriesRepository {
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (!snapshot.exists()){
-                        categoriesRef.child(boardID).child("categories").child(category.categoryID).setValue(category)
+                        groupsRef
+                            .child(groupID)
+                            .child("boards")
+                            .child(boardID)
+                            .child("categories")
+                            .child(category.categoryID)
+                            .setValue(category)
                             .addOnCompleteListener{
                                 println("debug: add category success")
                             }.addOnFailureListener{ err ->
@@ -61,8 +71,14 @@ class CategoriesRepository {
             })
     }
 
-    fun delete(boardID:String, categoryID:String){
-        categoriesRef.child(boardID).child("categories").child(categoryID).removeValue()
+    fun delete(groupID: String, boardID:String, categoryID:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("categories")
+            .child(categoryID)
+            .removeValue()
             .addOnSuccessListener {
                 println("debug: delete category success")
             }.addOnFailureListener{ err ->

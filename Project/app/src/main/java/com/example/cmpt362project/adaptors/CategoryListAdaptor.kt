@@ -79,6 +79,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 val intent = Intent(view.context, CreateCategoryActivity::class.java)
                 intent.putExtra("boardTitle", boardTitle)
                 intent.putExtra("boardID", boardID)
+                intent.putExtra("groupID", groupID)
                 view.context.startActivity(intent)
             }
             return ViewHolder(view)
@@ -105,7 +106,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 )
             )
 
-            holder.taskListViewModel.fetchTasks(boardID)
+            holder.taskListViewModel.fetchTasks(groupID, boardID)
             holder.taskListViewModel.tasksLiveData.observe(holder.lifecycleOwner){
                 val mutableIt = it.toMutableList()
                 mutableIt.removeIf{ it -> it.category != categoryTitle}
@@ -127,7 +128,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                             taskIDsToDelete.add(taskListView.children.toList()[i].findViewById<TextView>(R.id.task_id).text.toString())
                         }
                         categoryListViewModel = ViewModelProvider(holder.vms)[CategoryListViewModel::class.java]
-                        categoryListViewModel.delete(boardID, categoryList[position].categoryID, taskIDsToDelete)
+                        categoryListViewModel.delete(groupID,boardID, categoryList[position].categoryID, taskIDsToDelete)
                     }
                     .setNegativeButton("No") { dialog, id ->
                         dialog.dismiss()
@@ -141,6 +142,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 val intent = Intent(holder.itemView.context, CreateTaskActivity::class.java)
                 intent.putExtra("category_title", categoryTitle)
                 intent.putExtra("boardID", boardID)
+                intent.putExtra("groupID", groupID)
                 holder.itemView.context.startActivity(intent)
             }
 
@@ -237,7 +239,7 @@ class CategoryListAdaptor(private var categoryList: List<Category>, private var 
                 println("debug: destParent: ${destination.parent}")
                 println("debug: category: $categoryName")
                 val taskListViewModel: TaskListViewModel = ViewModelProvider(vmsForDrag)[TaskListViewModel::class.java]
-                taskListViewModel.updateCategory(taskBoardID, taskID, categoryName)
+                taskListViewModel.updateCategory(groupID,taskBoardID, taskID, categoryName)
                 destination.addView(v)
                 v.visibility = View.VISIBLE
                 true

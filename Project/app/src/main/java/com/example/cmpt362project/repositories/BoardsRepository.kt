@@ -17,12 +17,12 @@ class BoardsRepository {
 
     val database = Firebase.database
     val auth = Firebase.auth
-    val boardsRef = database.getReference("boards")
+    val groupsRef = database.getReference("groups")
     var usersRef = database.getReference("users")
     private val changeNotificationsRef = database.getReference("changeNotifications")
 
     fun fetchBoards(liveData: MutableLiveData<List<Board>>, groupID:String){
-        boardsRef
+        groupsRef
             .orderByChild("groupID").equalTo(groupID)
             .addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -37,9 +37,11 @@ class BoardsRepository {
         })
     }
 
-    fun fetchBoardsByUser(liveData: MutableLiveData<List<Board>>){
-        boardsRef
-            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
+    fun fetchBoardsByUser(liveData: MutableLiveData<List<Board>>, groupID:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .orderByChild("groupID")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val boards: List<Board> = snapshot.children.map { dataSnapshot ->
@@ -54,7 +56,10 @@ class BoardsRepository {
     }
 
     fun insert(board: Board){
-        boardsRef.child(board.boardID).setValue(board)
+        groupsRef
+            .child(board.groupID)
+            .child("boards")
+            .child(board.boardID).setValue(board)
             .addOnCompleteListener{
                 println("debug: add board success")
             }.addOnFailureListener{ err ->
@@ -70,8 +75,12 @@ class BoardsRepository {
             }
     }
 
-    fun delete(boardID:String, boardName:String, groupID:String){
-        boardsRef.child(boardID).removeValue()
+    fun delete(groupID:String, boardID:String, boardName:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .removeValue()
             .addOnSuccessListener {
                 println("debug: delete board success")
             }.addOnFailureListener{ err ->
@@ -87,12 +96,16 @@ class BoardsRepository {
             }
     }
 
-    fun update(boardID:String, boardUpdateData:BoardUpdateData){
+    fun update(groupID: String, boardID:String, boardUpdateData:BoardUpdateData){
         val boardUpdate = hashMapOf<String, Any>(
             "/boardName" to boardUpdateData.boardName,
             "/description" to boardUpdateData.description,
         )
-        boardsRef.child(boardID).updateChildren(boardUpdate)
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .updateChildren(boardUpdate)
             .addOnSuccessListener {
                 println("debug: update board success")
             }.addOnFailureListener{ err ->
