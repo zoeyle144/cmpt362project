@@ -23,8 +23,8 @@ import com.google.firebase.ktx.Firebase
 class PermissionAdaptor(val context: Context, private var permList: List<Permission>, private var vm: PermissionViewModel, editableIn: Boolean): BaseAdapter(),
     AdapterView.OnItemSelectedListener {
 
-    val spinnerItems = listOf("Reader", "Writer", "Mod", "Admin")
-    val spinnerItemsDatabase = listOf("reader", "writer", "mod", "admin")
+    val spinnerItems = listOf("Reader", "Writer",  "Admin")
+    val spinnerItemsDatabase = listOf("reader", "writer", "admin")
     val editable = editableIn
 
     val auth = Firebase.auth
@@ -52,6 +52,7 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
 
         spinner.adapter = adapter
         spinner.setSelection(spinnerItemsDatabase.indexOf(permList[p0].role))
+        var start = true
         spinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -60,8 +61,13 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
                     position: Int,
                     id: Long
                 ) {
-                    Log.w("DEBUG", spinnerItemsDatabase[position])
-                    vm.replace(permList[p0].permissionID, spinnerItemsDatabase[position])
+                    if (!start) {
+                        Log.w("DEBUG", spinnerItemsDatabase[position])
+                        Log.w("DEBUG", permList[p0].permissionID.toString())
+
+                        vm.replace(permList[p0].permissionID, spinnerItemsDatabase[position])
+                    }
+                    start = false
                 }
                 override fun onNothingSelected(parent: AdapterView<*>) {
 
