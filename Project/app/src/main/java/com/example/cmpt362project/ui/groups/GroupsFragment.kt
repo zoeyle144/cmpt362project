@@ -45,7 +45,7 @@ class GroupsFragment : Fragment() {
         adapter = GroupListAdapter(requireContext(),groupList, 0)
         groupListView.adapter = adapter
 
-        groupListViewModel.getGroups()
+//        groupListViewModel.getGroups()
         groupListViewModel.groupsLiveData.observe(requireActivity()){
             (adapter as GroupListAdapter).updateList(it)
             (adapter as GroupListAdapter).notifyDataSetChanged()

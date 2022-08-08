@@ -20,20 +20,20 @@ class BoardListViewModel: ViewModel(){
         repository.fetchBoards(_boardsLiveData, groupID)
     }
 
-    fun fetchBoardsByUser(){
-        repository.fetchBoardsByUser(_boardsLiveData)
+    fun fetchBoardsByUser(groupID: String){
+        repository.fetchBoardsByUser(_boardsLiveData, groupID)
     }
 
     fun insert(board: Board){
         repository.insert(board)
     }
 
-    fun delete(boardID:String, boardName:String, groupID: String){
-        repository.delete(boardID, boardName, groupID)
+    fun delete(groupID: String, boardID:String, boardName:String){
+        repository.delete(groupID,boardID, boardName)
     }
 
-    fun update(boardID: String, boardUpdateData: BoardUpdateData){
-        repository.update(boardID, boardUpdateData)
+    fun update(groupID:String, boardID: String, boardUpdateData: BoardUpdateData){
+        repository.update(groupID, boardID, boardUpdateData)
     }
 
     fun getImage() : Bitmap? {

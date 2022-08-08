@@ -16,10 +16,12 @@ class TasksRepository {
 
     val database = Firebase.database
     val auth = Firebase.auth
-    val tasksRef = database.getReference("boards")
+    val groupsRef = database.getReference("groups")
 
-    fun fetchTasks(liveData: MutableLiveData<List<Task>>, boardID: String){
-        tasksRef
+    fun fetchTasks(liveData: MutableLiveData<List<Task>>,groupID:String, boardID: String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
             .child(boardID)
             .child("tasks")
             .orderByChild("endDate")
@@ -36,8 +38,14 @@ class TasksRepository {
             })
     }
 
-    fun insert(task: Task, boardID:String){
-        tasksRef.child(boardID).child("tasks").child(task.taskID).setValue(task)
+    fun insert(task: Task,groupID: String ,boardID:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("tasks")
+            .child(task.taskID)
+            .setValue(task)
             .addOnCompleteListener{
                 println("debug: add task success")
             }.addOnFailureListener{ err ->
@@ -45,8 +53,14 @@ class TasksRepository {
             }
     }
 
-    fun delete(boardID: String, id:String){
-        tasksRef.child(boardID).child("tasks").child(id).removeValue()
+    fun delete(groupID: String,boardID: String, id:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("tasks")
+            .child(id)
+            .removeValue()
             .addOnSuccessListener {
                 println("debug: delete task success")
             }.addOnFailureListener{ err ->
@@ -54,8 +68,15 @@ class TasksRepository {
             }
     }
 
-    fun updateCategory(boardID: String, id: String, category:String){
-        tasksRef.child(boardID).child("tasks").child(id).child("category").setValue(category)
+    fun updateCategory(groupID: String, boardID: String, id: String, category:String){
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("tasks")
+            .child(id)
+            .child("category")
+            .setValue(category)
             .addOnSuccessListener {
                 println("debug: update task category success")
             }.addOnFailureListener{ err ->
@@ -63,7 +84,7 @@ class TasksRepository {
             }
     }
 
-    fun updateTask(boardID: String, task: TaskUpdateData){
+    fun updateTask(groupID: String,boardID: String, task: TaskUpdateData){
         val taskUpdate = hashMapOf<String, Any>(
             "/name" to task.name,
             "/summary" to task.summary,
@@ -73,7 +94,13 @@ class TasksRepository {
             "/startDate" to task.startDate,
             "/endDate" to task.endDate
         )
-        tasksRef.child(boardID).child("tasks").child(task.taskID).updateChildren(taskUpdate)
+        groupsRef
+            .child(groupID)
+            .child("boards")
+            .child(boardID)
+            .child("tasks")
+            .child(task.taskID)
+            .updateChildren(taskUpdate)
             .addOnSuccessListener {
                 println("debug: update task success")
             }.addOnFailureListener{ err ->
