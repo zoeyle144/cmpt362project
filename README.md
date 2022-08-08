@@ -60,7 +60,7 @@ All members took part in creating show and tell recordings and presentation slid
 
 *   _Feature:_ **Group management contribution**
 *   _Feature:_ **Group description view contribution**
-*   _Feature:_ **Group invitation linking**
+*   _Misc:_ **Group invitation linking**
 
 
 Videos
