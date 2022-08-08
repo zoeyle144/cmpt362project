@@ -45,6 +45,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.DisplayBoardInfoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+            <intent-filter>
+                <action android:name="com.example.cmpt362project.ui.settings.AboutAppActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ui.settings.account.SettingsAccountActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">

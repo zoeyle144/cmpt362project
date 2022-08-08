@@ -95,7 +95,7 @@ class GroupListAdapter(private val context: Context, private var groupList: List
     }
 
     override fun sendTexts(userName: String, role: String) {
-        TODO("Not yet implemented")
+        
     }
 
     interface OnItemClickValue {

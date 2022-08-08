@@ -1,5 +1,7 @@
 package com.example.cmpt362project.adaptors
 
+import android.app.Activity
+import android.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -9,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.get
 import com.example.cmpt362project.R
 import com.example.cmpt362project.models.Message
 import com.example.cmpt362project.models.Permission
@@ -20,8 +23,8 @@ import com.google.firebase.ktx.Firebase
 class PermissionAdaptor(val context: Context, private var permList: List<Permission>, private var vm: PermissionViewModel, editableIn: Boolean): BaseAdapter(),
     AdapterView.OnItemSelectedListener {
 
-    val spinnerItems = listOf("Reader", "Writer", "Mod", "Admin")
-    val spinnerItemsDatabase = listOf("reader", "writer", "mod", "admin")
+    val spinnerItems = listOf("Reader", "Writer",  "Admin")
+    val spinnerItemsDatabase = listOf("reader", "writer", "admin")
     val editable = editableIn
 
     val auth = Firebase.auth
@@ -49,13 +52,57 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
 
         spinner.adapter = adapter
         spinner.setSelection(spinnerItemsDatabase.indexOf(permList[p0].role))
-        spinner.onItemSelectedListener = this
+        var start = true
+        spinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (!start) {
+                        Log.w("DEBUG", spinnerItemsDatabase[position])
+                        Log.w("DEBUG", permList[p0].permissionID.toString())
+
+                        vm.replace(permList[p0].permissionID, spinnerItemsDatabase[position])
+                    }
+                    start = false
+                }
+                override fun onNothingSelected(parent: AdapterView<*>) {
+
+                }
+            }
+
+
         deleteBtn.setOnClickListener{
-            vm.delete(permList[p0], auth.currentUser!!.uid)
+            val confirmationBuilder = AlertDialog.Builder(context)
+            var leaving = false
+            var message = "Are you sure you want to kick <${permList[p0].userName}>?"
+            if (auth.currentUser!!.uid == permList[p0].uid) {
+                message = "Are you sure you want to leave the group?"
+                leaving = true
+            }
+            confirmationBuilder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    vm.delete(permList[p0], auth.currentUser!!.uid)
+                    if (leaving) {
+                        (context as Activity).finish()
+                    }
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    dialog.dismiss()
+                }
+            val alert = confirmationBuilder.create()
+            alert.show()
+
         }
+
+        // role based ui changes
         if (auth.currentUser!!.uid == permList[p0].uid) {
             spinner.isEnabled = false
-            deleteBtn.visibility = View.INVISIBLE
+            deleteBtn.visibility = View.VISIBLE
         } else if (editable) {
             spinner.isEnabled = true
             deleteBtn.visibility = View.VISIBLE
@@ -75,7 +122,6 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-        Log.w("DEBUG", spinnerItemsDatabase[position])
 
     }
 
@@ -83,25 +129,3 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
 
     }
 }
-
-//class FileDataAdapter : RecyclerView.Adapter<FileDataAdapter.ViewHolder>() {
-//    var items : List<ProjectFilesModel> = listOf()
-//        set(value) {
-//            // implements setter for notifying item changed
-//            field = value
-//            notifyDataSetChanged()
-//        }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileDataViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.filtered_file, parent, false)
-//        return FileDataViewHolder(view)
-//    }
-//
-//    override fun getItemCount(): Int = items.count()
-//
-//    override fun onBindViewHolder(holder: FileDataViewHolder, position: Int) {
-//        holder.containerView.fileNameLayout.text = fileList[position].fileName
-//        holder.containerView.ctypeLayout.text = fileList[position].ctype
-//        holder.containerView.floorLayout.text = "${fileList[position].floor}floor"
-//    }
-//}

@@ -23,6 +23,8 @@ import com.example.cmpt362project.viewModels.ChatListViewModel
 import com.example.cmpt362project.viewModels.GroupChatListViewModel
 import com.example.cmpt362project.viewModels.GroupListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class GroupsListFragment : Fragment(), AdapterView.OnItemClickListener {
 
@@ -40,7 +42,7 @@ class GroupsListFragment : Fragment(), AdapterView.OnItemClickListener {
         groupListView.onItemClickListener = this
         groupListView.adapter = adapter
 
-        groupListViewModel.getGroups()
+        groupListViewModel.getGroups(Firebase.auth.currentUser!!.uid)
         groupListViewModel.groupsLiveData.observe(requireActivity()) { it ->
             adapter.clear()
             adapter.updateList(it)

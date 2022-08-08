@@ -3,6 +3,7 @@ package com.example.cmpt362project.repositories
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Group
+import com.example.cmpt362project.models.Permission
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -14,17 +15,37 @@ class GroupsRepository {
     val database = Firebase.database
     val auth = Firebase.auth
     val groupsRef = database.getReference("groups")
+    val permRef = database.getReference("permission")
 
-    fun getGroups(liveData: MutableLiveData<List<Group>>){
+    fun getGroups(liveData: MutableLiveData<List<Group>>, uid:String){
         groupsRef
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val groups: List<Group> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(Group::class.java)!!
                     }
+                    var userGroupsIds = mutableListOf<String>()
+                    var userGroups = mutableListOf<Group>()
 
-                    liveData.postValue(groups)
-                    Log.w("DEBUG", groups.toString())
+                    permRef.get().addOnSuccessListener {
+                        if (it.value != null) {
+                            val permList = it.value as Map<*, *>
+                            for ((key, value) in permList) {
+                                var permListEntry = value as Map<*, *>
+                                if (permListEntry["uid"].toString() == uid) {
+                                    userGroupsIds.add(permListEntry["groupID"].toString())
+                                }
+                            }
+                            for (group in groups) {
+                                if (userGroupsIds.contains(group.groupID)) {
+                                    userGroups.add(group)
+                                }
+                            }
+                            liveData.postValue(userGroups)
+                        }
+
+                    }
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
