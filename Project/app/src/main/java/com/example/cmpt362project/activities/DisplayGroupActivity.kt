@@ -17,12 +17,13 @@ import com.example.cmpt362project.viewModels.MessageListViewModel
 import com.example.cmpt362project.viewModels.PermissionViewModel
 import com.google.android.material.textfield.TextInputLayout
 import com.example.cmpt362project.models.Group
+import com.example.cmpt362project.ui.groups.InviteMemberDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class DisplayGroupActivity : AppCompatActivity() {
+class DisplayGroupActivity : AppCompatActivity(), InviteMemberDialogFragment.DialogListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //menuInflater.inflate(R.menu.custom_group_info_menu,menu)
@@ -147,5 +148,18 @@ class DisplayGroupActivity : AppCompatActivity() {
             }
         }
 
+        inviteMemberButton.setOnClickListener{
+            val myDialog = InviteMemberDialogFragment()
+            val bundle = Bundle()
+            bundle.putInt(InviteMemberDialogFragment.DIALOG_KEY, InviteMemberDialogFragment.TEST_DIALOG)
+            myDialog.arguments = bundle
+            myDialog.show(supportFragmentManager, "my dialog")
+        }
+
     }
+
+    override fun sendTexts(userName: String, role: String) {
+
+    }
+    
 }

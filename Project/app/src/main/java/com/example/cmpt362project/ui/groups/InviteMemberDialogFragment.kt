@@ -130,19 +130,9 @@ class InviteMemberDialogFragment: DialogFragment(), DialogInterface.OnClickListe
     }
     override fun onClick(dialog: DialogInterface, item: Int) {
         if (item == DialogInterface.BUTTON_POSITIVE) {
-//            val item = role_spinner.selectedItemPosition
-//            if(item == 0) {
-//                role = "admin"
-//            } else if (item == 1) {
-//                role = "author"
-//            } else if (item == 2) {
-//                role = "reader"
-//            }
-//            dialogListener.sendTexts(userName, role)
 
             Toast.makeText(activity, "Member invited", Toast.LENGTH_LONG).show()
         } else if (item == DialogInterface.BUTTON_NEGATIVE) {
-            Toast.makeText(activity, "Cancel", Toast.LENGTH_LONG).show()
         }
     }
 

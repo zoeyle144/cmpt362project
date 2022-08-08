@@ -103,9 +103,7 @@ class SearchUserResultActivity : AppCompatActivity() {
             var user2uid = ""
             var myUsername = ""
 
-            Log.w("DEBUGU", username)
             usernamesRef.child(username).get().addOnSuccessListener {
-                Log.w("DEBUGZ", it.value.toString())
                 user2uid = it.value.toString()
                 usersRef.child(auth.currentUser!!.uid).get().addOnSuccessListener {
                     var usersListEntry = it.value as Map<*, *>
