@@ -1,12 +1,6 @@
 package com.example.cmpt362project.ui.home
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +11,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-
 
 class HomeFragment : Fragment() {
 
@@ -91,7 +83,6 @@ class HomeFragment : Fragment() {
             }else{
                 Toast.makeText(requireActivity(), "You do not have permission to create a board", Toast.LENGTH_SHORT).show()
             }
-
         }
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())

@@ -1,16 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+    <!-- Username -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Group Name"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_person_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Boards"
@@ -32,12 +64,131 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_board"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Username -->
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- E-mail -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Group Description"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_email_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_email_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- E-mail -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- Name -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Group Members"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:startIconDrawable="@drawable/ic_outline_badge_24"
+        app:hintAnimationEnabled="false"
+        app:hintEnabled="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Name -->
+
+    <ListView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/member_listview"
+        android:name="com.example.cmpt362project.ui.search.ItemFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_search_user_entry" />
+
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_board_button"
+        android:layout_gravity="bottom"
+        />
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+    <!--<androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--    android:layout_height="match_parent"-->
+    <!--    android:layout_width="match_parent">-->
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:orientation="vertical">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="Boards"-->
+    <!--            android:textSize="24sp"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:textColor="@color/black"-->
+    <!--            android:layout_margin="20dp"/>-->
+
+    <!--        <androidx.recyclerview.widget.RecyclerView-->
+    <!--            android:id="@+id/recycler_view_board"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"/>-->
+
+    <!--    </LinearLayout>-->
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->

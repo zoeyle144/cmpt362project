@@ -1,147 +1,99 @@
 package com.example.cmpt362project.login
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.View
+import android.view.MenuItem
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
-import com.example.cmpt362project.database.User
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.example.cmpt362project.login.SignUpPageViewModel.SignUpPageErrors.*
+import com.example.cmpt362project.login.SignUpPageViewModel.SignUpPageVMState.FAILURE
+import com.example.cmpt362project.login.SignUpPageViewModel.SignUpPageVMState.SUCCESS
+import com.example.cmpt362project.utility.FieldsLayoutUtility
+import com.google.android.material.textfield.TextInputLayout
 
-class SignUpPageActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var database: DatabaseReference
-    private lateinit var auth: FirebaseAuth
+class SignUpPageActivity : AppCompatActivity() {
+    private lateinit var emailView: TextInputLayout
+    private lateinit var usernameView: TextInputLayout
+    private lateinit var passwordView: TextInputLayout
+    private lateinit var confirmPasswordView: TextInputLayout
 
+    private lateinit var viewModel: SignUpPageViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up_page)
-        title="Horizon Sign Up"
+        setContentView(R.layout.temp1)
 
-        val username = findViewById<EditText>(R.id.sign_up_username)
-        val password = findViewById<EditText>(R.id.sign_up_password)
-        val email = findViewById<EditText>(R.id.sign_up_email)
-        var error: TextView = findViewById<TextView>(R.id.error_message)
-        username.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                username.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        viewModel = ViewModelProvider(this)[SignUpPageViewModel::class.java]
 
-        password.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                password.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        emailView = findViewById(R.id.sign_up_email)
+        usernameView = findViewById(R.id.sign_up_username)
+        passwordView = findViewById(R.id.sign_up_password)
+        confirmPasswordView = findViewById(R.id.sign_up_confirm_password)
 
-        email.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                error.text = ""
-                email.setTextColor(resources.getColor(R.color.black))
-            }
-        })
+        FieldsLayoutUtility.setListenersForTextInputLayout(
+            listOf(emailView, usernameView, passwordView, confirmPasswordView))
 
-        val confirmBtn = findViewById<Button>(R.id.sign_up_confirm)
-        confirmBtn.setOnClickListener(this)
-    }
+        val toolbar = findViewById<Toolbar>(R.id.sign_up_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    // display error message;  if view is not null, set text color to error color
-    fun showError(errorMsg: String, view: EditText?) {
-        var er: TextView = findViewById<TextView>(R.id.error_message)
-        er.text = errorMsg
-        if (view != null) {
-            view.setTextColor(resources.getColor(R.color.error))
+        val confirmBtn = findViewById<Button>(R.id.sign_up_button)
+        confirmBtn.setOnClickListener {
+            val email = emailView.editText!!.text.toString()
+            val username = usernameView.editText!!.text.toString()
+            val password = passwordView.editText!!.text.toString()
+            val confirmPassword = confirmPasswordView.editText!!.text.toString()
+
+            signUp(email, username, password, confirmPassword)
         }
     }
 
-    override fun onClick(p0: View?) {
-        val username = findViewById<EditText>(R.id.sign_up_username)
-        val password = findViewById<EditText>(R.id.sign_up_password)
-        val email = findViewById<EditText>(R.id.sign_up_email)
-
-        val usernameTxt = username.text.toString().toLowerCase()
-        val passwordTxt = password.text.toString()
-        val emailTxt = email.text.toString()
-
-        // front-end input validation
-        if (usernameTxt.isEmpty()) {
-            showError("Error: Username is Empty", username)
-            return
-        } else if (passwordTxt.isEmpty()) {
-            showError("Error: Password is Empty", password)
-            return
-        } else if (emailTxt.isEmpty()) {
-            showError("Error: Email is Empty", email)
-            return
-        } else if (usernameTxt.length <= 3) {
-            showError("Error: Username must be longer than 3 characters.", username)
-            return
-        } else if (passwordTxt.length < 6) {
-            showError("Error: Password must be longer than 5 characters.", password)
-            return
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailTxt).matches()) {
-            showError("Error: Invalid Email", email)
-            return
-        }
-
-        // back-end input validation
-        database = Firebase.database.reference
-        auth = Firebase.auth
-
-        // Referenced for ideas: https://stackoverflow.com/questions/35243492/firebase-android-make-username-unique
-        database.child("usernames").child(usernameTxt).get().addOnSuccessListener {
-            if (it.value != null) {
-                showError("Error: Username Already Exists", username)
-            } else {
-                // add login data to auth
-                auth.createUserWithEmailAndPassword(emailTxt, passwordTxt)
-                    .addOnSuccessListener(this) { task ->
-                        // Sign up success
-                        val user = auth.currentUser
-                        val userData = User(usernameTxt, emailTxt, "", getString(R.string.default_pfp_path), "")
-
-                        database.child("users").child(user!!.uid).setValue(userData)
-
-                        // add unique username into database
-                        database.child("usernames").child(usernameTxt).setValue(user.uid)
-                        
-                        // inform the user of success
-                        Toast.makeText(this, "Account successfully created with username: ${usernameTxt}",
-                            Toast.LENGTH_SHORT).show()
-
-                        // go to login page
-                        val intent = Intent(this, LoginPageActivity::class.java)
-                        startActivity(intent)
-                    }
-                    .addOnFailureListener {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(baseContext, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show()
-                    }
+    private fun signUp(email: String, username: String, password: String, confirmPassword: String) {
+        viewModel.signUp(email, username, password, confirmPassword).observe(this) { ret ->
+            when(ret) {
+                SUCCESS -> startLoginActivity(username)
+                FAILURE -> handleSignUpErrors()
+                else -> {}
             }
-        }.addOnFailureListener{
-            showError("System Error: Firebase Error getting data", null)
+        }
+    }
 
+    private fun handleSignUpErrors() {
+        val errors = viewModel.errorList.value
+        if (errors != null) {
+            for (e in errors) {
+                when (e) {
+                    EMAIL_EMPTY -> emailView.error = "E-mail field cannot be empty."
+                    PASSWORD_EMPTY -> passwordView.error = "Password field cannot be empty."
+                    USERNAME_SHORT -> usernameView.error = "Username must be longer than 3 characters."
+                    PASSWORD_DIFFERENT -> confirmPasswordView.error = "Does not match the password field."
+                    USERNAME_TAKEN -> usernameView.error = "This username is already taken."
+                    PASSWORD_WEAK -> passwordView.error = "Password should be at least 6 characters."
+                    EMAIL_MALFORMED -> emailView.error = "The email address is badly formatted."
+                    EMAIL_TAKEN -> emailView.error = "The email address is already in use by another account."
+                    UNKNOWN_ERROR -> Toast.makeText(baseContext, "System Error: Firebase Error getting data", Toast.LENGTH_SHORT).show()
+                }
+            }
+            viewModel.clearErrorList()
+        }
+    }
+
+    private fun startLoginActivity(username: String) {
+        Toast.makeText(this, "Account successfully created with username: $username",
+            Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this, LoginPageActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId) {
+        else -> {
+            finish()
+            true
         }
     }
 }

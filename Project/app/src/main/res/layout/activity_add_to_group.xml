@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.settings.profile.SettingsProfileActivity"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        />
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:background="@drawable/profile_image_background"-->
+<!--        android:paddingTop="24dp">-->
+
+<!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/profile_picture"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="120dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="120dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:contentDescription="@string/profile_picture_content_desc"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:layout_constraintTop_toTopOf="parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:srcCompat="@drawable/empty_profile_pic" />&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <com.google.android.material.button.MaterialButton&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/profile_picture_change_picture_button"&ndash;&gt;-->
+<!--&lt;!&ndash;            style="@style/Widget.MaterialComponents.Button.Icon"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="48dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="48dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_marginEnd="-24dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_marginBottom="-24dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:onClick="onClickChangePhoto"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:cornerRadius="24dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:icon="@drawable/ic_outline_photo_camera_24"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:iconPadding="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:iconSize="24dp"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:layout_constraintBottom_toBottomOf="@+id/profile_picture"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:layout_constraintEnd_toEndOf="@+id/profile_picture" />&ndash;&gt;-->
+<!--&lt;!&ndash;    </androidx.constraintlayout.widget.ConstraintLayout>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <Space&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:minHeight="12dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
+
+    <!-- Username -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_username_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_person_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Username -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- E-mail -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_email_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_email_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_email_24"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- E-mail -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <!-- Name -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_picture_name_label"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="4dp" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profile_name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:startIconDrawable="@drawable/ic_outline_badge_24"
+        app:hintAnimationEnabled="false"
+        app:hintEnabled="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Name -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="12dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/group_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</LinearLayout>

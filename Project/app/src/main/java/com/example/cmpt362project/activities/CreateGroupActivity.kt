@@ -11,9 +11,11 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Group
+import com.example.cmpt362project.models.GroupChat
 import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.ui.groups.InviteMemberDialogFragment
 import com.example.cmpt362project.viewModels.BoardListViewModel
+import com.example.cmpt362project.viewModels.GroupChatListViewModel
 import com.example.cmpt362project.viewModels.GroupListViewModel
 import com.example.cmpt362project.viewModels.PermissionViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -30,46 +32,82 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
     private lateinit var memberList: ArrayList<String>
     private lateinit var userName: String
     private lateinit var role: String
+    private val database = Firebase.database
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
-
+        auth = Firebase.auth
         val createGroupButton = findViewById<Button>(R.id.create_group_button)
         val createGroupName = findViewById<EditText>(R.id.create_group_name_input)
         val createGroupDescription = findViewById<EditText>(R.id.create_group_description_input)
         val inviteMemberButton = findViewById<Button>(R.id.invite_member_btn)
         val groupName = intent.getSerializableExtra("groupTitle").toString()
 
-
+        val uID = auth.currentUser?.uid
+        val userRole = "admin"
+        var userName = ""
+        database.getReference("users").child(uID!!).get().addOnSuccessListener {
+            if (it.value != null) {
+                val userData = it.value as Map<*, *>
+                userName = userData["username"].toString()
+            }
+        }
         memberListView = findViewById<TextView>(R.id.memberList)
 
         createGroupButton.setOnClickListener{
 
             val groupListViewModel: GroupListViewModel = ViewModelProvider(this)[GroupListViewModel::class.java]
-            val database = Firebase.database
             val groupsRef = database.getReference("groups")
             val groupID = groupsRef.push().key!!
-            val groupName = createGroupName.text
+            val groupName = createGroupName.text.toString()
             val groupDescription = createGroupDescription.text
             auth = Firebase.auth
-            val createdBy = auth.currentUser?.uid
 
-            val permRef = database.getReference("permission")
-            val permissionID = permRef.push().key!!
-            val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
+            groupsRef.get().addOnSuccessListener {
+                if (it.value != null) {
+                    var exists = false
+                    val groupsList = it.value as Map<*, *>
+                    for ((key, value) in groupsList) {
+
+                        var entry = value as Map<*, *>
+                        println(entry)
+                        if (entry["groupName"] == groupName) {
+                            exists = true
+                            break
+                        }
+                    }
+                    if (exists) {
+                        Toast.makeText(this, "Group name ${groupName} already taken.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val permRef = database.getReference("permission")
+                        val permissionID = permRef.push().key!!
+                        val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
 
 
-            println("Debug: Assign role $memberList")
+                        // push group
+                        val group = Group(groupID, groupName.toString(), groupDescription.toString())
+                        groupListViewModel.insert(group)
 
-            val group = Group(groupID, groupName.toString(), groupDescription.toString(), createdBy.toString(),memberList, ArrayList())
+                        // push creator as admin
+                        val permission = Permission(permissionID,userRole,uID,groupID, userName)
+                        permissionViewModel.insert(permission)
 
-            val permission = Permission(permissionID,role,userName,groupID, userName)
-            groupListViewModel.insert(group)
-            permissionViewModel.insert(permission)
-            
-            finish()
+                        // push group chat
+                        val groupChatsRef = database.getReference("group_chats")
+                        val groupChatViewModel = ViewModelProvider(this)[GroupChatListViewModel::class.java]
+                        val groupChatID = groupChatsRef.push().key!!
+                        val groupChat = GroupChat(groupChatID, groupID, System.currentTimeMillis())
+                        groupChatViewModel.insert(groupChat)
+                        Toast.makeText(this, "Group ${groupName} created.", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                }
+
+            }
+
+
 
         }
 
@@ -94,10 +132,6 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
         memberList.add(userName)
 
 
-
-    }
-
-    fun getMember(userName: String) {
 
     }
 

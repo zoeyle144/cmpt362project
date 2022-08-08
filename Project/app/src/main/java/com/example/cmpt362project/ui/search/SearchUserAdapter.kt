@@ -11,6 +11,9 @@ import android.widget.*
 import com.example.cmpt362project.database.User
 //import com.example.cmpt362project.databinding.FragmentItemBinding
 import com.example.cmpt362project.databinding.FragmentSearchUserEntryBinding
+import com.example.cmpt362project.ui.invitation.addToGroupActivity
+import com.example.cmpt362project.ui.invitation.addToGroupActivity.Companion.KEY_USER_NAME
+
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_ABOUT_ME
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_EMAIL
 import com.example.cmpt362project.ui.search.SearchUserResultActivity.Companion.KEY_SEARCH_USER_RESULT_NAME
@@ -47,14 +50,18 @@ class SearchUserAdapter(private val context: Context, private var list: ArrayLis
         holder.entryView.setOnClickListener {
             if(type == 0) {
                 val intent = Intent(context, SearchUserResultActivity::class.java)
-                intent.putExtra(KEY_SEARCH_USER_RESULT_USERNAME, item.username)
+                intent.putExtra(SearchUserResultActivity.KEY_SEARCH_USER_RESULT_USERNAME, item.username)
                 intent.putExtra(KEY_SEARCH_USER_RESULT_EMAIL, item.email)
-                intent.putExtra(KEY_SEARCH_USER_RESULT_NAME, item.name)
+                intent.putExtra(SearchUserResultActivity.KEY_SEARCH_USER_RESULT_NAME, item.name)
                 intent.putExtra(KEY_SEARCH_USER_RESULT_PROFILE_PIC, item.profilePic)
                 intent.putExtra(KEY_SEARCH_USER_RESULT_ABOUT_ME, item.aboutMe)
                 context.startActivity(intent)
             }
             else if (type == 1) {
+                val intent = Intent(context, addToGroupActivity::class.java)
+                intent.putExtra(KEY_USER_NAME, item.username)
+                println("Debug: ZZZZ ${item.username}")
+                context.startActivity(intent)
 
             }
 

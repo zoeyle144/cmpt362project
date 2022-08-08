@@ -21,15 +21,21 @@
 
     <fragment
         android:id="@+id/nav_groups"
-        android:name="com.example.cmpt362project.ui.groups.GroupsFragment"
+        android:name="com.example.cmpt362project.ui.groups.GroupsListFragment"
         android:label="@string/menu_groups"
-        tools:layout="@layout/fragment_groups" />
+        tools:layout="@layout/fragment_groups_list" />
 
     <fragment
         android:id="@+id/nav_invitations"
         android:name="com.example.cmpt362project.ui.invitation.InvitationListFragment"
         android:label="@string/menu_invitations"
         tools:layout="@layout/fragment_invitations"/>
+
+    <fragment
+        android:id="@+id/nav_group_chats"
+        android:name="com.example.cmpt362project.ui.groupChat.GroupChatListFragment"
+        android:label="Group Chats"
+        tools:layout="@layout/fragment_group_chats"/>
 
     <fragment
         android:id="@+id/nav_chats"

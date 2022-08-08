@@ -9,20 +9,13 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class Group(
     val groupID: String = "",
     val groupName: String = "",
-    val description: String = "",
-    val createdBy: String = "",
-    val assignedTo: ArrayList<String> = ArrayList(),
-    val roles: List<Permission> = ArrayList()
+    val description: String = ""
 ): Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.createStringArrayList()!!,
-        arrayListOf<Permission>().also { parcel.readTypedList(it,Permission.CREATOR) },
-    //    arrayListOf<Category>().also { parcel.readTypedList(it, Category.CREATOR) },
+        parcel.readString()!!
     ) {
     }
 
@@ -30,10 +23,6 @@ data class Group(
         parcel.writeString(groupID)
         parcel.writeString(groupName)
         parcel.writeString(description)
-        parcel.writeString(createdBy)
-        parcel.writeStringList(assignedTo)
-        parcel.writeTypedList(roles)
-    //    parcel.writeTypedList(categories)
     }
 
     override fun describeContents(): Int {

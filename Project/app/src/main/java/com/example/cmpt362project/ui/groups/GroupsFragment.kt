@@ -42,7 +42,7 @@ class GroupsFragment : Fragment() {
         layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         groupListView.layoutManager = layoutManager
         groupList =  ArrayList()
-        adapter = GroupListAdapter(groupList)
+        adapter = GroupListAdapter(requireContext(),groupList, 0)
         groupListView.adapter = adapter
 
         groupListViewModel.getGroups()
@@ -66,7 +66,6 @@ class GroupsFragment : Fragment() {
                 "prefSync is $prefSync, prefAttachment is $prefAttachment")
 
 
-//        return root
         return view
     }
 }

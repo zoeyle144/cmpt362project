@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.settings.profile.SettingsProfileActivity"
+    >
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/settings_account_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        app:navigationIcon="@drawable/toolbar_settings_dialog_close"
-        app:title="Delete your account"
-        app:navigationContentDescription="@string/profile_toolbar_cancel"
-        />
-
-    <Space
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="12dp"
-        />
+        android:text=""
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:layout_margin="20dp"
+        android:id="@+id/group_view_header"/>
 
-    <!-- Enter current e-mail -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/account_settings_enter_current_email_label"
+        android:text="Group Name"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         />
@@ -35,22 +32,20 @@
         android:minHeight="4dp"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_current_email_field"
+        android:id="@+id/group_name_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_person_24"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:endIconMode="custom"
-        app:errorEnabled="true"
-        >
+        android:paddingEnd="16dp">
         <com.google.android.material.textfield.TextInputEditText
+            android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:padding="8dp"
+            android:focusable="false"
             />
     </com.google.android.material.textfield.TextInputLayout>
-    <!-- Enter current e-mail -->
+    <!-- Username -->
 
     <Space
         android:layout_width="match_parent"
@@ -58,14 +53,13 @@
         android:minHeight="12dp"
         />
 
-    <!-- Enter current password -->
+    <!-- E-mail -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/account_settings_current_password_label"
+        android:text="Description"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        />
+        android:paddingEnd="16dp"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,22 +68,20 @@
         android:paddingEnd="16dp"
         />
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_current_password_field"
+        android:id="@+id/group_desc_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_outline_email_24"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:passwordToggleEnabled="true"
-        app:errorEnabled="true"
-        >
+        android:paddingEnd="16dp">
+
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/group_desc_field_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:padding="8dp"
-            />
+            android:focusable="false"
+            android:padding="8dp" />
     </com.google.android.material.textfield.TextInputLayout>
-    <!-- Enter current password -->
 
     <Space
         android:layout_width="match_parent"
@@ -97,44 +89,49 @@
         android:minHeight="12dp"
         />
 
-    <!-- Enter confirm -->
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/account_settings_enter_confirm_label"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:text="save name and description"
+        android:layout_gravity="center"
+        android:id="@+id/save_group_changes"
+        android:visibility="gone"
         />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_margin="12dp"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="invite members"
+        android:layout_gravity="center"
+        android:id="@+id/invite_member_btn"
+        android:visibility="gone"
+        />
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="4dp"
+        android:minHeight="12dp"
         />
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_confirm_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:endIconMode="custom"
-        app:errorEnabled="true"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:padding="8dp"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-    <!-- Enter confirm -->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/account_settings_delete_note"
-        android:textColor="@color/error"
+        android:text="Members"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        />
+        android:paddingEnd="16dp"/>
+    <ListView
+        android:id="@+id/group_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </LinearLayout>

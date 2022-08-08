@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_search, R.id.nav_settings, R.id.nav_chats, R.id.nav_groups), drawerLayout)
+                R.id.nav_home, R.id.nav_search, R.id.nav_settings, R.id.nav_chats, R.id.nav_groups, R.id.nav_group_chats, R.id.nav_invitations), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
