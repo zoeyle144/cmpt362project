@@ -83,25 +83,3 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
 
     }
 }
-
-//class FileDataAdapter : RecyclerView.Adapter<FileDataAdapter.ViewHolder>() {
-//    var items : List<ProjectFilesModel> = listOf()
-//        set(value) {
-//            // implements setter for notifying item changed
-//            field = value
-//            notifyDataSetChanged()
-//        }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileDataViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.filtered_file, parent, false)
-//        return FileDataViewHolder(view)
-//    }
-//
-//    override fun getItemCount(): Int = items.count()
-//
-//    override fun onBindViewHolder(holder: FileDataViewHolder, position: Int) {
-//        holder.containerView.fileNameLayout.text = fileList[position].fileName
-//        holder.containerView.ctypeLayout.text = fileList[position].ctype
-//        holder.containerView.floorLayout.text = "${fileList[position].floor}floor"
-//    }
-//}

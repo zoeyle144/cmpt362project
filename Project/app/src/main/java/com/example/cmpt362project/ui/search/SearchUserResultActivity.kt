@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.cmpt362project.R
 import com.example.cmpt362project.activities.ChatConversationActivity
 import com.example.cmpt362project.models.Chat
+import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.utility.ImageUtility
 import com.example.cmpt362project.viewModels.ChatListViewModel
 import com.google.android.material.button.MaterialButton
@@ -146,7 +148,7 @@ class SearchUserResultActivity : AppCompatActivity() {
             true
         }
         R.id.profile_search_toolbar_invite -> {
-            
+
             true
         }
         else -> {

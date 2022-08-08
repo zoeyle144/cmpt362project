@@ -116,7 +116,7 @@ class DisplayTaskActivity : AppCompatActivity() {
                     groupUserID = ArrayList()
                     for (i in iterator) {
                         groupUserUserNames.add(i.userName)
-                        groupUserID.add(i.uID)
+                        groupUserID.add(i.uid)
                     }
                     val tempAdaptor = ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,groupUserUserNames);
                     assignedUser.adapter = tempAdaptor

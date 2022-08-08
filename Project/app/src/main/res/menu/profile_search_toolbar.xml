@@ -7,11 +7,12 @@
         android:icon="@drawable/toolbar_chat"
         app:showAsAction="always"
         />
-    <item
+    <!--<item
         android:id="@+id/profile_search_toolbar_invite"
         android:title="Invite to group"
         android:icon="@drawable/toolbar_invite"
         app:showAsAction="ifRoom"
         />
+    -->
 
 </menu>
