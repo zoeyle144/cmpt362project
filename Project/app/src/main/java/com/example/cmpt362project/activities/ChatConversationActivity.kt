@@ -26,7 +26,7 @@ class ChatConversationActivity : AppCompatActivity() {
         val auth = Firebase.auth
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_conversation)
-
+        title = "Chat"
         val chatId = intent.getStringExtra("chatId")
         var username = intent.getStringExtra("myUsername")
         var partnerName = intent.getStringExtra("otherUserUsername")

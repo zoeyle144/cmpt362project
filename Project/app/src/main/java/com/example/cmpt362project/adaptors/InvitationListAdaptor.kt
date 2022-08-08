@@ -77,11 +77,8 @@ class InvitationListAdaptor(val context: Context, private var invitationList: Li
             val permRef = database.getReference("permission")
             val permissionID = permRef.push().key!!
             val role = "reader"
-            val groupID_uID = "${invitationList[p0].groupId} _ $uID"
+            val permission = Permission(permissionID,role,uID!!,invitationList[p0].groupId, userName)
 
-            val permission = Permission(permissionID,role,uID!!,invitationList[p0].groupId, userName, groupID_uID)
-
-            println("Debug: permission!!! $permission")
             permissionViewModel.insert(permission)
 
 

@@ -8,10 +8,9 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class Permission(
     val permissionID: String = "",
     val role: String = "",
-    val uID: String = "",
+    val uid: String = "",
     val groupID: String = "",
     val userName: String = "",
-    val groupID_uID: String = "",
 
     ): Parcelable {
 
@@ -21,18 +20,14 @@ data class Permission(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!,
-
         ) {
     }
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
         parcel.writeString(permissionID)
         parcel.writeString(role)
-        parcel.writeString(uID)
+        parcel.writeString(uid)
         parcel.writeString(groupID)
         parcel.writeString(userName)
-        parcel.writeString(groupID_uID)
-
     }
 
     override fun describeContents(): Int {

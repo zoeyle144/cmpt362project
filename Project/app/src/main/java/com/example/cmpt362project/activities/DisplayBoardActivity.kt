@@ -71,16 +71,17 @@ class DisplayBoardActivity: AppCompatActivity() {
 
         //mData = list of members
         val mData: ArrayList<String> = ArrayList()
-        mData.add("Test1")
-        mData.add("Test2")
-        mData.add("Test3")
-        mData.add("Test4")
+        mData.add("admin")
+        mData.add("mod")
+        mData.add("writer")
+        mData.add("reader")
 
         val mSpinnerData: ArrayList<String> = ArrayList()
         mSpinnerData.add("admin")
-        mSpinnerData.add("author")
-        mSpinnerData.add("reader")
         mSpinnerData.add("mod")
+        mSpinnerData.add("writer")
+        mSpinnerData.add("reader")
+
 
         val spinnerAdapter = SpinnerAdapter(mData, mSpinnerData, this)
         lv.setAdapter(spinnerAdapter)
@@ -92,8 +93,7 @@ class DisplayBoardActivity: AppCompatActivity() {
 
 
         val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
-        var role = permissionViewModel.userHasRole("-N8peB8q2cxHoWX7mQKR","newman")
-        println("Debug: ROLE $role")
+        //println("Debug: ROLE $role")
 
 
 //

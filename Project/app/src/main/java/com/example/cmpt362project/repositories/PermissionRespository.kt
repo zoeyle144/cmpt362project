@@ -1,5 +1,6 @@
 package com.example.cmpt362project.repositories
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.ui.groups.FirebaseSuccessListener
@@ -15,18 +16,23 @@ class PermissionRespository {
     val auth = Firebase.auth
     val permRef = database.getReference("permission")
 
-    fun getPermission(liveData: MutableLiveData<List<Permission>>, permissionID: String){
+    fun getPermissions(liveData: MutableLiveData<List<Permission>>, groupId: String) {
         permRef
-            .child(permissionID)
-            .child("permission")
-            .addValueEventListener(object: ValueEventListener{
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val permission: List<Permission> = snapshot.children.map { dataSnapshot ->
                         dataSnapshot.getValue(Permission::class.java)!!
                     }
 
-                    liveData.postValue(permission)
-
+                    var filteredPermissions = mutableListOf<Permission>()
+                    for (perm in permission) {
+                        if (perm.groupID == groupId) {
+                            filteredPermissions.add(perm)
+                        }
+                    }
+                    liveData.postValue(filteredPermissions)
+                    //Log.w("DEBUGHERE", permission.toString())
+                    //liveData.postValue(permission)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -34,29 +40,42 @@ class PermissionRespository {
             })
     }
 
-    fun insert(permission: Permission){
+
+    fun insert(permission: Permission) {
         permRef.child(permission.permissionID).setValue(permission)
-            .addOnCompleteListener{
+            .addOnCompleteListener {
                 println("debug: add permission success")
-            }.addOnFailureListener{ err ->
+            }.addOnFailureListener { err ->
                 println("debug: add permission fail Error ${err.message}")
             }
     }
 
-    fun insertInGroup(permission: Permission, groupID: String) {
-        permRef
-            .child(groupID).child("permission")
-            .child(permission.permissionID).setValue(permission)
-            .addOnCompleteListener {
-                println("debug: add permission on group success")
-            }.addOnFailureListener { err ->
-                println("debug: add permission group fail Error ${err.message}")
-            }
+    fun edit(permission: Permission) {
+        permRef.child(permission.permissionID).setValue(permission)
     }
 
-//    fun delete(groupID: String){
-//        permRef.child(groupID).removeValue()
-//            .addOnSuccessListener {
+    fun delete(permission: Permission, uid: String){
+        permRef.get().addOnSuccessListener {
+            var hasPermission = false
+            val permList = it.value as Map<*, *>
+            for ((key, value) in permList) {
+                var permListEntry = value as Map<*, *>
+                Log.w("DEBUG", permListEntry.toString())
+                if (permListEntry["uid"] == uid &&
+                    permListEntry["groupID"] == permission.groupID &&
+                    permListEntry["role"] == "admin"
+                ) {
+                    hasPermission = true
+                    break
+                }
+            }
+            if (hasPermission) {
+                permRef.child(permission.permissionID).removeValue()
+            }
+        }
+
+    }
+}
 //                println("debug: delete board success")
 //            }.addOnFailureListener{ err ->
 //                println("debug: delete board fail Error ${err.message}")
@@ -137,7 +156,7 @@ class PermissionRespository {
 //            })
 //        return result
 //    }
-
+/*
     fun updateRole(groupID:String, uID: String, role: String) {
         println("Debug: Updated role ${getPermissionID()}")
         permRef
@@ -164,7 +183,6 @@ class PermissionRespository {
 //                    }
 //                }
 //                override fun onCancelled(error: DatabaseError) {
-//                    TODO("Not yet implemented")
 //                }
 //            })
 //    }
@@ -263,3 +281,4 @@ class PermissionRespository {
     }
 
 }
+*/

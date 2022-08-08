@@ -66,7 +66,6 @@ class GroupsFragment : Fragment() {
                 "prefSync is $prefSync, prefAttachment is $prefAttachment")
 
 
-//        return root
         return view
     }
 }

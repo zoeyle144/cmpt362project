@@ -21,9 +21,9 @@
 
     <fragment
         android:id="@+id/nav_groups"
-        android:name="com.example.cmpt362project.ui.groups.GroupsFragment"
+        android:name="com.example.cmpt362project.ui.groups.GroupsListFragment"
         android:label="@string/menu_groups"
-        tools:layout="@layout/fragment_groups" />
+        tools:layout="@layout/fragment_groups_list" />
 
     <fragment
         android:id="@+id/nav_invitations"

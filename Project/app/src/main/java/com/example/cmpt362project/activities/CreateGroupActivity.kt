@@ -11,9 +11,11 @@ import com.example.cmpt362project.R
 import com.example.cmpt362project.database.User
 import com.example.cmpt362project.models.Board
 import com.example.cmpt362project.models.Group
+import com.example.cmpt362project.models.GroupChat
 import com.example.cmpt362project.models.Permission
 import com.example.cmpt362project.ui.groups.InviteMemberDialogFragment
 import com.example.cmpt362project.viewModels.BoardListViewModel
+import com.example.cmpt362project.viewModels.GroupChatListViewModel
 import com.example.cmpt362project.viewModels.GroupListViewModel
 import com.example.cmpt362project.viewModels.PermissionViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -62,23 +64,26 @@ class CreateGroupActivity: AppCompatActivity(), InviteMemberDialogFragment.Dialo
             val groupName = createGroupName.text
             val groupDescription = createGroupDescription.text
             auth = Firebase.auth
-            val createdBy = auth.currentUser?.uid
 
             val permRef = database.getReference("permission")
             val permissionID = permRef.push().key!!
             val permissionViewModel: PermissionViewModel = ViewModelProvider(this)[PermissionViewModel::class.java]
 
-            val chatID = ""
 
-
-            val group = Group(groupID, groupName.toString(), groupDescription.toString(), createdBy.toString(), chatID, ArrayList())
+            // push group
+            val group = Group(groupID, groupName.toString(), groupDescription.toString())
             groupListViewModel.insert(group)
 
-            val groupID_uID = "$groupID _ $uID"
-            val permission = Permission(permissionID,userRole,uID!!,groupID, userName, groupID_uID)
-
+            // push creator as admin
+            val permission = Permission(permissionID,userRole,uID,groupID, userName)
             permissionViewModel.insert(permission)
-            permissionViewModel.insertInGroup(permission,groupID)
+
+            // push group chat
+            val groupChatsRef = database.getReference("group_chats")
+            val groupChatViewModel = ViewModelProvider(this)[GroupChatListViewModel::class.java]
+            val groupChatID = groupChatsRef.push().key!!
+            val groupChat = GroupChat(groupChatID, groupID, System.currentTimeMillis())
+            groupChatViewModel.insert(groupChat)
             
             finish()
 

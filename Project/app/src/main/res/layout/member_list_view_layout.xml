@@ -7,20 +7,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal">
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="4dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/row_item_textview"
-            android:textSize="19sp"
-            android:layout_weight="1"/>
+
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            />
+
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/role_spinner"
             android:gravity="right"
-            android:scrollbarSize="25sp"
+            android:scrollbarSize="48sp"
             android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="4dp"
+            android:text="X"
+            android:id="@+id/permission_delete_btn"/>
 
 </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

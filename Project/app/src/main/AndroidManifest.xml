@@ -22,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CMPT362Project">
         <activity
+            android:name=".activities.DisplayGroupActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.settings.notification.SettingsNotificationActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
@@ -71,13 +74,11 @@
         <activity
             android:name=".login.LoginPageActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-        />
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".login.SignUpPageActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-        />
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".activities.CreateChatActivity"
             android:exported="false" />
@@ -98,18 +99,18 @@
         <activity android:name=".activities.CreateGroupActivity" />
         <activity android:name=".activities.DisplayCategoryActivity" />
         <activity android:name=".activities.DisplayTaskActivity" />
-
-        <activity android:name=".activities.DisplayBoardActivity"
+        <activity
+            android:name=".activities.DisplayBoardActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".ui.search.SearchUserResultActivity"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
-
-
-        <activity android:name=".ui.invitation.addToGroupActivity"
+        <activity
+            android:name=".ui.invitation.addToGroupActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+
         <service
             android:name=".services.NotificationService"
             android:enabled="true" />

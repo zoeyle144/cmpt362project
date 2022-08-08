@@ -34,7 +34,7 @@ class SpinnerAdapter(private var data: ArrayList<String>, private var spinnerIte
         val textView = view.findViewById<TextView>(R.id.row_item_textview)
         val spinner = view.findViewById<Spinner>(R.id.role_spinner)
 
-        textView.setText(data.get(p0))
+        textView.text = data.get(p0)
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, spinnerItems)
 
         spinner.setAdapter(adapter)
@@ -42,25 +42,3 @@ class SpinnerAdapter(private var data: ArrayList<String>, private var spinnerIte
         return view
     }
 }
-
-//class FileDataAdapter : RecyclerView.Adapter<FileDataAdapter.ViewHolder>() {
-//    var items : List<ProjectFilesModel> = listOf()
-//        set(value) {
-//            // implements setter for notifying item changed
-//            field = value
-//            notifyDataSetChanged()
-//        }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileDataViewHolder {
-//        val view = LayoutInflater.from(parent.context).inflate(R.layout.filtered_file, parent, false)
-//        return FileDataViewHolder(view)
-//    }
-//
-//    override fun getItemCount(): Int = items.count()
-//
-//    override fun onBindViewHolder(holder: FileDataViewHolder, position: Int) {
-//        holder.containerView.fileNameLayout.text = fileList[position].fileName
-//        holder.containerView.ctypeLayout.text = fileList[position].ctype
-//        holder.containerView.floorLayout.text = "${fileList[position].floor}floor"
-//    }
-//}

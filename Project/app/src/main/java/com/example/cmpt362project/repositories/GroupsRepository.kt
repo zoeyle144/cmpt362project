@@ -1,5 +1,6 @@
 package com.example.cmpt362project.repositories
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.cmpt362project.models.Group
 import com.google.firebase.auth.ktx.auth
@@ -16,7 +17,6 @@ class GroupsRepository {
 
     fun getGroups(liveData: MutableLiveData<List<Group>>){
         groupsRef
-            .orderByChild("createdBy").equalTo(auth.currentUser?.uid.toString())
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val groups: List<Group> = snapshot.children.map { dataSnapshot ->
@@ -24,6 +24,7 @@ class GroupsRepository {
                     }
 
                     liveData.postValue(groups)
+                    Log.w("DEBUG", groups.toString())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -42,9 +43,14 @@ class GroupsRepository {
 
 
     fun delete(groupID: String){
+        val groupChatsRef = database.getReference("group_chats")
+        val msgRef = database.getReference("chat_messages")
+        val invitationsRef = database.getReference("invitations")
+        val permsRef = database.getReference("permission")
         groupsRef.child(groupID).removeValue()
             .addOnSuccessListener {
                 println("debug: delete group success")
+                msgRef.child(groupID).removeValue()
             }.addOnFailureListener{ err ->
                 println("debug: delete group fail Error ${err.message}")
             }
