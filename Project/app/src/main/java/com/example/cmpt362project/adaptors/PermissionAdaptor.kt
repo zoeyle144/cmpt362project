@@ -1,5 +1,7 @@
 package com.example.cmpt362project.adaptors
 
+import android.app.Activity
+import android.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -50,12 +52,35 @@ class PermissionAdaptor(val context: Context, private var permList: List<Permiss
         spinner.adapter = adapter
         spinner.setSelection(spinnerItemsDatabase.indexOf(permList[p0].role))
         spinner.onItemSelectedListener = this
+
         deleteBtn.setOnClickListener{
-            vm.delete(permList[p0], auth.currentUser!!.uid)
+            val confirmationBuilder = AlertDialog.Builder(context)
+            var leaving = false
+            var message = "Are you sure you want to kick <${permList[p0].userName}>?"
+            if (auth.currentUser!!.uid == permList[p0].uid) {
+                message = "Are you sure you want to leave the group?"
+                leaving = true
+            }
+            confirmationBuilder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    vm.delete(permList[p0], auth.currentUser!!.uid)
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    if (leaving) {
+                        (context as Activity).finish()
+                    }
+                    dialog.dismiss()
+                }
+            val alert = confirmationBuilder.create()
+            alert.show()
+
         }
+
+        // role based ui changes
         if (auth.currentUser!!.uid == permList[p0].uid) {
             spinner.isEnabled = false
-            deleteBtn.visibility = View.INVISIBLE
+            deleteBtn.visibility = View.VISIBLE
         } else if (editable) {
             spinner.isEnabled = true
             deleteBtn.visibility = View.VISIBLE

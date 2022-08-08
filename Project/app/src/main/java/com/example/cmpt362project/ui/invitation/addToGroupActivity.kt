@@ -75,7 +75,7 @@ class addToGroupActivity: AppCompatActivity(), AdapterView.OnItemClickListener, 
         groupID = adapter.getGroupID().toString()
 
 
-        groupListViewModel.getGroups()
+        //groupListViewModel.getGroups()
         groupListViewModel.groupsLiveData.observe(this){
             (adapter as GroupListAdapter).updateList(it)
             (adapter as GroupListAdapter).notifyDataSetChanged()

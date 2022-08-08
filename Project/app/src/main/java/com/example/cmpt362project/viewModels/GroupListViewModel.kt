@@ -12,8 +12,8 @@ class GroupListViewModel: ViewModel(){
     private val _groupsLiveData = MutableLiveData<List<Group>>()
     val groupsLiveData: LiveData<List<Group>> = _groupsLiveData
 
-    fun getGroups(){
-        repository.getGroups(_groupsLiveData)
+    fun getGroups(uid: String){
+        repository.getGroups(_groupsLiveData, uid)
     }
 
     fun insert(group: Group){
